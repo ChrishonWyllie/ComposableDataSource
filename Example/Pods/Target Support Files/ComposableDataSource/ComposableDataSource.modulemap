@@ -1,0 +1,6 @@
+framework module ComposableDataSource {
+  umbrella header "ComposableDataSource-umbrella.h"
+
+  export *
+  module * { export * }
+}
