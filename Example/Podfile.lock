@@ -32,7 +32,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  ComposableDataSource: a9cea1e1af2a9bd1bdf1f719306ce7f98e71ebdd
+  ComposableDataSource: 3021b90a8fb3035403a94fbee9de32c7c4fb1c7f
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
   Nimble: 051e3d8912d40138fa5591c78594f95fb172af37
   Nimble-Snapshots: f5459b5b091678dc942d03ec4741cacb58ba4a52

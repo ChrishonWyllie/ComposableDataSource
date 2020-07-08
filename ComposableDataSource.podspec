@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ComposableDataSource'
-  s.version          = '0.1.0'
+  s.version          = '0.2.0'
   s.summary          = 'A more contained and composable method of creating scrollView datasources'
 
 # This description is used to generate tags and improve search results.
@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
   s.swift_versions   = ['4.0', '4.1', '4.2', '5.0', '5.1']
 
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '9.0'
 
   s.source_files = 'ComposableDataSource/Classes/**/*'
   
