@@ -33,32 +33,23 @@ public protocol GenericSupplementaryModel {
 // This protocol is somewhat unnecessary since the GenericSupplementaryHeaderFooterModel
 // is the only model that implements it
 
-public protocol SupplementaryContainer {
-    associatedtype H
-    associatedtype F
-}
-
-public protocol GenericSupplementaryContainerModel: SupplementaryContainer {
-    var header: H? { get }
-    var footer: F? { get }
+public protocol GenericSupplementaryContainerModel {
+    var header: GenericSupplementaryModel? { get }
+    var footer: GenericSupplementaryModel? { get }
     var designatedSection: Int { get }
 }
 
-struct GenericSupplementaryHeaderFooterModel: GenericSupplementaryContainerModel {
-    typealias H = GenericSupplementaryModel
-    
-    typealias F = GenericSupplementaryModel
-    
-    public private(set) var header: H?
-    public private(set) var footer: F?
+public struct GenericSupplementaryHeaderFooterModel: GenericSupplementaryContainerModel {
+    public private(set) var header: GenericSupplementaryModel?
+    public private(set) var footer: GenericSupplementaryModel?
     public private(set) var designatedSection: Int
     
-    init(header: H?, footer: F?, designatedSection: Int) {
+    init(header: GenericSupplementaryModel?, footer: GenericSupplementaryModel?, designatedSection: Int) {
         if header != nil {
-            guard header?.viewKind == UICollectionElementKindSectionHeader else { fatalError("You placed the wrong supplementary model in this parameter") }
+            guard header?.viewKind == UICollectionView.elementKindSectionHeader else { fatalError("You placed the wrong supplementary model in this parameter") }
         }
         if footer != nil {
-            guard footer?.viewKind == UICollectionElementKindSectionFooter else { fatalError("You placed the wrong supplementary model in this parameter") }
+            guard footer?.viewKind == UICollectionView.elementKindSectionFooter else { fatalError("You placed the wrong supplementary model in this parameter") }
         }
         self.header = header
         self.footer = footer
