@@ -8,8 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ComposableDataSource'
-  s.version          = '0.1.0'
-  s.summary          = 'A short description of ComposableDataSource.'
+  s.version          = '0.2.0'
+  s.summary          = 'A more contained and composable method of creating scrollView datasources'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+  ComposableDataSource was written to assuage to usually annoying task of writing UICollectionView delegate and datasource code. Now, this functionality can be encapsulated in one function
                        DESC
 
   s.homepage         = 'https://github.com/ChrishonWyllie/ComposableDataSource'
@@ -27,8 +27,9 @@ TODO: Add long description of the pod here.
   s.author           = { 'ChrishonWyllie' => 'chrishon595@yahoo.com' }
   s.source           = { :git => 'https://github.com/ChrishonWyllie/ComposableDataSource.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.swift_versions   = ['4.0', '4.1', '4.2', '5.0', '5.1']
 
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '9.0'
 
   s.source_files = 'ComposableDataSource/Classes/**/*'
   
@@ -37,6 +38,6 @@ TODO: Add long description of the pod here.
   # }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
+   s.frameworks = 'UIKit'
   # s.dependency 'AFNetworking', '~> 2.3'
 end
