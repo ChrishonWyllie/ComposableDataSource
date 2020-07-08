@@ -15,7 +15,7 @@ import UIKit.UICollectionView
 // similar to the GenericCellModel
 // But this is to allow for generic supplementary views (header and footer)
 
-protocol GenericSupplementaryModel {
+public protocol GenericSupplementaryModel {
     var supplementaryViewClass: AnyClass { get }
     var viewKind: String { get }
 }
@@ -33,18 +33,27 @@ protocol GenericSupplementaryModel {
 // This protocol is somewhat unnecessary since the GenericSupplementaryHeaderFooterModel
 // is the only model that implements it
 
-protocol GenericSupplementaryContainerModel {
-    var header: GenericSupplementaryModel? { get }
-    var footer: GenericSupplementaryModel? { get }
+public protocol SupplementaryContainer {
+    associatedtype H
+    associatedtype F
+}
+
+public protocol GenericSupplementaryContainerModel: SupplementaryContainer {
+    var header: H? { get }
+    var footer: F? { get }
     var designatedSection: Int { get }
 }
 
 struct GenericSupplementaryHeaderFooterModel: GenericSupplementaryContainerModel {
-    public private(set) var header: GenericSupplementaryModel?
-    public private(set) var footer: GenericSupplementaryModel?
+    typealias H = GenericSupplementaryModel
+    
+    typealias F = GenericSupplementaryModel
+    
+    public private(set) var header: H?
+    public private(set) var footer: F?
     public private(set) var designatedSection: Int
     
-    init(header: GenericSupplementaryModel?, footer: GenericSupplementaryModel?, designatedSection: Int) {
+    init(header: H?, footer: F?, designatedSection: Int) {
         if header != nil {
             guard header?.viewKind == UICollectionElementKindSectionHeader else { fatalError("You placed the wrong supplementary model in this parameter") }
         }
