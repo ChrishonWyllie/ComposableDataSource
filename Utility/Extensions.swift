@@ -5,7 +5,7 @@
 //  Created by Chrishon Wyllie on 7/8/20.
 //
 
-import Foundation
+import UIKit
 
 // MARK: - Array
 
@@ -106,4 +106,121 @@ extension Array where Element: Hashable {
         
         return setOfOtherItems.isSubset(of: setOfCurrentItems)
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// MARK: - UICollectionViewCell
+// This rounds corners for UICollectionViewCells depending on its indexPath
+// For example, the top cell has its .topLeft and .topRight corners rounded
+// The bottom cell has its .bottomLeft and .bottomRight corners rounded
+
+extension UICollectionViewCell {
+    
+    func roundCellCorners(with padding: UIEdgeInsets,
+                          corners: UIRectCorner,
+                          cornerRadius: CGFloat,
+                          forItemAt indexPath: IndexPath,
+                          in collectionView: UICollectionView) {
+        
+        let bounds = self.bounds
+        // TODO
+        // NOTE
+        // Not using padding.left / 2 will cause a weird effect.
+        let formattedRect = CGRect(x: padding.left / 2,
+                                   y: padding.top,
+                                   width: bounds.size.width - (padding.left + padding.right),
+                                   height: bounds.size.height - (padding.top + padding.bottom))
+        
+        
+        let maskCornerRadii: CGSize = CGSize(width: cornerRadius, height: cornerRadius)
+        
+        let roundingCorners: UIRectCorner = collectionView.numberOfItems(inSection: indexPath.section) == 1
+            ? [.allCorners]
+            : corners
+        
+        // Create a mask for the first cell
+        let roundedMask = UIBezierPath(roundedRect: formattedRect,
+                                       byRoundingCorners: roundingCorners,
+                                       cornerRadii: maskCornerRadii)
+        let roundedShapeLayer = CAShapeLayer()
+        roundedShapeLayer.frame = formattedRect
+        roundedShapeLayer.path = roundedMask.cgPath
+        
+        
+        
+        
+        // For middle cell
+        let maskPathMiddle = UIBezierPath(rect: formattedRect)
+        let shapeLayerMiddle  = CAShapeLayer()
+        shapeLayerMiddle.frame = formattedRect
+        shapeLayerMiddle.path = maskPathMiddle.cgPath
+        
+        
+        
+        
+        
+        
+        // Round only the first and last cells if there is only one column (itemSize = deviceScreenWidth)
+        switch indexPath.item {
+        case 0, (collectionView.numberOfItems(inSection: indexPath.section) - 1):
+            self.layer.mask = roundedShapeLayer
+        default:
+            // middleCell
+            self.layer.mask = shapeLayerMiddle
+            break
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+// MARK: - UICollectionReusableView
+
+extension UICollectionReusableView {
+    
+    func roundCorners(with padding: UIEdgeInsets, corners: UIRectCorner, cornerRadius: CGFloat) {
+        
+        let bounds = self.bounds
+        // TODO
+        // NOTE
+        // Not using padding.left / 2 will cause a weird effect.
+        let formattedRect = CGRect(x: padding.left / 2,
+                                   y: padding.top,
+                                   width: bounds.size.width - (padding.left + padding.right),
+                                   height: bounds.size.height - (padding.top + padding.bottom))
+        
+        
+        let maskCornerRadii: CGSize = CGSize(width: cornerRadius, height: cornerRadius)
+        
+        // Create a mask for the first cell
+        let roundedMask = UIBezierPath(roundedRect: formattedRect,
+                                       byRoundingCorners: corners,
+                                       cornerRadii: maskCornerRadii)
+        let roundedShapeLayer = CAShapeLayer()
+        roundedShapeLayer.frame = formattedRect
+        roundedShapeLayer.path = roundedMask.cgPath
+        
+        
+        self.layer.mask = roundedShapeLayer
+    }
+    
 }
