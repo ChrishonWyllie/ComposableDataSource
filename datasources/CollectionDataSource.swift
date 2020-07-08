@@ -16,19 +16,12 @@ public typealias CollectionScrollViewDidEndDecelerating = (UIScrollView) -> Void
 public typealias CollectionScrollViewWillEndDragging = (UIScrollView, CGPoint, UnsafeMutablePointer<CGPoint>) -> Void
 public typealias CollectionScrollViewDidEndDragging = (UIScrollView, Bool) -> Void
 
-open class CollectionDataSource
-    <Provider: CollectionDataProvider,
-    Cell: UICollectionViewCell,
-    Supplementary: SupplementaryContainer>:
+open class CollectionDataSource<Provider: CollectionDataProvider, Cell: UICollectionViewCell>:
     NSObject,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
     UICollectionViewDelegateFlowLayout
-where Cell: ConfigurableReusableCell,
-Supplementary.H: GenericSupplementaryModel,
-Supplementary.F: GenericSupplementaryModel,
-Provider.T == Cell.T,
-Provider.S == Supplementary {
+where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     
     // MARK: - Variables
     
@@ -63,10 +56,10 @@ Provider.S == Supplementary {
         
         collectionView.register(Cell.self, forCellWithReuseIdentifier: Cell.reuseIdentifier)
         collectionView.register(UICollectionReusableView.self,
-                                forSupplementaryViewOfKind: UICollectionElementKindSectionHeader,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: Constants.ReuseIdentifiers.defaultHeaderReuseIdentifier)
         collectionView.register(UICollectionReusableView.self,
-                                forSupplementaryViewOfKind: UICollectionElementKindSectionFooter,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
                                 withReuseIdentifier: Constants.ReuseIdentifiers.defaultFooterReuseIdentifier)
     }
     
@@ -153,12 +146,12 @@ Provider.S == Supplementary {
                              viewForSupplementaryElementOfKind kind: String,
                              at indexPath: IndexPath) -> UICollectionReusableView
     {
-        if kind == UICollectionElementKindSectionHeader {
-            return collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader,
+        if kind == UICollectionView.elementKindSectionHeader {
+            return collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader,
                                                                    withReuseIdentifier: Constants.ReuseIdentifiers.defaultHeaderReuseIdentifier,
                                                                    for: indexPath)
         } else {
-            return collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionFooter,
+            return collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter,
                                                                    withReuseIdentifier: Constants.ReuseIdentifiers.defaultFooterReuseIdentifier,
                                                                    for: indexPath)
         }
