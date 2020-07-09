@@ -9,7 +9,7 @@ import UIKit
 
 // This class can handle multiple kinds of UICollectionViewCells
 
-class ComposableCollectionDataSource: SectionableCollectionDataSource<GenericCellModel, GenericCollectionViewCell, GenericSupplementaryContainerModel, GenericCollectionReusableView> {
+open class ComposableCollectionDataSource: SectionableCollectionDataSource<GenericCellModel, GenericCollectionViewCell, GenericSupplementaryContainerModel, GenericCollectionReusableView> {
     
     private var cellPadding: UIEdgeInsets = .zero
     private var cellCornerRadius: CGFloat = 0.0
@@ -54,7 +54,7 @@ class ComposableCollectionDataSource: SectionableCollectionDataSource<GenericCel
         return corners
     }
     
-    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    public override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if self.cellPadding != .zero && self.cellCornerRadius > 0.0 {
             let corners: UIRectCorner = getRoundedRectCorners(for: indexPath)
             cell.roundCellCorners(with: cellPadding,
@@ -65,7 +65,7 @@ class ComposableCollectionDataSource: SectionableCollectionDataSource<GenericCel
         }
     }
     
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    public override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         guard let item = super.provider.item(at: indexPath) else {
             return UICollectionViewCell()
@@ -87,13 +87,13 @@ class ComposableCollectionDataSource: SectionableCollectionDataSource<GenericCel
         return cell!
     }
     
-    override func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+    public override func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
         if self.cellPadding != .zero && self.cellCornerRadius > 0.0 {
             view.roundCorners(with: cellPadding, corners: [.allCorners], cornerRadius: cellCornerRadius)
         }
     }
     
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    public override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         guard let supplementaryContainerModel = super.supplementaryContainerItem(at: indexPath.section) else {
             print("Could not get supplementary item at index section: \(indexPath.section)")

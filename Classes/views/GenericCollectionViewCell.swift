@@ -15,20 +15,20 @@ protocol GenericCollectionViewCellProtocol: ConfigurableReusableCell {
     func setupUIElements()
 }
 
-class GenericCollectionViewCell: UICollectionViewCell, GenericCollectionViewCellProtocol {
-    typealias T = GenericCellModel
-    func configure(with item: GenericCellModel, at indexPath: IndexPath) {}
+open class GenericCollectionViewCell: UICollectionViewCell, GenericCollectionViewCellProtocol {
+    public typealias T = GenericCellModel
+    open func configure(with item: GenericCellModel, at indexPath: IndexPath) {}
     
     
     
     
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         setupUIElements()
     }
     
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -106,7 +106,7 @@ class GenericTitleEmptyBackgroundView: GenericEmptyCollectionBackgroundView {
         titleLabel.text = "Friend Stories will appear here!"
         titleLabel.textColor = UIColor.lightGray
         titleLabel.textAlignment = .center
-        titleLabel.font = UIFont.classicFont.withSize(12)
+//        titleLabel.font = UIFont.classicFont.withSize(12)
         titleLabel.numberOfLines = 0
         return titleLabel
     }()

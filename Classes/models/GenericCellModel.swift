@@ -14,6 +14,6 @@ import Foundation
 // Therefore, the ArrayDataProvider can provide the correct cell
 // and allow for Multiple cell types
 
-protocol GenericCellModel {
+public protocol GenericCellModel {
     var cellClass: AnyClass { get }
 }
