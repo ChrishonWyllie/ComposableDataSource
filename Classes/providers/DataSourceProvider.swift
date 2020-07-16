@@ -7,19 +7,17 @@
 
 import Foundation
 
-public class DataSourceProvider<T, S>: CollectionDataProvider {
+public class DataSourceProvider<T, S, U>: CollectionDataProvider {
     
     // MARK: - Internal Properties
     private var items: [[T]] = []
     private var supplementaryContainerItems: [S] = []
     
-    // MARK: - Lifecycle
+    // MARK: - Initializers
     init(array: [[T]], supplementaryItems: [S]) {
         items = array
         supplementaryContainerItems = supplementaryItems
     }
-    
-    // MARK: - CollectionDataProvider
     
     public var isEmpty: Bool {
         if items.count > 0 {
@@ -52,7 +50,7 @@ public class DataSourceProvider<T, S>: CollectionDataProvider {
         return items[section].count
     }
     
-    // Create
+    // MARK: - Create
     
     public func append(items: [T], inNestedSection section: Int, atIndex index: Int? = nil) {
         self.items[section].append(contentsOf: items)
@@ -127,7 +125,7 @@ public class DataSourceProvider<T, S>: CollectionDataProvider {
     
     
     
-    // Read
+    // MARK: - Read
     
     public func item(at indexPath: IndexPath) -> T? {
         // Prevent index overflow
@@ -139,6 +137,25 @@ public class DataSourceProvider<T, S>: CollectionDataProvider {
             return nil
         }
         return items[indexPath.section][indexPath.row]
+    }
+    
+    public func items(at indexPaths: [IndexPath]) -> [T]? {
+        var itemsToReturn: [T]?
+        
+        guard items.isEmpty == false else {
+            return nil
+        }
+        
+        for indexPath in indexPaths {
+            if let item = item(at: indexPath) {
+                if itemsToReturn == nil {
+                    itemsToReturn = []
+                }
+                itemsToReturn?.append(item)
+            }
+        }
+        
+        return itemsToReturn
     }
     
     public func supplementaryContainerItem(at designatedSection: Int) -> S? {
@@ -154,7 +171,7 @@ public class DataSourceProvider<T, S>: CollectionDataProvider {
     
     
     
-    // Update
+    // MARK: - Update
     
     public func updateItem(at indexPath: IndexPath, withNewItem item: T) {
         guard self.item(at: indexPath) != nil else {
@@ -232,7 +249,7 @@ public class DataSourceProvider<T, S>: CollectionDataProvider {
     
     
     
-    // Delete
+    // MARK: - Delete
     
     @discardableResult public func deleteItems(at indexPaths: [IndexPath]) -> [Int] {
         
@@ -291,8 +308,7 @@ public class DataSourceProvider<T, S>: CollectionDataProvider {
             }
             for index in 0..<supplementaryContainerItems.count {
                 supplementaryContainerItems[index] =  GenericSupplementaryHeaderFooterModel(header: nil,
-                                                                                           footer: nil,
-                                                                                           designatedSection: index) as! S
+                                                                                           footer: nil) as! S
             }
         } else {
             items.removeAll()

@@ -36,15 +36,13 @@ public protocol GenericSupplementaryModel {
 public protocol GenericSupplementaryContainerModel {
     var header: GenericSupplementaryModel? { get }
     var footer: GenericSupplementaryModel? { get }
-    var designatedSection: Int { get }
 }
 
 public struct GenericSupplementaryHeaderFooterModel: GenericSupplementaryContainerModel {
     public private(set) var header: GenericSupplementaryModel?
     public private(set) var footer: GenericSupplementaryModel?
-    public private(set) var designatedSection: Int
     
-    init(header: GenericSupplementaryModel?, footer: GenericSupplementaryModel?, designatedSection: Int) {
+    public init(header: GenericSupplementaryModel?, footer: GenericSupplementaryModel?) {
         if header != nil {
             guard header?.viewKind == UICollectionView.elementKindSectionHeader else { fatalError("You placed the wrong supplementary model in this parameter") }
         }
@@ -53,6 +51,5 @@ public struct GenericSupplementaryHeaderFooterModel: GenericSupplementaryContain
         }
         self.header = header
         self.footer = footer
-        self.designatedSection = designatedSection
     }
 }

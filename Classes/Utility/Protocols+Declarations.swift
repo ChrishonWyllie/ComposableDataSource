@@ -29,8 +29,9 @@ public protocol ConfigurableReusableSupplementaryView: ReusableUIElement {
 
 public protocol CollectionDataProvider {
     
-    associatedtype T
-    associatedtype S
+    associatedtype T // cell model
+    associatedtype S // supplementary container
+    associatedtype U // individual header/footer model
     
 //    var items: [[T]] { get }
 //    var supplementaryContainerItems: [S] { get }
@@ -59,6 +60,7 @@ public protocol CollectionDataProvider {
     // Read
     
     func item(at indexPath: IndexPath) -> T?
+    func items(at indexPaths: [IndexPath]) -> [T]?
     func supplementaryContainerItem(at designatedSection: Int) -> S?
     
     // Update
@@ -82,3 +84,48 @@ public protocol CollectionDataProvider {
     func reset(keepingStructure: Bool)
     func replaceAllItems(with models: [[T]], supplementaryContainerItems: [S])
 }
+
+
+
+
+
+
+
+
+
+
+
+public enum DataSourceUpdateStyle {
+    case withBatchUpdates
+    case immediately
+}
+
+public typealias OptionalCompletionHandler = ((Bool) -> ())?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public typealias CollectionItemSelectionHandler<T> = (IndexPath, T) -> Void
+public typealias CollectionItemDeselectionHandler<T> = (IndexPath, T) -> Void
+public typealias CollectionItemSizeHandler<T> = (IndexPath, T) -> CGSize
+public typealias CollectionSupplementaryHeaderSizeHandler<U> = (Int, U) -> CGSize
+public typealias CollectionSupplementaryFooterSizeHandler<U> = (Int, U) -> CGSize
+public typealias CollectionBeginPrefetchingHandler<T> = ([IndexPath], [T]) -> Void
+public typealias CollectionCancelPrefetchingHandler<T> = ([IndexPath], [T]) -> Void
+
+public typealias CollectionContentOffset = (CGPoint) -> Void
+public typealias CollectionScrollViewWillBeginDragging = (UIScrollView) -> Void
+public typealias CollectionScrollViewDidEndScrollAnimation = (UIScrollView) -> Void
+public typealias CollectionScrollViewDidEndDecelerating = (UIScrollView) -> Void
+public typealias CollectionScrollViewWillEndDragging = (UIScrollView, CGPoint, UnsafeMutablePointer<CGPoint>) -> Void
+public typealias CollectionScrollViewDidEndDragging = (UIScrollView, Bool) -> Void
