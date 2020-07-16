@@ -15,19 +15,19 @@ public enum DataSourceUpdateStyle {
 public typealias OptionalCompletionHandler = ((Bool) -> ())?
 
 
-open class SectionableCollectionDataSource<T, Cell: UICollectionViewCell, S, View: UICollectionReusableView>: CollectionDataSource<DataSourceProvider<T, S>, Cell>
-    where Cell: ConfigurableReusableCell, Cell.T == T
+open class SectionableCollectionDataSource<T, Cell: UICollectionViewCell, S, U, View: UICollectionReusableView>: CollectionDataSource<DataSourceProvider<T, S, U>, Cell>
+where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSupplementaryView, View.T == U
 {
     
     // MARK: - Lifecycle
     
     public init(collectionView: UICollectionView, array: [[T]], supplementaryItems: [S]) {
-        let provider = DataSourceProvider(array: array, supplementaryItems: supplementaryItems)
+        let provider = DataSourceProvider<T, S, U>(array: array, supplementaryItems: supplementaryItems)
         super.init(collectionView: collectionView, provider: provider)
         register(sectionModels: array, supplementaryContainerItems: supplementaryItems)
     }
     
-    public init(collectionView: UICollectionView, dataProvider: DataSourceProvider<T, S>) {
+    public init(collectionView: UICollectionView, dataProvider: DataSourceProvider<T, S, U>) {
         super.init(collectionView: collectionView, provider: dataProvider)
         registerItems(in: dataProvider)
     }
@@ -76,7 +76,7 @@ open class SectionableCollectionDataSource<T, Cell: UICollectionViewCell, S, Vie
         return super.provider.numberOfItems(in: section)
     }
     
-    public func registerItems(in dataProvider: DataSourceProvider<T, S>) {
+    public func registerItems(in dataProvider: DataSourceProvider<T, S, U>) {
         register(sectionModels: dataProvider.allItems(), supplementaryContainerItems: dataProvider.allSupplementaryItems())
     }
     
