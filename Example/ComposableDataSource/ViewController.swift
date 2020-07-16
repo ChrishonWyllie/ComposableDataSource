@@ -34,6 +34,8 @@ class ViewController: UIViewController {
         
         view.addSubview(collectionView)
         
+//        Celestial.shared.setDebugMode(on: true)
+        
         collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
@@ -50,10 +52,12 @@ class ViewController: UIViewController {
     
     private func fetchData() {
         
-        guard let url = URL(string: "https://picsum.photos/v2/list?limit=25") else {
+        let urlString: String = "https://picsum.photos/v2/list?limit=25"
+        guard let url = URL(string: urlString) else {
             return
         }
         
+        var supplementaryModels: [GenericSupplementaryHeaderFooterModel] = []
         var cellModels: [GenericCellModel] = []
         
         let group = DispatchGroup()
@@ -61,6 +65,11 @@ class ViewController: UIViewController {
         group.enter()
         
         URLSession.shared.dataTask(with: url) { (data, response, error) in
+            
+            let headerModel = HeaderItemModel(title: urlString)
+            let containerModel = GenericSupplementaryHeaderFooterModel(header: headerModel, footer: nil)
+            supplementaryModels.append(containerModel)
+            
             guard let data = data else { return }
             do {
                 guard let jsonDataArray = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments) as? [[String: AnyObject]] else {
@@ -81,18 +90,38 @@ class ViewController: UIViewController {
         }.resume()
         
         group.notify(queue: DispatchQueue.main) {
-            self.dataSource?.replaceAllItems(with: [cellModels], supplementaryContainerItems: [], updateStyle: .withBatchUpdates, completion: nil)
+            self.dataSource?.replaceAllItems(with: [cellModels], supplementaryContainerItems: supplementaryModels, updateStyle: .withBatchUpdates, completion: nil)
         }
     }
 
     private func setupDataSource() -> ComposableCollectionDataSource {
             
         let models: [[GenericCellModel]] = [[]]
+        let supplementaryModels: [GenericSupplementaryContainerModel] = []
         
-        let dataSource = TestDataSource(collectionView: collectionView,
-                                                      array: models,
-                                                      supplementaryItems: [])
+        let dataSource = ComposableCollectionDataSource(collectionView: collectionView, array: models, supplementaryItems: supplementaryModels)
+        .handleSelection { (indexPath, model) in
+                print("selected model: \(model) at indexPath: \(indexPath)")
+        }.handleItemSize { [unowned self] (indexPath, model) -> CGSize in
+            return CGSize.init(width: self.collectionView.frame.size.width, height: 400.0)
+        }.handleSupplementaryHeaderItemSize { [unowned self] (indexPath, model) -> CGSize in
+            return CGSize.init(width: self.collectionView.frame.size.width, height: 50.0)
+        }.handlRequestedPrefetching { (indexPaths, models) in
+            let models = models as! [ImageCellModel]
+            Celestial.shared.prefetchResources(at: models.map { $0.urlString} )
+        }.handleCanceledPrefetching { (indexPaths, models) in
+            let models = models as! [ImageCellModel]
+            Celestial.shared.pausePrefetchingForResources(at: models.map { $0.urlString}, cancelCompletely: false)
+        }
         
+        
+        let emptyView = UILabel()
+        emptyView.text = "Still loading data... :)"
+        emptyView.font = UIFont.boldSystemFont(ofSize: 25)
+        emptyView.numberOfLines = 0
+        emptyView.textAlignment = .center
+        
+        dataSource.emptyDataSourceView = emptyView
         return dataSource
     }
 }
@@ -112,11 +141,5 @@ fileprivate struct URLSessionObject {
         id = object["id"] as? NSNumber ?? 0
         url = object["url"] as? String ?? ""
         width = object["width"] as? NSNumber ?? 0
-    }
-}
-
-fileprivate class TestDataSource: ComposableCollectionDataSource {
-    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize.init(width: collectionView.frame.size.width, height: 400.0)
     }
 }
