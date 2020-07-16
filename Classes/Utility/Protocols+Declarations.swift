@@ -29,8 +29,9 @@ public protocol ConfigurableReusableSupplementaryView: ReusableUIElement {
 
 public protocol CollectionDataProvider {
     
-    associatedtype T
-    associatedtype S
+    associatedtype T // cell model
+    associatedtype S // supplementary container
+    associatedtype U // individual header/footer model
     
 //    var items: [[T]] { get }
 //    var supplementaryContainerItems: [S] { get }
@@ -59,6 +60,7 @@ public protocol CollectionDataProvider {
     // Read
     
     func item(at indexPath: IndexPath) -> T?
+    func items(at indexPaths: [IndexPath]) -> [T]?
     func supplementaryContainerItem(at designatedSection: Int) -> S?
     
     // Update
