@@ -65,20 +65,18 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     
     
     
-    // NOTE
-    // "open" declaration is so that these functions can
-    // be subclassed
+    
     
     
     
     
     // MARK: - UICollectionView datasource
     
-    public func numberOfSections(in collectionView: UICollectionView) -> Int {
+    open func numberOfSections(in collectionView: UICollectionView) -> Int {
         return provider.numberOfSections()
     }
     
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if provider.numberOfItems(in: section) > 0 {
             collectionView.backgroundView = nil
             return provider.numberOfItems(in: section)
@@ -107,7 +105,7 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     
     // MARK: - UICollectionView delegate
     
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let item = provider.item(at: indexPath)
         // This is called "binding"
         // Here's another link on the subject
@@ -116,7 +114,7 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
         collectionItemSelectionHandler?(indexPath, item)
     }
     
-    public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+    open func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         let item = provider.item(at: indexPath)
         collectionItemDeselectionHandler?(indexPath, item)
     }
@@ -186,7 +184,7 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     
     // MARK: - UIScrollView delegate
     
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    open func scrollViewDidScroll(_ scrollView: UIScrollView) {
         collectionContentOffsetHandler?(scrollView.contentOffset)
     }
     
@@ -198,15 +196,15 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
         scrollViewWillEndDraggingHandler?(scrollView, velocity, targetContentOffset)
     }
     
-    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    open func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         scrollViewDidEndDraggingHandler?(scrollView, decelerate)
     }
     
-    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+    open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         scrollViewDidEndScrollAnimationHandler?(scrollView)
     }
     
-    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         scrollViewDidEndDeceleratingHandler?(scrollView)
     }
 }
