@@ -84,3 +84,32 @@ public protocol CollectionDataProvider {
     func reset(keepingStructure: Bool)
     func replaceAllItems(with models: [[T]], supplementaryContainerItems: [S])
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public typealias CollectionItemSelectionHandler<T> = (IndexPath, T) -> Void
+public typealias CollectionItemDeselectionHandler<T> = (IndexPath, T) -> Void
+public typealias CollectionItemSizeHandler<T> = (IndexPath, T) -> CGSize
+public typealias CollectionSupplementaryHeaderSizeHandler<U> = (Int, U) -> CGSize
+public typealias CollectionSupplementaryFooterSizeHandler<U> = (Int, U) -> CGSize
+public typealias CollectionBeginPrefetchingHandler<T> = ([IndexPath], [T]) -> Void
+public typealias CollectionCancelPrefetchingHandler<T> = ([IndexPath], [T]) -> Void
+
+public typealias CollectionContentOffset = (CGPoint) -> Void
+public typealias CollectionScrollViewWillBeginDragging = (UIScrollView) -> Void
+public typealias CollectionScrollViewDidEndScrollAnimation = (UIScrollView) -> Void
+public typealias CollectionScrollViewDidEndDecelerating = (UIScrollView) -> Void
+public typealias CollectionScrollViewWillEndDragging = (UIScrollView, CGPoint, UnsafeMutablePointer<CGPoint>) -> Void
+public typealias CollectionScrollViewDidEndDragging = (UIScrollView, Bool) -> Void
