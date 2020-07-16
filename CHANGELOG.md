@@ -1,3 +1,21 @@
+## [Version 0.4.0](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.4.0) 
+
+### New
+* Allow all `UICollectionView` delegate and datasource functions to be overriden
+* Replaced handlers with builder pattern
+* Added function for getting all `GenericCellModels` at designated indexPaths
+* Added conformance for prefetching
+* Added associatedType `U` to `DataSourceProvider` to represent individual header and footer models in GenericSupplementaryContainerModel `S`
+
+### Improvements
+* Adoption of builder pattern allows for easier code completion. 
+* Replaced optional `GenericCellModel` argument in handlers with non optional. Removes need for unwrapping a guaranteed non-nil-but-still optional argument
+* Moved all supplementary code (enums, protocols, structs, etc.) out of code. Improving code readability
+* Removed designated section argument from supplementary models
+
+### Bug fixes
+N/A
+
 ## [Version 0.3.0](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.3.0)  
 
 ### New
