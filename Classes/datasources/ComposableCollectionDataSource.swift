@@ -9,7 +9,7 @@ import UIKit
 
 // This class can handle multiple kinds of UICollectionViewCells
 
-open class ComposableCollectionDataSource: SectionableCollectionDataSource<GenericCellModel, GenericCollectionViewCell, GenericSupplementaryContainerModel, GenericCollectionReusableView> {
+open class ComposableCollectionDataSource: SectionableCollectionDataSource<GenericCellModel, GenericCollectionViewCell, GenericSupplementaryContainerModel, GenericSupplementaryModel, GenericCollectionReusableView> {
     
     private var cellPadding: UIEdgeInsets = .zero
     private var cellCornerRadius: CGFloat = 0.0
@@ -27,7 +27,7 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource<Gener
     }
     
     public init(collectionView: UICollectionView,
-                dataProvider: DataSourceProvider<GenericCellModel, GenericSupplementaryContainerModel>,
+                dataProvider: DataSourceProvider<GenericCellModel, GenericSupplementaryContainerModel, GenericSupplementaryModel>,
                 cellPadding: UIEdgeInsets = .zero,
                 cellCornerRadius: CGFloat = 0.0) {
         
@@ -75,12 +75,10 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource<Gener
         
         var cell: GenericCollectionViewCell?
         
-//        print("cell type: \(cellType)")
-        
         cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: cellType), for: indexPath) as? GenericCollectionViewCell
         cell?.configure(with: item, at: indexPath)
         
-        if self.cellPadding != .zero { //&& self.cellCornerRadius > 0.0 {
+        if self.cellPadding != .zero {
             cell?.setContentViewPadding(padding: cellPadding)
         }
         
@@ -128,6 +126,21 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource<Gener
         }
         
         return view!
+    }
+    
+    open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        
+        guard let supplementaryModel = provider.supplementaryContainerItem(at: section)?.header else {
+            return .zero
+        }
+        return collectionHeaderItemSizeHandler?(section, supplementaryModel) ?? .zero
+    }
+    
+    open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        guard let supplementaryModel = provider.supplementaryContainerItem(at: section)?.footer else {
+            return .zero
+        }
+        return collectionFooterItemSizeHandler?(section, supplementaryModel) ?? .zero
     }
     
     // Since each collectionView/dataSource displays different cells,
@@ -228,5 +241,54 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource<Gener
             collectionView.contentOffset = CGPoint(x: xValue, y: 0)
             print("collectionView contentOffset after: \(collectionView.contentOffset)")
         }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    @discardableResult open func handleSelection(_ completion: @escaping CollectionItemSelectionHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+        super.collectionItemSelectionHandler = completion
+        return self
+    }
+       
+    @discardableResult open func handleDeselection(_ completion: @escaping CollectionItemDeselectionHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+        super.collectionItemDeselectionHandler = completion
+        return self
+    }
+    
+    @discardableResult open func handleItemSize(_ completion: @escaping CollectionItemSizeHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+        super.collectionItemSizeHandler = completion
+        return self
+    }
+    
+    @discardableResult open func handleSupplementaryHeaderItemSize(_ completion: @escaping CollectionSupplementaryHeaderSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource {
+        super.collectionHeaderItemSizeHandler = completion
+        return self
+    }
+    
+    @discardableResult open func handleSupplementaryFooterItemSize(_ completion: @escaping CollectionSupplementaryFooterSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource {
+        super.collectionFooterItemSizeHandler = completion
+        return self
+    }
+    
+    @discardableResult open func handlRequestedPrefetching(_ completion: @escaping CollectionBeginPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+        super.collectionBeginPrefetchingHandler = completion
+        return self
+    }
+    
+    @discardableResult open func handleCanceledPrefetching(_ completion: @escaping CollectionCancelPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+        super.collectionCancelPrefetchingHandler = completion
+        return self
     }
 }
