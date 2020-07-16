@@ -7,15 +7,9 @@
 
 import UIKit
 
-public enum DataSourceUpdateStyle {
-    case withBatchUpdates
-    case immediately
-}
-
-public typealias OptionalCompletionHandler = ((Bool) -> ())?
-
-
-open class SectionableCollectionDataSource<T, Cell: UICollectionViewCell, S, U, View: UICollectionReusableView>: CollectionDataSource<DataSourceProvider<T, S, U>, Cell>
+open class SectionableCollectionDataSource
+    <T, Cell: UICollectionViewCell, S, U, View: UICollectionReusableView>:
+    CollectionDataSource<DataSourceProvider<T, S, U>, Cell>
 where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSupplementaryView, View.T == U
 {
     

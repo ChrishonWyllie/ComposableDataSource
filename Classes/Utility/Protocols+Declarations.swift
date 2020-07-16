@@ -95,6 +95,22 @@ public protocol CollectionDataProvider {
 
 
 
+public enum DataSourceUpdateStyle {
+    case withBatchUpdates
+    case immediately
+}
+
+public typealias OptionalCompletionHandler = ((Bool) -> ())?
+
+
+
+
+
+
+
+
+
+
 
 
 
