@@ -9,11 +9,12 @@ import UIKit
 
 // This class is the superclass for other UICollectionReusableViews
 // Just cast the `item` to the necessary ViewModel
-public protocol GenericCollectionReusableViewProtocol: ConfigurableReusableSupplementaryView {
+protocol GenericCollectionReusableViewProtocol: ConfigurableReusableSupplementaryView {
     var containerView: UIView { get set }
     func setContentViewPadding(padding: UIEdgeInsets)
     func setupUIElements()
 }
+
 open class GenericCollectionReusableView: UICollectionReusableView, GenericCollectionReusableViewProtocol {
     public typealias T = GenericSupplementaryModel
     open func configure(with item: GenericSupplementaryModel, at indexPath: IndexPath) {}
