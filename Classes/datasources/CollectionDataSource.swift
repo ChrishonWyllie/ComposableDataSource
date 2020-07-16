@@ -7,37 +7,34 @@
 
 import UIKit
 
-public typealias CollectionItemSelectionHandlerType<T> = (IndexPath, T?) -> Void
-public typealias CollectionItemDeselectionHandlerType<T> = (IndexPath, T?) -> Void
-public typealias CollectionContentOffset = (CGPoint) -> Void
-public typealias CollectionScrollViewWillBeginDragging = (UIScrollView) -> Void
-public typealias CollectionScrollViewDidEndScrollAnimation = (UIScrollView) -> Void
-public typealias CollectionScrollViewDidEndDecelerating = (UIScrollView) -> Void
-public typealias CollectionScrollViewWillEndDragging = (UIScrollView, CGPoint, UnsafeMutablePointer<CGPoint>) -> Void
-public typealias CollectionScrollViewDidEndDragging = (UIScrollView, Bool) -> Void
-
 open class CollectionDataSource<Provider: CollectionDataProvider, Cell: UICollectionViewCell>:
     NSObject,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
-    UICollectionViewDelegateFlowLayout
+    UICollectionViewDelegateFlowLayout,
+    UICollectionViewDataSourcePrefetching
 where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     
     // MARK: - Variables
     
-    // TODO
-    // Make provider private. collectionView private(set)
-    let provider: Provider
+    internal let provider: Provider
     public private(set) var collectionView: UICollectionView
-    var emptyDataSourceView: UIView?
-    public var collectionItemSelectionHandler: CollectionItemSelectionHandlerType<Provider.T>?
-    public var collectionItemDeselectionHandler: CollectionItemDeselectionHandlerType<Provider.T>?
-    public var collectionContentOffsetHandler: CollectionContentOffset?
-    public var scrollViewWillBeginDraggingHandler: CollectionScrollViewWillBeginDragging?
-    public var scrollViewDidEndScrollAnimationHandler: CollectionScrollViewDidEndScrollAnimation?
-    public var scrollViewDidEndDeceleratingHandler: CollectionScrollViewDidEndDecelerating?
-    public var scrollViewWillEndDraggingHandler: CollectionScrollViewWillEndDragging?
-    public var scrollViewDidEndDraggingHandler: CollectionScrollViewDidEndDragging?
+    public var emptyDataSourceView: UIView?
+    
+    internal var collectionItemSelectionHandler: CollectionItemSelectionHandler<Provider.T>?
+    internal var collectionItemDeselectionHandler: CollectionItemDeselectionHandler<Provider.T>?
+    internal var collectionItemSizeHandler: CollectionItemSizeHandler<Provider.T>?
+    internal var collectionHeaderItemSizeHandler: CollectionSupplementaryHeaderSizeHandler<Provider.U>?
+    internal var collectionFooterItemSizeHandler: CollectionSupplementaryFooterSizeHandler<Provider.U>?
+    internal var collectionBeginPrefetchingHandler: CollectionBeginPrefetchingHandler<Provider.T>?
+    internal var collectionCancelPrefetchingHandler: CollectionCancelPrefetchingHandler<Provider.T>?
+    
+    internal var collectionContentOffsetHandler: CollectionContentOffset?
+    internal var scrollViewWillBeginDraggingHandler: CollectionScrollViewWillBeginDragging?
+    internal var scrollViewDidEndScrollAnimationHandler: CollectionScrollViewDidEndScrollAnimation?
+    internal var scrollViewDidEndDeceleratingHandler: CollectionScrollViewDidEndDecelerating?
+    internal var scrollViewWillEndDraggingHandler: CollectionScrollViewWillEndDragging?
+    internal var scrollViewDidEndDraggingHandler: CollectionScrollViewDidEndDragging?
     
     
 
@@ -47,12 +44,13 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
         self.collectionView = collectionView
         self.provider = provider
         super.init()
-        setup()
+        setDelegatesAndRegisterViews()
     }
     
-    private func setup() {
+    private func setDelegatesAndRegisterViews() {
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.prefetchDataSource = self
         
         collectionView.register(Cell.self, forCellWithReuseIdentifier: Cell.reuseIdentifier)
         collectionView.register(UICollectionReusableView.self,
@@ -93,8 +91,8 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
                                                             for: indexPath) as? Cell else {
                                                                 return UICollectionViewCell()
         }
-        let item = provider.item(at: indexPath)
-        if let item = item {
+        
+        if let item = provider.item(at: indexPath) {
             cell.configure(with: item, at: indexPath)
         }
         return cell
@@ -106,7 +104,9 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     // MARK: - UICollectionView delegate
     
     open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let item = provider.item(at: indexPath)
+        guard let item = provider.item(at: indexPath) else {
+            return
+        }
         // This is called "binding"
         // Here's another link on the subject
         // https://www.raywenderlich.com/667-bond-tutorial-bindings-in-swift
@@ -115,7 +115,9 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     }
     
     open func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        let item = provider.item(at: indexPath)
+        guard let item = provider.item(at: indexPath) else {
+            return
+        }
         collectionItemDeselectionHandler?(indexPath, item)
     }
     
@@ -131,7 +133,12 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     // MARK: - UICollectionDelegateFlowLayout
     
     open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize.init(width: 50, height: 50)
+        
+        guard let item = provider.item(at: indexPath) else {
+            return .zero
+        }
+        
+        return collectionItemSizeHandler?(indexPath, item) ?? .init(width: 50, height: 50)
     }
     
     open func collectionView(_ collectionView: UICollectionView,
@@ -176,6 +183,29 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
 
     open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return .zero
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    // MARK: - UICollectionViewDataSourcePrefetching
+    
+    open func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        guard let models = provider.items(at: indexPaths) else {
+            return
+        }
+        collectionBeginPrefetchingHandler?(indexPaths, models)
+    }
+    
+    open func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        guard let models = provider.items(at: indexPaths) else {
+            return
+        }
+        collectionCancelPrefetchingHandler?(indexPaths, models)
     }
     
     
