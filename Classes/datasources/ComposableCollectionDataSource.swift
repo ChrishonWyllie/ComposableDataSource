@@ -16,6 +16,8 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource
     GenericCollectionViewCell,
     GenericCollectionReusableView> {
     
+    public static var debugModeIsActive: Bool = false
+    
     private var cellPadding: UIEdgeInsets = .zero
     private var cellCornerRadius: CGFloat = 0.0
     
@@ -99,9 +101,9 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource
     open override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         guard let supplementarySectionItem = super.supplementarySectionItem(atSection: indexPath.section) else {
-            print("Could not get supplementary item at index section: \(indexPath.section)")
-            print("supplementary items: \(String(describing: super.provider.allSupplementarySectionItems().count))")
-            print("supplementary items: \(String(describing: super.supplementarySectionItem(atSection: indexPath.section)))")
+            DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - Could not get supplementary item at index section: \(indexPath.section)")
+            DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - supplementary items: \(String(describing: super.provider.allSupplementarySectionItems().count))")
+            DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - supplementary items: \(String(describing: super.supplementarySectionItem(atSection: indexPath.section)))")
             return UICollectionReusableView()
         }
         
@@ -122,8 +124,8 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource
         let viewType = type(of: item.supplementaryViewClass)
         
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: viewType), for: indexPath) as? GenericCollectionReusableView
-        print("generic supplementary item: \(item)")
-        print("generic supplementary view type: \(viewType)")
+        DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - generic supplementary item: \(item)")
+        DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - generic supplementary view type: \(viewType)")
         view?.configure(with: item, at: indexPath)
         
         if self.cellPadding != .zero {//&& self.cellCornerRadius > 0.0 {
@@ -201,7 +203,7 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource
     public func insertItemsMaintainingPosition(cellItems: [GenericCellModel], indexPaths: [IndexPath], completion: OptionalCompletionHandler) {
         
         let currentOffsetBeforeChanges = getCurrentOffset()
-        print("maintain offset: \(currentOffsetBeforeChanges)")
+        DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - maintain offset: \(currentOffsetBeforeChanges)")
         
         CATransaction.begin()
         CATransaction.setDisableActions(true)
@@ -233,18 +235,18 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource
                 fatalError()
         }
         
-        print("collectionView contentOffset before: \(collectionView.contentOffset)")
-        print("collectionView contentSize before: \(collectionView.contentSize)")
+        DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - collectionView contentOffset before: \(collectionView.contentOffset)")
+        DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - collectionView contentSize before: \(collectionView.contentSize)")
         if scrollDirection == .vertical {
             // TODO
             // Confirm that this works
             let maintainedOffset = CGPoint(x: 0, y: collectionView.contentSize.height - offset)
-            print("maintained offset: \(maintainedOffset)")
+            DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - maintained offset: \(maintainedOffset)")
             collectionView.contentOffset = maintainedOffset
         } else {
             let xValue = collectionView.contentSize.width - collectionView.frame.size.width - offset
             collectionView.contentOffset = CGPoint(x: xValue, y: 0)
-            print("collectionView contentOffset after: \(collectionView.contentOffset)")
+            DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - collectionView contentOffset after: \(collectionView.contentOffset)")
         }
     }
     

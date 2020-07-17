@@ -75,7 +75,6 @@ extension Array {
     }
     
     public func flatten() -> [Any] {
-//        print("array before flatten: \(self.count)")
         let flattenedArray = self.flatMap{ element -> [Any] in
             if let elementAsArray = element as? [Any] {
                 return elementAsArray.flatten()
@@ -84,7 +83,6 @@ extension Array {
                 return [element]
             }
         }
-//        print("flattened array: \(flattenedArray.count)")
         return flattenedArray
     }
 
