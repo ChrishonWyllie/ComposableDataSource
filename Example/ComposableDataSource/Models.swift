@@ -12,6 +12,21 @@ protocol URLCellModel {
     var urlString: String { get }
 }
 
+protocol SupplementaryItemModel {
+    var title: String { get }
+}
+
+struct HeaderItemModel: GenericSupplementaryModel, SupplementaryItemModel {
+    var viewKind: String {
+        return UICollectionView.elementKindSectionHeader
+    }
+    
+    var supplementaryViewClass: AnyClass {
+        return ExampleSupplementaryHeaderView.self
+    }
+    let title: String
+}
+
 struct VideoCellModel: GenericCellModel, URLCellModel {
     var cellClass: AnyClass {
         return VideoCell.self
@@ -25,4 +40,3 @@ struct ImageCellModel: GenericCellModel, URLCellModel {
     }
     let urlString: String
 }
-
