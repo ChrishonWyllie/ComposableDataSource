@@ -9,12 +9,7 @@ import UIKit
 
 // This class can handle multiple kinds of UICollectionViewCells
 
-open class ComposableCollectionDataSource: SectionableCollectionDataSource
-    <GenericCellModel,
-    GenericSupplementarySectionModel,
-    GenericSupplementaryModel,
-    GenericCollectionViewCell,
-    GenericCollectionReusableView> {
+open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtocol {
     
     
     

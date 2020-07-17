@@ -107,7 +107,7 @@ public typealias ComposableScrollViewDidEndDraggingHandler = (UIScrollView, Bool
 
 /**
 
-Typealias for conforming to CollectionDataSource object
+Typealias for conforming to CollectionDataSource superclass
  
     - Parameters:
         - T: The expected cell model used to configure the Configurable Resuable UICollectionViewCell
@@ -125,7 +125,13 @@ public typealias ConfigurableReusableCellProtocol = ConfigurableReusableCell & U
 /// Convenient combination of ConfigurableReusableSupplementaryView and UICollectionReusableView
 public typealias ConfigurableReusableViewProtocol = ConfigurableReusableSupplementaryView & UICollectionReusableView
 
-
+/// Typealias for conforming to SectionableDataSource superclass
+public typealias SectionableDataSourceInheriableProtocol = SectionableCollectionDataSource
+<GenericCellModel,
+GenericSupplementarySectionModel,
+GenericSupplementaryModel,
+GenericCollectionViewCell,
+GenericCollectionReusableView>
 
 
 
