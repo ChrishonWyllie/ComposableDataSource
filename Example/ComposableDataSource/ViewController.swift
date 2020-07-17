@@ -57,7 +57,7 @@ class ViewController: UIViewController {
             return
         }
         
-        var supplementaryModels: [GenericSupplementaryHeaderFooterModel] = []
+        var supplementaryModels: [GenericSupplementarySectionModel] = []
         var cellModels: [GenericCellModel] = []
         
         let group = DispatchGroup()
@@ -67,7 +67,7 @@ class ViewController: UIViewController {
         URLSession.shared.dataTask(with: url) { (data, response, error) in
             
             let headerModel = HeaderItemModel(title: urlString)
-            let containerModel = GenericSupplementaryHeaderFooterModel(header: headerModel, footer: nil)
+            let containerModel = GenericSupplementarySectionModel(header: headerModel, footer: nil)
             supplementaryModels.append(containerModel)
             
             guard let data = data else { return }
@@ -103,7 +103,7 @@ class ViewController: UIViewController {
         
         let dataSource = ComposableCollectionDataSource(collectionView: collectionView, cellItems: models, supplementarySectionItems: supplementaryModels)
         .handleSelection { (indexPath, model) in
-                print("selected model: \(model) at indexPath: \(indexPath)")
+            print("selected model: \(model) at indexPath: \(indexPath)")
         }.handleItemSize { [unowned self] (indexPath, model) -> CGSize in
             return CGSize.init(width: self.collectionView.frame.size.width, height: 400.0)
         }.handleSupplementaryHeaderItemSize { [unowned self] (indexPath, model) -> CGSize in
