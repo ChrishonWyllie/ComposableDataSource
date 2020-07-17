@@ -82,21 +82,18 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
             if indexPath.section > (self.cellItems.count - 1) {
                 // Attempting to insert at out-of-bounds
                 // index section. Create a new section
-                print("IndexPath section: \(indexPath.section)")
-                print("items count: \(self.cellItems)")
+                DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - IndexPath section: \(indexPath.section)")
+                DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - items count: \(self.cellItems)")
                 let newSectionItems = [cellItems[i]]
                 appendNewSection(with: newSectionItems)
                 indicesOfNewSectionsToInsert.append(self.cellItems.count - 1)
             } else {
-//                print("items: \(items)")
-//                print("inserting at section: \(indexPath.section), item: \(indexPath.item)")
-//                print("valus: \(values.count)")
-//                print("index: \(i)")
+                
                 let valueToInsert = cellItems[i]
                 let section = indexPath.section
                 let itemIndex = indexPath.item
-                print("items count: \(self.cellItems.count)")
-                print("items in section count: \(self.cellItems[section].count)")
+                DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - items count: \(self.cellItems.count)")
+                DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - items in section count: \(self.cellItems[section].count)")
                 
                 insert(cellItems: [valueToInsert], inNestedSection: section, atIndex: itemIndex)
             }
@@ -300,6 +297,14 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
     
     
     
+    // MARK: - Overwrite
+    
+    public func replaceDataSource(withCellItems cellItems: [[T]], supplementarySectionItems: [S]) {
+        self.reset()
+        self.cellItems = cellItems
+        self.supplementarySectionItems = supplementarySectionItems
+    }
+    
     public func reset(keepingStructure: Bool = true) {
         if keepingStructure == true {
             for i in 0..<cellItems.count {
@@ -313,11 +318,5 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
             cellItems.removeAll()
             supplementarySectionItems.removeAll()
         }
-    }
-    
-    public func replaceDataSource(withCellItems cellItems: [[T]], supplementarySectionItems: [S]) {
-        self.reset()
-        self.cellItems = cellItems
-        self.supplementarySectionItems = supplementarySectionItems
     }
 }
