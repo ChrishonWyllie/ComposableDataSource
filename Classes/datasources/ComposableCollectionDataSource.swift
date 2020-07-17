@@ -9,7 +9,12 @@ import UIKit
 
 // This class can handle multiple kinds of UICollectionViewCells
 
-open class ComposableCollectionDataSource: SectionableCollectionDataSource<GenericCellModel, GenericCollectionViewCell, GenericSupplementarySectionModel, GenericSupplementaryModel, GenericCollectionReusableView> {
+open class ComposableCollectionDataSource: SectionableCollectionDataSource
+    <GenericCellModel,
+    GenericSupplementarySectionModel,
+    GenericSupplementaryModel,
+    GenericCollectionViewCell,
+    GenericCollectionReusableView> {
     
     private var cellPadding: UIEdgeInsets = .zero
     private var cellCornerRadius: CGFloat = 0.0

@@ -7,8 +7,12 @@
 
 import UIKit
 
+/**
+Subclass of `CollectionDataSource` to provide CRUD functions for cell and supplementary section items
+
+*/
 open class SectionableCollectionDataSource
-    <T, Cell: UICollectionViewCell, S, U, View: UICollectionReusableView>:
+    <T, S, U, Cell: UICollectionViewCell, View: UICollectionReusableView>:
     CollectionDataSource<DataSourceProvider<T, S, U>, Cell, View>
 where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSupplementaryView, View.T == U
 {
@@ -27,6 +31,7 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
     }
     
     // MARK: - Public Methods
+    
     public func item(atIndexPath indexPath: IndexPath) -> T? {
         return super.provider.item(atIndexPath: indexPath)
     }
@@ -37,14 +42,6 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
     
     public func numberOfSections() -> Int {
         return super.provider.numberOfSections()
-    }
-    
-    public func reset(keepingStructure: Bool = true, reload: Bool? = nil) {
-        provider.reset(keepingStructure: keepingStructure)
-        
-        if reload == true {
-            super.collectionView.reloadData()
-        }
     }
     
     public func indexPathOfLastItem(in section: Int) -> IndexPath {
@@ -77,25 +74,16 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
     }
     
     public func register(cellItems: [T], supplementarySectionItems: [S]) {
-        // TODO
-        // This should replace the need to
-        // manually register cells in dataSources
-        // that begin with 0 items
-        // However, you should check if this
-        // is efficient
+        
         if cellItems.count > 0 {
             cellItems.compactMap { (cellItem) -> GenericCellModel in
                 return (cellItem as! GenericCellModel)
-                }.forEach { (cellItem) in
-                    super.collectionView.register((cellItem.cellClass).self,
-                                                  forCellWithReuseIdentifier: String(describing: type(of: (cellItem.cellClass))))
+            }.forEach { (cellItem) in
+                super.collectionView.register((cellItem.cellClass).self,
+                                                forCellWithReuseIdentifier: String(describing: type(of: (cellItem.cellClass))))
             }
         }
         
-        // TODO
-        // Find a way to do this automatically
-        // Or create a utility function so you don't have
-        // to copy this code
         if supplementarySectionItems.count > 0 {
             supplementarySectionItems.forEach { (supplementarySectionItem) in
                 guard let supplementarySectionItem = supplementarySectionItem as? GenericSupplementarySectionModel else { fatalError() }
@@ -114,7 +102,10 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         }
     }
     
-    public func updateCellItems(atIndexPaths indexPaths: [IndexPath], newCellItems: [T], updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
+    public func updateCellItems(atIndexPaths indexPaths: [IndexPath],
+                                newCellItems: [T],
+                                updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                                completion: OptionalCompletionHandler) {
         
         register(cellItems: newCellItems, supplementarySectionItems: [])
         
@@ -180,7 +171,9 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         }
     }
     
-    public func insert(cellItems: [T], atIndexPaths indexPaths: [IndexPath], updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
+    public func insert(cellItems: [T], atIndexPaths indexPaths: [IndexPath],
+                       updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                       completion: OptionalCompletionHandler) {
         
         register(cellItems: cellItems, supplementarySectionItems: [])
         
@@ -209,7 +202,9 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         }
     }
     
-    public func deleteCellItems(atIndexPaths indexPaths: [IndexPath], updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
+    public func deleteCellItems(atIndexPaths indexPaths: [IndexPath],
+                                updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                                completion: OptionalCompletionHandler) {
         // TODO
         // Consider the case where deleting items in a section
         // will render that section empty.
@@ -317,6 +312,14 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
             deleteWithBatchUpdates()
         } else {
             deleteImmediately()
+        }
+    }
+    
+    public func reset(keepingStructure: Bool = true, reload: Bool? = nil) {
+        provider.reset(keepingStructure: keepingStructure)
+        
+        if reload == true {
+            super.collectionView.reloadData()
         }
     }
     

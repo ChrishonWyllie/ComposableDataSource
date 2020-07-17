@@ -306,8 +306,8 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
                 cellItems[i].removeAll()
             }
             for index in 0..<supplementarySectionItems.count {
-                supplementarySectionItems[index] =  GenericSupplementaryHeaderFooterModel(header: nil,
-                                                                                          footer: nil) as! S
+                supplementarySectionItems[index] =  GenericSupplementarySectionModel(header: nil,
+                                                                                     footer: nil) as! S
             }
         } else {
             cellItems.removeAll()
