@@ -92,7 +92,7 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
                                                                 return UICollectionViewCell()
         }
         
-        if let item = provider.item(at: indexPath) {
+        if let item = provider.item(atIndexPath: indexPath) {
             cell.configure(with: item, at: indexPath)
         }
         return cell
@@ -104,7 +104,7 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     // MARK: - UICollectionView delegate
     
     open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let item = provider.item(at: indexPath) else {
+        guard let item = provider.item(atIndexPath: indexPath) else {
             return
         }
         // This is called "binding"
@@ -115,7 +115,7 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     }
     
     open func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        guard let item = provider.item(at: indexPath) else {
+        guard let item = provider.item(atIndexPath: indexPath) else {
             return
         }
         collectionItemDeselectionHandler?(indexPath, item)
@@ -134,7 +134,7 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     
     open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        guard let item = provider.item(at: indexPath) else {
+        guard let item = provider.item(atIndexPath: indexPath) else {
             return .zero
         }
         
@@ -195,14 +195,14 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     // MARK: - UICollectionViewDataSourcePrefetching
     
     open func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        guard let models = provider.items(at: indexPaths) else {
+        guard let models = provider.items(atIndexPaths: indexPaths) else {
             return
         }
         collectionBeginPrefetchingHandler?(indexPaths, models)
     }
     
     open func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-        guard let models = provider.items(at: indexPaths) else {
+        guard let models = provider.items(atIndexPaths: indexPaths) else {
             return
         }
         collectionCancelPrefetchingHandler?(indexPaths, models)

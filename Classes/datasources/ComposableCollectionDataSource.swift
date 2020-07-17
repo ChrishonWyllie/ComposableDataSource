@@ -9,25 +9,25 @@ import UIKit
 
 // This class can handle multiple kinds of UICollectionViewCells
 
-open class ComposableCollectionDataSource: SectionableCollectionDataSource<GenericCellModel, GenericCollectionViewCell, GenericSupplementaryContainerModel, GenericSupplementaryModel, GenericCollectionReusableView> {
+open class ComposableCollectionDataSource: SectionableCollectionDataSource<GenericCellModel, GenericCollectionViewCell, GenericSupplementarySectionModel, GenericSupplementaryModel, GenericCollectionReusableView> {
     
     private var cellPadding: UIEdgeInsets = .zero
     private var cellCornerRadius: CGFloat = 0.0
     
     public init(collectionView: UICollectionView,
-                array: [[GenericCellModel]],
-                supplementaryItems: [GenericSupplementaryContainerModel],
+                cellItems: [[GenericCellModel]],
+                supplementarySectionItems: [GenericSupplementarySectionModel],
                 cellPadding: UIEdgeInsets = .zero,
                 cellCornerRadius: CGFloat = 0.0) {
         
-        super.init(collectionView: collectionView, array: array, supplementaryItems: supplementaryItems)
+        super.init(collectionView: collectionView, cellItems: cellItems, supplementarySectionItems: supplementarySectionItems)
         
         self.cellPadding = cellPadding
         self.cellCornerRadius = cellCornerRadius
     }
     
     public init(collectionView: UICollectionView,
-                dataProvider: DataSourceProvider<GenericCellModel, GenericSupplementaryContainerModel, GenericSupplementaryModel>,
+                dataProvider: DataSourceProvider<GenericCellModel, GenericSupplementarySectionModel, GenericSupplementaryModel>,
                 cellPadding: UIEdgeInsets = .zero,
                 cellCornerRadius: CGFloat = 0.0) {
         
@@ -67,7 +67,7 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource<Gener
     
     open override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        guard let item = super.provider.item(at: indexPath) else {
+        guard let item = super.provider.item(atIndexPath: indexPath) else {
             return UICollectionViewCell()
         }
         
@@ -93,10 +93,10 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource<Gener
     
     open override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
-        guard let supplementaryContainerModel = super.supplementaryContainerItem(at: indexPath.section) else {
+        guard let supplementaryContainerModel = super.supplementarySectionItem(atSection: indexPath.section) else {
             print("Could not get supplementary item at index section: \(indexPath.section)")
-            print("supplementary items: \(String(describing: super.provider.allSupplementaryItems().count))")
-            print("supplementary items: \(String(describing: super.supplementaryContainerItem(at: indexPath.section)))")
+            print("supplementary items: \(String(describing: super.provider.allSupplementarySectionItems().count))")
+            print("supplementary items: \(String(describing: super.supplementarySectionItem(atSection: indexPath.section)))")
             return UICollectionReusableView()
         }
         
@@ -130,14 +130,14 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource<Gener
     
     open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
-        guard let supplementaryModel = provider.supplementaryContainerItem(at: section)?.header else {
+        guard let supplementaryModel = provider.supplementarySectionItem(atSection: section)?.header else {
             return .zero
         }
         return collectionHeaderItemSizeHandler?(section, supplementaryModel) ?? .zero
     }
     
     open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        guard let supplementaryModel = provider.supplementaryContainerItem(at: section)?.footer else {
+        guard let supplementaryModel = provider.supplementarySectionItem(atSection: section)?.footer else {
             return .zero
         }
         return collectionFooterItemSizeHandler?(section, supplementaryModel) ?? .zero
@@ -193,7 +193,7 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource<Gener
         }
     }
     
-    public func insertItemsMaintainingPosition(items: [GenericCellModel], indexPaths: [IndexPath], completion: OptionalCompletionHandler) {
+    public func insertItemsMaintainingPosition(cellItems: [GenericCellModel], indexPaths: [IndexPath], completion: OptionalCompletionHandler) {
         
         let currentOffsetBeforeChanges = getCurrentOffset()
         print("maintain offset: \(currentOffsetBeforeChanges)")
@@ -204,10 +204,10 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource<Gener
             completion?(true)
         }
         
-        super.register(models: items, supplementaryContainerItems: [])
+        super.register(cellItems: cellItems, supplementarySectionItems: [])
         
         self.collectionView.performBatchUpdates({
-            let indicesOfNewSectionsToInsert = super.provider.insertItems(at: indexPaths, values: items)
+            let indicesOfNewSectionsToInsert = super.provider.insert(cellItems: cellItems, atIndexPaths: indexPaths)
             super.collectionView.insertItems(at: indexPaths)
             if indicesOfNewSectionsToInsert.count > 0 {
                 let indexSet = IndexSet(integersIn: indicesOfNewSectionsToInsert.min()!...indicesOfNewSectionsToInsert.max()!)

@@ -15,10 +15,10 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
     
     // MARK: - Lifecycle
     
-    public init(collectionView: UICollectionView, array: [[T]], supplementaryItems: [S]) {
-        let provider = DataSourceProvider<T, S, U>(array: array, supplementaryItems: supplementaryItems)
+    public init(collectionView: UICollectionView, cellItems: [[T]], supplementarySectionItems: [S]) {
+        let provider = DataSourceProvider<T, S, U>(cellItems: cellItems, supplementarySectionItems: supplementarySectionItems)
         super.init(collectionView: collectionView, provider: provider)
-        register(sectionModels: array, supplementaryContainerItems: supplementaryItems)
+        register(cellItems: cellItems, supplementarySectionItems: supplementarySectionItems)
     }
     
     public init(collectionView: UICollectionView, dataProvider: DataSourceProvider<T, S, U>) {
@@ -27,21 +27,19 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
     }
     
     // MARK: - Public Methods
-    public func item(at indexPath: IndexPath) -> T? {
-        return super.provider.item(at: indexPath)
+    public func item(atIndexPath indexPath: IndexPath) -> T? {
+        return super.provider.item(atIndexPath: indexPath)
     }
     
-    public func supplementaryContainerItem(at section: Int) -> S? {
-        return super.provider.supplementaryContainerItem(at: section)
+    public func supplementarySectionItem(atSection section: Int) -> S? {
+        return super.provider.supplementarySectionItem(atSection: section)
     }
     
     public func numberOfSections() -> Int {
         return super.provider.numberOfSections()
     }
     
-    public func clearAllItems(keepingStructure: Bool = true, reload: Bool? = nil) {
-        // Clears each of the items in each section, but
-        // maintains the empty items
+    public func reset(keepingStructure: Bool = true, reload: Bool? = nil) {
         provider.reset(keepingStructure: keepingStructure)
         
         if reload == true {
@@ -71,25 +69,26 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
     }
     
     public func registerItems(in dataProvider: DataSourceProvider<T, S, U>) {
-        register(sectionModels: dataProvider.allItems(), supplementaryContainerItems: dataProvider.allSupplementaryItems())
+        register(cellItems: dataProvider.allCellItems(), supplementarySectionItems: dataProvider.allSupplementarySectionItems())
     }
     
-    public func register(sectionModels: [[T]], supplementaryContainerItems: [S]) {
-        register(models: sectionModels.flatten() as! [T], supplementaryContainerItems: supplementaryContainerItems)
+    public func register(cellItems: [[T]], supplementarySectionItems: [S]) {
+        register(cellItems: cellItems.flatten() as! [T], supplementarySectionItems: supplementarySectionItems)
     }
     
-    public func register(models: [T], supplementaryContainerItems: [S]) {
+    public func register(cellItems: [T], supplementarySectionItems: [S]) {
         // TODO
         // This should replace the need to
         // manually register cells in dataSources
         // that begin with 0 items
         // However, you should check if this
         // is efficient
-        if models.count > 0 {
-            models.compactMap { (model) -> GenericCellModel in
-                return (model as! GenericCellModel)
-                }.forEach { (model) in
-                    super.collectionView.register((model.cellClass).self, forCellWithReuseIdentifier: String(describing: type(of: (model.cellClass))))
+        if cellItems.count > 0 {
+            cellItems.compactMap { (cellItem) -> GenericCellModel in
+                return (cellItem as! GenericCellModel)
+                }.forEach { (cellItem) in
+                    super.collectionView.register((cellItem.cellClass).self,
+                                                  forCellWithReuseIdentifier: String(describing: type(of: (cellItem.cellClass))))
             }
         }
         
@@ -97,33 +96,37 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         // Find a way to do this automatically
         // Or create a utility function so you don't have
         // to copy this code
-        if supplementaryContainerItems.count > 0 {
-            supplementaryContainerItems.forEach { (item) in
-                guard let supplementaryContainerModel = item as? GenericSupplementaryContainerModel else { fatalError() }
+        if supplementarySectionItems.count > 0 {
+            supplementarySectionItems.forEach { (supplementarySectionItem) in
+                guard let supplementarySectionItem = supplementarySectionItem as? GenericSupplementarySectionModel else { fatalError() }
                 
-                if let header = supplementaryContainerModel.header {
-                    super.collectionView.register((header.supplementaryViewClass).self, forSupplementaryViewOfKind: header.viewKind, withReuseIdentifier: String(describing: type(of: header.supplementaryViewClass.self)))
+                if let header = supplementarySectionItem.header {
+                    super.collectionView.register((header.supplementaryViewClass).self,
+                                                  forSupplementaryViewOfKind: header.viewKind,
+                                                  withReuseIdentifier: String(describing: type(of: header.supplementaryViewClass.self)))
                 }
-                if let footer = supplementaryContainerModel.footer {
-                    super.collectionView.register((footer.supplementaryViewClass).self, forSupplementaryViewOfKind: footer.viewKind, withReuseIdentifier: String(describing: type(of: footer.supplementaryViewClass.self)))
+                if let footer = supplementarySectionItem.footer {
+                    super.collectionView.register((footer.supplementaryViewClass).self,
+                                                  forSupplementaryViewOfKind: footer.viewKind,
+                                                  withReuseIdentifier: String(describing: type(of: footer.supplementaryViewClass.self)))
                 }
             }
         }
     }
     
-    public func updateItems(at indexPaths: [IndexPath], values: [T], updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
+    public func updateCellItems(atIndexPaths indexPaths: [IndexPath], newCellItems: [T], updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
         
-        register(models: values, supplementaryContainerItems: [])
+        register(cellItems: newCellItems, supplementarySectionItems: [])
         
         func updateWithBatchUpdates() {
             super.collectionView.performBatchUpdates({
-                super.provider.updateItems(at: indexPaths, values: values)
+                super.provider.updateCellItems(atIndexPaths: indexPaths, newCellItems: newCellItems)
                 super.collectionView.reloadItems(at: indexPaths)
             }, completion: completion)
         }
         
         func updateImmediately() {
-            super.provider.updateItems(at: indexPaths, values: values)
+            super.provider.updateCellItems(atIndexPaths: indexPaths, newCellItems: newCellItems)
             super.collectionView.reloadData()
             super.collectionView.performBatchUpdates(nil, completion: completion)
         }
@@ -135,31 +138,31 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         }
     }
     
-    public func updateSections(atItemSectionIndices itemIndices: [Int],
-                               items: [[T]],
-                               supplementaryItems: [S]? = nil,
+    public func updateSections(atItemSectionIndices itemSectionIndices: [Int],
+                               newCellItems: [[T]],
+                               supplementarySectionItems: [S]? = nil,
                                supplementarySectionIndices: [Int]? = nil,
                                updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
                                completion: OptionalCompletionHandler) {
         
-        register(sectionModels: items, supplementaryContainerItems: supplementaryItems ?? [])
+        register(cellItems: newCellItems, supplementarySectionItems: supplementarySectionItems ?? [])
         
         func updateWithBatchUpdates() {
             super.collectionView.performBatchUpdates({
-                super.provider.updateSections(atItemSectionIndices: itemIndices,
-                                              items: items,
-                                              supplementaryItems: supplementaryItems ?? [],
-                                              supplementarySectionIndices: supplementarySectionIndices ?? [])
-                let indexSet = IndexSet(itemIndices)
+                super.provider.updateSections(atItemSectionIndices: itemSectionIndices,
+                                              newCellItems: newCellItems,
+                                              supplementarySectionIndices: supplementarySectionIndices ?? [],
+                                              newSupplementarySectionItems:  supplementarySectionItems ?? [])
+                let indexSet = IndexSet(itemSectionIndices)
                 super.collectionView.reloadSections(indexSet)
             }, completion: completion)
         }
         
         func updateImmediately() {
-            super.provider.updateSections(atItemSectionIndices: itemIndices,
-                                          items: items,
-                                          supplementaryItems: supplementaryItems ?? [],
-                                          supplementarySectionIndices: supplementarySectionIndices ?? [])
+            super.provider.updateSections(atItemSectionIndices: itemSectionIndices,
+                                          newCellItems: newCellItems,
+                                          supplementarySectionIndices: supplementarySectionIndices ?? [],
+                                          newSupplementarySectionItems:  supplementarySectionItems ?? [])
             super.collectionView.reloadData()
             super.collectionView.collectionViewLayout.invalidateLayout()
             completion?(true)
@@ -177,13 +180,13 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         }
     }
     
-    public func insertItems(at indexPaths: [IndexPath], values: [T], updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
+    public func insert(cellItems: [T], atIndexPaths indexPaths: [IndexPath], updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
         
-        register(models: values, supplementaryContainerItems: [])
+        register(cellItems: cellItems, supplementarySectionItems: [])
         
         func insertWithBatchUpdates() {
             super.collectionView.performBatchUpdates({
-                let indicesOfNewSectionsToInsert = super.provider.insertItems(at: indexPaths, values: values)
+                let indicesOfNewSectionsToInsert = super.provider.insert(cellItems: cellItems, atIndexPaths: indexPaths)
                 super.collectionView.insertItems(at: indexPaths)
                 if indicesOfNewSectionsToInsert.count > 0 {
                     let indexSet = IndexSet(integersIn: indicesOfNewSectionsToInsert.min()!...indicesOfNewSectionsToInsert.max()!)
@@ -193,7 +196,7 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         }
         
         func insertImmediately() {
-            super.provider.insertItems(at: indexPaths, values: values)
+            super.provider.insert(cellItems: cellItems, atIndexPaths: indexPaths)
             super.collectionView.reloadData()
             super.collectionView.performBatchUpdates(nil, completion: completion)
         }
@@ -206,17 +209,17 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         }
     }
     
-    public func deleteItems(at indexPaths: [IndexPath], updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
+    public func deleteCellItems(atIndexPaths indexPaths: [IndexPath], updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
         // TODO
         // Consider the case where deleting items in a section
         // will render that section empty.
         // Should you also delete the entire section?
         func deleteWithBatchUpdates() {
             super.collectionView.performBatchUpdates({
-                let indexSectionsToDelete = super.provider.deleteItems(at: indexPaths)
+                let indexSectionsToDelete = super.provider.deleteCellItems(atIndexPaths: indexPaths)
                 super.collectionView.deleteItems(at: indexPaths)
                 if indexSectionsToDelete.count > 0 {
-                    super.provider.deleteSupplementaryContainerItems(at: indexSectionsToDelete)
+                    super.provider.deleteSupplementarySectionItems(atSections: indexSectionsToDelete)
                     let sectionsToDeleteAt = IndexSet(indexSectionsToDelete)
                     super.collectionView.deleteSections(sectionsToDeleteAt)
                 }
@@ -224,7 +227,7 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         }
         
         func deleteImmediately() {
-            let _ = super.provider.deleteItems(at: indexPaths)
+            super.provider.deleteCellItems(atIndexPaths: indexPaths)
             super.collectionView.reloadData()
             super.collectionView.performBatchUpdates(nil, completion: completion)
         }
@@ -238,20 +241,23 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         }
     }
     
-    public func updateSupplementaryContainerItems(at sections: [Int], supplementaryContainerItems: [S], updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
+    public func updateSupplementarySectionsItems(atSections sections: [Int],
+                                                 withNewSupplementarySectionItems supplementarySectionItems: [S],
+                                                 updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                                                 completion: OptionalCompletionHandler) {
         
-        register(models: [], supplementaryContainerItems: supplementaryContainerItems)
+        register(cellItems: [[]], supplementarySectionItems: supplementarySectionItems)
         
         func updateWithBatchUpdates() {
             super.collectionView.performBatchUpdates({
-                super.provider.updateSupplementaryItems(atSections: sections, withNewSupplementaryItems: supplementaryContainerItems)
+                super.provider.updateSupplementarySectionItems(atSections: sections, withNewSupplementarySectionItems: supplementarySectionItems)
                 let indexSet = IndexSet(sections)
                 super.collectionView.reloadSections(indexSet)
             }, completion: completion)
         }
         
         func updateImmediately() {
-            super.provider.updateSupplementaryItems(atSections: sections, withNewSupplementaryItems: supplementaryContainerItems)
+            super.provider.updateSupplementarySectionItems(atSections: sections, withNewSupplementarySectionItems: supplementarySectionItems)
             super.collectionView.reloadData()
             super.collectionView.performBatchUpdates(nil, completion: completion)
         }
@@ -263,19 +269,22 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         }
     }
     
-    public func insertSupplementaryContainerItems(at sections: [Int], supplementaryContainerItems: [S], updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
+    public func insert(supplementarySectionItems: [S],
+                       atSections sections: [Int],
+                       updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                       completion: OptionalCompletionHandler) {
         
-        register(models: [], supplementaryContainerItems: supplementaryContainerItems)
+        register(cellItems: [[]], supplementarySectionItems: supplementarySectionItems)
         
         func insertWithBatchUpdates() {
             super.collectionView.performBatchUpdates({
-                super.provider.insertSupplementaryContainerItems(at: sections, supplementaryContainerItems: supplementaryContainerItems)
+                super.provider.insert(supplementarySectionItems: supplementarySectionItems, atSections: sections)
                 super.collectionView.reloadSections(IndexSet(sections))
             }, completion: completion)
         }
         
         func insertImmediately() {
-            super.provider.insertSupplementaryContainerItems(at: sections, supplementaryContainerItems: supplementaryContainerItems)
+            super.provider.insert(supplementarySectionItems: supplementarySectionItems, atSections: sections)
             super.collectionView.reloadData()
             super.collectionView.performBatchUpdates(nil, completion: completion)
         }
@@ -287,17 +296,19 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         }
     }
     
-    public func deleteSupplementaryContainerItems(at sections: [Int], updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
+    public func deleteSupplementarySectionItems(atSections sections: [Int],
+                                                updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                                                completion: OptionalCompletionHandler) {
         
         func deleteWithBatchUpdates() {
              super.collectionView.performBatchUpdates({
-                super.provider.deleteSupplementaryContainerItems(at: sections)
+                super.provider.deleteSupplementarySectionItems(atSections: sections)
                 super.collectionView.reloadSections(IndexSet(sections))
              }, completion: completion)
         }
         
         func deleteImmediately() {
-            super.provider.deleteSupplementaryContainerItems(at: sections)
+            super.provider.deleteSupplementarySectionItems(atSections: sections)
             super.collectionView.reloadData()
             super.collectionView.performBatchUpdates(nil, completion: completion)
         }
@@ -309,20 +320,23 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         }
     }
     
-    public func replaceAllItems(with models: [[T]], supplementaryContainerItems: [S], updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
+    public func replaceDataSource(withCellItems cellItems: [[T]],
+                                  supplementarySectionItems: [S],
+                                  updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                                  completion: OptionalCompletionHandler) {
         
-        register(sectionModels: models, supplementaryContainerItems: supplementaryContainerItems)
+        register(cellItems: cellItems, supplementarySectionItems: supplementarySectionItems)
         
         func replaceWithBatchUpdates() {
             super.collectionView.performBatchUpdates({
-                super.provider.replaceAllItems(with: models, supplementaryContainerItems: supplementaryContainerItems)
-                let sectionsToReload = Array(0..<models.count)
+                super.provider.replaceDataSource(withCellItems: cellItems, supplementarySectionItems: supplementarySectionItems)
+                let sectionsToReload = Array(0..<cellItems.count)
                 super.collectionView.reloadSections(IndexSet(sectionsToReload))
             }, completion: completion)
         }
         
         func replaceImmediately() {
-            super.provider.replaceAllItems(with: models, supplementaryContainerItems: supplementaryContainerItems)
+            super.provider.replaceDataSource(withCellItems: cellItems, supplementarySectionItems: supplementarySectionItems)
             super.collectionView.reloadData()
             super.collectionView.performBatchUpdates(nil, completion: completion)
         }
