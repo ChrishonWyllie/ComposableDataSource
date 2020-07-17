@@ -99,59 +99,21 @@ public typealias ComposableScrollViewDidEndDraggingHandler = (UIScrollView, Bool
 
 
 
-// MARK: - CollectionDataProvider
+// MARK: - SectionableDataSource
 
-/// Provides conformance by which UICollectionView data source provider must conform to
-public protocol CollectionDataProvider {
+/**
+Protocol for data sources that allow for multiple sections
+Provides basic CRUD functions for handling data displayed in UICollectionView
+*/
+public protocol SectionableDataSourceProtocol {
     
-    associatedtype T // cell item
-    associatedtype S // supplementary section item
-    associatedtype U // individual header or footer item
+    associatedtype T
     
+    associatedtype S
     
-    /**
-     Initializes data provider with items to represent cells and supplementary views
-     
-    - Parameters:
-        - cellItems: A double nested array of models to represent and configure each cell at a specific IndexPath
-        - supplementarySectionItems: Array of models to represent and configure each supplementary view at a specific IndexPath section
-     */
-    init(cellItems: [[T]], supplementarySectionItems: [S])
+    func indexPathOfLastItem(in section: Int) -> IndexPath
     
-    /**
-     Determines if the data provider is completely empty
-     
-    - Usage:
-     ```
-     let dataSource = ....
-     if dataSource.isEmpty {
-        // ...
-     }
-     ```
-    */
-    var isEmpty: Bool { get }
-    
-    /**
-     Returns double nested array of all items representing cells in each section
-     
-    - Usage:
-     ```
-     let dataSource = ....
-     let allItems = dataSource.allItems()
-     ```
-    */
-    func allCellItems() -> [[T]]
-    
-    /**
-     Returns all items representing section supplementary views
-     
-    - Usage:
-     ```
-     let dataSource = ....
-     let allSupplementaryItems = dataSource.allSupplementarySectionItems()
-     ```
-    */
-    func allSupplementarySectionItems() -> [S]
+    func indexPathOfLastItem() -> IndexPath
     
     /**
      Returns the number of sections represented by the data provider, and therefore, the number sections in the UICollectionView
@@ -163,7 +125,7 @@ public protocol CollectionDataProvider {
      ```
     */
     func numberOfSections() -> Int
-    
+       
     /**
      Returns the number of items in a specific section, and therefore, the number of items in a specific UICollectionView section
      
@@ -179,152 +141,29 @@ public protocol CollectionDataProvider {
     */
     func numberOfItems(in section: Int) -> Int
     
-    
-    // Create
-    
     /**
-     Appends an array of cell items to the end of a certain section
+     Inserts cell items at specified indexPaths.
      
-    - Note:
-     The section must already exist. If the desired section does not already exist, use the `appendNewSection(with:)` function which will create a completely new section. Otherwise, inserting into non-existent sections will throw an out of bounds error, as expected.
-     
-    - Usage:
-     ```
-     let dataSource = ....
-     let itemsToAppend = [....]
-     let sectionIndex: Int = 2
-     dataSource.append(items: itemsToAppend, inNestedSection: sectionIndex)
-     ```
-     
-    - Parameters:
-        - cellItems: Array of items representing each cell to append
-        - section: The section index by which the cell items will be appended to the end of
-     
-    */
-    func append(cellItems: [T], inNestedSection section: Int)
-    
-    /**
-     Creates a new section with a new array of cell items
-     
-    - Note:
-     Be aware that adding new sections will require calling `collectionView.insertSections()` if using `collectionView.performBatchUpdates(...)`. Use the return value to call `collectionView.insertSections()`
-        
-    - Usage:
-     ```
-     let dataSource = ....
-     let itemsToAppend = [....]
-     let sectionIndex: Int = 2
-     dataSource.appendNewSection(with: itemsToAppend)
-     ```
-     
-    - Parameters:
-        - cellItems: Array of items representing each cell to append
-     
-    - Returns:
-        - An integer representing the index of the new section that was created. Use this to call `collectionView.insertSections()`
-     
-    */
-    @discardableResult func appendNewSection(with cellItems: [T]) -> Int
-    
-    /**
-     Appends a supplementary section item
-     
-    - Usage:
-     ```
-     let dataSource = ....
-     let supplementarySectionItem = ....
-     dataSource.append(supplementarySectionItem: supplementarySectionItem)
-     ```
-     
-    - Parameters:
-        - supplementarySectionItem: section item representing a supplementary header and/or footer in data source
-     
-    */
-    func append(supplementarySectionItem: S)
-    
-    /**
-     Inserts cell items at specified indexPaths. Returns an array of Integers representing new sections that have been created
-     
-    - Note:
-     If a new section needs to be inserted (i.e., the [indexPaths] argument contains sections greater than the current largest section)
-     this will return an array of those new section indices that were created as a result of insertions. If using `collectionView.performBatchUpdates(...)` use this array to insert the new sections with `collectionView.insertSections()`
      
     - Usage:
      ```
      let dataSource = ....
      let itemsToInsert = [....]
      let indexPathsOfItems = [....]
-     let newSections = dataSource.insert(cellItems: itemsToInsert, at: indexPathsOfItems)
-     
-     // insert new sections or call collectionView.reloadData()
+     let newSections = dataSource.insert(cellItems: itemsToInsert, at: indexPathsOfItems, updateStyle: .withBatchUpdates, completion: nil)
      ```
      
     - Parameters:
         - cellItems: Array of items representing each cell to insert
         - indexPaths: Array of `IndexPath` representing each cell's final expected indexPath
-     
-    - Returns:
-        - An array of `Int` representing each section that was created as a result of the insertions
-    */
-    @discardableResult func insert(cellItems: [T], atIndexPaths indexPaths: [IndexPath]) -> [Int]
-    
-    /**
-     Inserts array of cell items into a specified section, at a particular index within that section, if specified
-        
-    - Usage:
-     ```
-     let dataSource = ....
-     let itemsToInsert = [....]
-     let sectionIndex: Int = 2
-     let indexWithinSection: Int = 9
-     dataSource.insert(cellItems: itemsToInsert, inNestedSection: sectionIndex, atIndex: indexWithinSection)
-     ```
-     
-    - Parameters:
-        - cellItems: Array of items representing each cell to insert
-        - section: The section index by which the cell items will be inserted into
-        - index: The index within the section by which the array will be inserted at. If nil, will insert at index 0 (beginning of the specified section).
+        - updateStyle: Enum dictating how the updates will happen, either by calling `performBatchUpdates(...)` or with `reloadData()`
+        - completion: Completion handler called at the end of function
      
     */
-    func insert(cellItems: [T], inNestedSection section: Int, atIndex index: Int?)
-    
-    /**
-     Inserts a new section with a new array of cell items at a specified section index. Essentially, moves down sections after this index and creates room for new section
-     
-    - Note:
-     Be aware that adding new sections will require calling `collectionView.insertSections()` if using `collectionView.performBatchUpdates(...)`
-        
-    - Usage:
-     ```
-     let dataSource = ....
-     let itemsToInsert = [....]
-     let sectionIndex: Int = 3
-     dataSource.insertNewSection(with: itemsToInsert, atSection: sectionIndex)
-     ```
-     
-    - Parameters:
-        - cellItems: Array of items representing each cell to append
-        - section: The section index that will be created/inserted with the new cell items
-     
-    */
-    func insertNewSection(with cellItems: [T], atSection section: Int)
-    
-    /**
-     Inserts a supplementary section item at a specified section index
-     
-    - Usage:
-     ```
-     let dataSource = ....
-     let supplementarySectionItem = ....
-     let sectionIndex: Int = 3
-     dataSource.insert(supplementarySectionItem: supplementarySectionItem, atSection: sectionIndex)
-     ```
-     
-    - Parameters:
-        - supplementarySectionItem: section item representing a supplementary header and/or footer in data source
-        - section: The section index by which the supplementary item will be inserted into
-    */
-    func insert(supplementarySectionItem: S, atSection section: Int)
+    func insert(cellItems: [T],
+                atIndexPaths indexPaths: [IndexPath],
+                updateStyle: DataSourceUpdateStyle,
+                completion: OptionalCompletionHandler)
     
     /**
      Inserts supplementary section items at specified section indices
@@ -334,17 +173,19 @@ public protocol CollectionDataProvider {
      let dataSource = ....
      let supplementarySectionItems = [....]
      let sectionIndices: [Int] = [1, 3, 6]
-     dataSource.insert(supplementarySectionItems: supplementarySectionItem, atSections: sectionIndices)
+     dataSource.insert(supplementarySectionItems: supplementarySectionItem, atSections: sectionIndices, updateStyle: .withBatchUpdates, completion: nil)
      ```
      
     - Parameters:
         - supplementarySectionItems: section items representing supplementary headers and/or footers in data source
         - sections: The section indices at which the supplementary section items will be inserted
+        - updateStyle: Enum dictating how the updates will happen, either by calling `performBatchUpdates(...)` or with `reloadData()`
+        - completion: Completion handler called at the end of function
     */
-    func insert(supplementarySectionItems: [S], atSections sections: [Int])
-    
-    
-    // Read
+    func insert(supplementarySectionItems: [S],
+                atSections sections: [Int],
+                updateStyle: DataSourceUpdateStyle,
+                completion: OptionalCompletionHandler)
     
     /**
      Returns a cell item at the specified indexPath
@@ -368,30 +209,7 @@ public protocol CollectionDataProvider {
         - A cell item representing the cell at the desired indexPath
     */
     func item(atIndexPath indexPath: IndexPath) -> T?
-    
-    /**
-     Returns an array of cell items at the specified indexPaths
-     
-    - Note:
-     Returns nil if no such item exists at the specified indexPaths, i.e. you are checking for an IndexPath that is out of bounds
         
-    - Usage:
-     ```
-     let dataSource = ....
-     let indexPath: [IndexPath] = [....]
-     let cellItems = dataSource.items(atIndexPaths: indexPaths)
-     
-     // Do something with item
-     ```
-     
-    - Parameters:
-        - indexPath: The indexPath of the desired item
-     
-    - Returns:
-        - An array of cell items representing each cell at the desired indexPaths
-    */
-    func items(atIndexPaths indexPaths: [IndexPath]) -> [T]?
-    
     /**
      Returns a supplementary seection item at the specified section index
      
@@ -415,6 +233,502 @@ public protocol CollectionDataProvider {
     */
     func supplementarySectionItem(atSection section: Int) -> S?
     
+    /**
+     Updates an array of current cell items at the specified indexPaths with new cell items
+     
+    - Usage:
+     ```
+     let dataSource = ....
+     let newCellItems = [....]
+     let indexPaths: [IndexPath] = [....]
+     dataSource.updateCellItems(atIndexPaths: indexPaths, withNewCellItems: newCellItems, updateStyle: .withBatchUpdates, completion: nil)
+     ```
+     
+    - Note:
+        - Since each indexPath corresponds to a new cell item to update with, `indexPaths.count` must equal `newCellItems.count`
+     
+    - Parameters:
+        - indexPaths: The indexPaths of the desired items to be updated
+        - newCellItems: The new cell items to replace with
+        - updateStyle: Enum dictating how the updates will happen, either by calling `performBatchUpdates(...)` or with `reloadData()`
+        - completion: Completion handler called at the end of function
+     
+    */
+    func updateCellItems(atIndexPaths indexPaths: [IndexPath],
+                         newCellItems: [T],
+                         updateStyle: DataSourceUpdateStyle,
+                         completion: OptionalCompletionHandler)
+    
+    /**
+     Updates existing supplementary section items
+     
+    - Usage:
+     ```
+     let dataSource = ....
+     let newSupplementarySectionItems = [....]
+     let sectionIndices: [Int] = [....]
+     dataSource.updateSupplementarySectionItems(atSections: sectionIndices, withNewSupplementarySectionItems: newSupplementarySectionItems, updateStyle: .withBatchUpdates, completion: nil)
+     ```
+     
+    - Note:
+        - Since each section index corresponds to a new supplementary section item to update with, `sections.count` must equal `supplementarySectionItems.count`
+     
+    - Parameters:
+        - sections: The section indices at which the supplementary section items will be updated
+        - supplementarySectionItems: The new supplementary section items to replace with
+        - updateStyle: Enum dictating how the updates will happen, either by calling `performBatchUpdates(...)` or with `reloadData()`
+        - completion: Completion handler called at the end of function
+    */
+    func updateSupplementarySectionsItems(atSections sections: [Int],
+                                          withNewSupplementarySectionItems supplementarySectionItems: [S],
+                                          updateStyle: DataSourceUpdateStyle,
+                                          completion: OptionalCompletionHandler)
+    
+    /**
+     Replaces entire sections with new cell items and supplementary section items
+          
+    - Usage:
+     ```
+     let dataSource = ....
+     let itemSectionIndices: [Int] = [0, 1, 5, 8]
+     let supplementarySectionIndices: [Int] = [1, 3, 4]
+     let newCellItems = [[....]] // Nested array
+     let newSupplementarySectionItems: [Int] = [....]
+     dataSource.updateSections(atItemSectionIndices: iteSectionIndices, newCellItems: newCellItems, supplementarySectionIndices: supplementarySectionIndices, newSupplementarySectionItems: newSupplementarySectionItems, updateStyle: .withBatchUpdates, completion: nil)
+     ```
+     
+    - Note:
+        - Since each section index corresponds to a nested array of cell items or supplementary section items, `sections.count` must equal `newCellItems.count` and `supplementarySectionIndices.count` must equal `newSupplementarySectionItems.count`
+        - Also, it is possble to update cell items in some sections and supplementary section items in other sections. Provide the designated sections for both separately if necessary.
+     
+    - Parameters:
+        - sections: The section indices at which the cell items will be updated
+        - newCellItems: The double nested array of new cell items to replace with
+        - supplementarySectionIndices: The indices of each section to be updated with new supplementary section items
+        - newSupplementarySectionItems: The array of new supplementary section items to replace with
+        - updateStyle: Enum dictating how the updates will happen, either by calling `performBatchUpdates(...)` or with `reloadData()`
+        - completion: Completion handler called at the end of function
+    */
+    func updateSections(atItemSectionIndices itemSectionIndices: [Int],
+                        newCellItems: [[T]],
+                        supplementarySectionItems: [S]?,
+                        supplementarySectionIndices: [Int]?,
+                        updateStyle: DataSourceUpdateStyle,
+                        completion: OptionalCompletionHandler)
+    
+    /**
+     Deletes cell items at specified indexPaths
+     
+    - Usage:
+     ```
+     let dataSource = ....
+     let indexPathsOfItems = [....]
+     let sectionsToDelete = dataSource.deleteCellItems(atIndexPaths: indexPathsOfItems, updateStyle: .withBatchUpdates, completion: nil)
+     ```
+     
+    - Parameters:
+        - indexPaths: Array of `IndexPath` representing each cell's indexPath to remove
+        - updateStyle: Enum dictating how the updates will happen, either by calling `performBatchUpdates(...)` or with `reloadData()`
+        - completion: Completion handler called at the end of function
+    */
+    func deleteCellItems(atIndexPaths indexPaths: [IndexPath],
+                         updateStyle: DataSourceUpdateStyle,
+                         completion: OptionalCompletionHandler)
+    
+    /**
+     Deletes supplementary section items at specified section indices
+     
+    - Usage:
+     ```
+     let dataSource = ....
+     let sectionIndices: [Int] = [....]
+     let sectionsToDelete = dataSource.deleteSupplementarySectionItems(atSections: sectionIndices, updateStyle: .withBatchUpdates, completion: nil)
+     ```
+     
+    - Parameters:
+        - sections: The section indices at which the supplementary section items will be deleted
+        - updateStyle: Enum dictating how the updates will happen, either by calling `performBatchUpdates(...)` or with `reloadData()`
+        - completion: Completion handler called at the end of function
+     
+    */
+    func deleteSupplementarySectionItems(atSections sections: [Int],
+                                         updateStyle: DataSourceUpdateStyle,
+                                         completion: OptionalCompletionHandler)
+    
+    /**
+     Completely replaces entire data source with new cell items and supplementary section items, regardless of existing items and/or section structure
+          
+    - Usage:
+     ```
+     let dataSource = ....
+     let newCellItems = [[....]] // Nested array
+     let newSupplementarySectionItems = [....]
+     dataSource.replaceDataSource(withCellItems: newCellItems, supplementarySectionItems: supplementarySectionItems, updateStyle: .withBatchUpdates, completion: nil)
+     ```
+     
+    - Parameters:
+        - cellItems: The double nested array of new cell items to replace with
+        - supplementarySectionItems: The new supplementary section items to replace with
+        - updateStyle: Enum dictating how the updates will happen, either by calling `performBatchUpdates(...)` or with `reloadData()`
+        - completion: Completion handler called at the end of function
+    */
+    func replaceDataSource(withCellItems cellItems: [[T]],
+                           supplementarySectionItems: [S],
+                           updateStyle: DataSourceUpdateStyle,
+                           completion: OptionalCompletionHandler)
+    
+    /**
+     Resets the data provider to its initial empty state
+     
+    - Usage:
+     ```
+     let dataSource = ....
+     dataSource.reset(keepingStructure: true)
+     ```
+     
+    - Parameters:
+        - keepingStructure: Determines if only the cell items and supplementary section items in each section will be removed, but the stucture of sections is maintained, i.e., empty sections will be left over. Otherwise, everything is purged, leaving a completely empty data source with 0 sections
+     
+    */
+    func reset(keepingStructure: Bool)
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// MARK: - CollectionDataProvider
+
+/**
+ Protocol for cell and supplementary section items provider
+ Provides basic CRUD functions for handling data displayed in UICollectionView
+ */
+public protocol CollectionDataProvider {
+    
+    associatedtype T // cell item
+    associatedtype S // supplementary section item
+    associatedtype U // individual header or footer item
+    
+    
+    /**
+     Initializes data provider with items to represent cells and supplementary views
+     
+    - Parameters:
+        - cellItems: A double nested array of models to represent and configure each cell at a specific IndexPath
+        - supplementarySectionItems: Array of models to represent and configure each supplementary view at a specific IndexPath section
+     */
+    init(cellItems: [[T]], supplementarySectionItems: [S])
+    
+    /**
+     Determines if the data provider is completely empty
+     
+    - Usage:
+     ```
+     let provider = ....
+     if provider.isEmpty {
+        // ...
+     }
+     ```
+    */
+    var isEmpty: Bool { get }
+    
+    /**
+     Returns double nested array of all items representing cells in each section
+     
+    - Usage:
+     ```
+     let provider = ....
+     let allItems = provider.allItems()
+     ```
+    */
+    func allCellItems() -> [[T]]
+    
+    /**
+     Returns all items representing section supplementary views
+     
+    - Usage:
+     ```
+     let provider = ....
+     let allSupplementaryItems = provider.allSupplementarySectionItems()
+     ```
+    */
+    func allSupplementarySectionItems() -> [S]
+    
+    /**
+     Returns the number of sections represented by the data provider, and therefore, the number sections in the UICollectionView
+     
+    - Usage:
+     ```
+     let provider = ....
+     let numSections = provider.numberOfSections()
+     ```
+    */
+    func numberOfSections() -> Int
+    
+    /**
+     Returns the number of items in a specific section, and therefore, the number of items in a specific UICollectionView section
+     
+    - Usage:
+     ```
+     let provider = ....
+     let sectionIndex: Int = 0
+     let numItemsInSection = provider.numberOfItems(in: sectionIndex)
+     ```
+     
+    - Parameters:
+        - section: The section index within the data source
+    */
+    func numberOfItems(in section: Int) -> Int
+    
+    
+    // Create
+    
+    /**
+     Appends an array of cell items to the end of a certain section
+     
+    - Note:
+     The section must already exist. If the desired section does not already exist, use the `appendNewSection(with:)` function which will create a completely new section. Otherwise, inserting into non-existent sections will throw an out of bounds error, as expected.
+     
+    - Usage:
+     ```
+     let provider = ....
+     let itemsToAppend = [....]
+     let sectionIndex: Int = 2
+     provider.append(items: itemsToAppend, inNestedSection: sectionIndex)
+     ```
+     
+    - Parameters:
+        - cellItems: Array of items representing each cell to append
+        - section: The section index by which the cell items will be appended to the end of
+     
+    */
+    func append(cellItems: [T], inNestedSection section: Int)
+    
+    /**
+     Creates a new section with a new array of cell items
+     
+    - Note:
+     Be aware that adding new sections will require calling `collectionView.insertSections()` if using `collectionView.performBatchUpdates(...)`. Use the return value to call `collectionView.insertSections()`
+        
+    - Usage:
+     ```
+     let provider = ....
+     let itemsToAppend = [....]
+     let sectionIndex: Int = 2
+     provider.appendNewSection(with: itemsToAppend)
+     ```
+     
+    - Parameters:
+        - cellItems: Array of items representing each cell to append
+     
+    - Returns:
+        - An integer representing the index of the new section that was created. Use this to call `collectionView.insertSections()`
+     
+    */
+    @discardableResult func appendNewSection(with cellItems: [T]) -> Int
+    
+    /**
+     Appends a supplementary section item
+     
+    - Usage:
+     ```
+     let provider = ....
+     let supplementarySectionItem = ....
+     provider.append(supplementarySectionItem: supplementarySectionItem)
+     ```
+     
+    - Parameters:
+        - supplementarySectionItem: section item representing a supplementary header and/or footer in data source
+     
+    */
+    func append(supplementarySectionItem: S)
+    
+    /**
+     Inserts cell items at specified indexPaths. Returns an array of Integers representing new sections that have been created
+     
+    - Note:
+     If a new section needs to be inserted (i.e., the [indexPaths] argument contains sections greater than the current largest section)
+     this will return an array of those new section indices that were created as a result of insertions. If using `collectionView.performBatchUpdates(...)` use this array to insert the new sections with `collectionView.insertSections()`
+     
+    - Usage:
+     ```
+     let provider = ....
+     let itemsToInsert = [....]
+     let indexPathsOfItems = [....]
+     let newSections = provider.insert(cellItems: itemsToInsert, at: indexPathsOfItems)
+     
+     // insert new sections or call collectionView.reloadData()
+     ```
+     
+    - Parameters:
+        - cellItems: Array of items representing each cell to insert
+        - indexPaths: Array of `IndexPath` representing each cell's final expected indexPath
+     
+    - Returns:
+        - An array of `Int` representing each section that was created as a result of the insertions
+    */
+    @discardableResult func insert(cellItems: [T], atIndexPaths indexPaths: [IndexPath]) -> [Int]
+    
+    /**
+     Inserts array of cell items into a specified section, at a particular index within that section, if specified
+        
+    - Usage:
+     ```
+     let provider = ....
+     let itemsToInsert = [....]
+     let sectionIndex: Int = 2
+     let indexWithinSection: Int = 9
+     provider.insert(cellItems: itemsToInsert, inNestedSection: sectionIndex, atIndex: indexWithinSection)
+     ```
+     
+    - Parameters:
+        - cellItems: Array of items representing each cell to insert
+        - section: The section index by which the cell items will be inserted into
+        - index: The index within the section by which the array will be inserted at. If nil, will insert at index 0 (beginning of the specified section).
+     
+    */
+    func insert(cellItems: [T], inNestedSection section: Int, atIndex index: Int?)
+    
+    /**
+     Inserts a new section with a new array of cell items at a specified section index. Essentially, moves down sections after this index and creates room for new section
+     
+    - Note:
+     Be aware that adding new sections will require calling `collectionView.insertSections()` if using `collectionView.performBatchUpdates(...)`
+        
+    - Usage:
+     ```
+     let provider = ....
+     let itemsToInsert = [....]
+     let sectionIndex: Int = 3
+     provider.insertNewSection(with: itemsToInsert, atSection: sectionIndex)
+     ```
+     
+    - Parameters:
+        - cellItems: Array of items representing each cell to append
+        - section: The section index that will be created/inserted with the new cell items
+     
+    */
+    func insertNewSection(with cellItems: [T], atSection section: Int)
+    
+    /**
+     Inserts a supplementary section item at a specified section index
+     
+    - Usage:
+     ```
+     let provider = ....
+     let supplementarySectionItem = ....
+     let sectionIndex: Int = 3
+     provider.insert(supplementarySectionItem: supplementarySectionItem, atSection: sectionIndex)
+     ```
+     
+    - Parameters:
+        - supplementarySectionItem: section item representing a supplementary header and/or footer in data source
+        - section: The section index by which the supplementary item will be inserted into
+    */
+    func insert(supplementarySectionItem: S, atSection section: Int)
+    
+    /**
+     Inserts supplementary section items at specified section indices
+     
+    - Usage:
+     ```
+     let provider = ....
+     let supplementarySectionItems = [....]
+     let sectionIndices: [Int] = [1, 3, 6]
+     provider.insert(supplementarySectionItems: supplementarySectionItem, atSections: sectionIndices)
+     ```
+     
+    - Parameters:
+        - supplementarySectionItems: section items representing supplementary headers and/or footers in data source
+        - sections: The section indices at which the supplementary section items will be inserted
+    */
+    func insert(supplementarySectionItems: [S], atSections sections: [Int])
+    
+    
+    // Read
+    
+    /**
+     Returns a cell item at the specified indexPath
+     
+    - Note:
+     Returns nil if no such item exists at the specified indexPath, i.e. you are checking for an IndexPath that is out of bounds
+        
+    - Usage:
+     ```
+     let provider = ....
+     let indexPath: IndexPath = ....
+     let cellItem = provider.item(atIndexPath: indexPath)
+     
+     // Do something with item
+     ```
+     
+    - Parameters:
+        - indexPath: The indexPath of the desired item
+     
+    - Returns:
+        - A cell item representing the cell at the desired indexPath
+    */
+    func item(atIndexPath indexPath: IndexPath) -> T?
+    
+    /**
+     Returns an array of cell items at the specified indexPaths
+     
+    - Note:
+     Returns nil if no such item exists at the specified indexPaths, i.e. you are checking for an IndexPath that is out of bounds
+        
+    - Usage:
+     ```
+     let provider = ....
+     let indexPath: [IndexPath] = [....]
+     let cellItems = provider.items(atIndexPaths: indexPaths)
+     
+     // Do something with item
+     ```
+     
+    - Parameters:
+        - indexPath: The indexPath of the desired item
+     
+    - Returns:
+        - An array of cell items representing each cell at the desired indexPaths
+    */
+    func items(atIndexPaths indexPaths: [IndexPath]) -> [T]?
+    
+    /**
+     Returns a supplementary seection item at the specified section index
+     
+    - Note:
+     Returns nil if no such supplementary section item exists at the specified section index, i.e. you are checking for a section index that is out of bounds
+        
+    - Usage:
+     ```
+     let provider = ....
+     let sectionIndex: Int = ....
+     let supplementarySectionItem = provider.supplementarySectionItem(atSection: sectionIndex)
+     
+     // Do something with item
+     ```
+     
+    - Parameters:
+        - section: The section index of the desired supplementary section item
+     
+    - Returns:
+        - A supplementary section item representing the supplementary header and/or footer view at the desired section index
+    */
+    func supplementarySectionItem(atSection section: Int) -> S?
+    
     // Update
     
     /**
@@ -422,10 +736,10 @@ public protocol CollectionDataProvider {
      
     - Usage:
      ```
-     let dataSource = ....
+     let provider = ....
      let newCellItem = ....
      let indexPath: IndexPath = ....
-     dataSource.updateCellItem(atIndexPath: indexPath, withNewCellItem: newCellItem)
+     provider.updateCellItem(atIndexPath: indexPath, withNewCellItem: newCellItem)
      ```
      
     - Parameters:
@@ -439,10 +753,10 @@ public protocol CollectionDataProvider {
      
     - Usage:
      ```
-     let dataSource = ....
+     let provider = ....
      let newCellItems = [....]
      let indexPaths: [IndexPath] = [....]
-     dataSource.updateCellItems(atIndexPaths: indexPaths, withNewCellItems: newCellItems)
+     provider.updateCellItems(atIndexPaths: indexPaths, withNewCellItems: newCellItems)
      ```
      
     - Note:
@@ -459,10 +773,10 @@ public protocol CollectionDataProvider {
      
     - Usage:
      ```
-     let dataSource = ....
+     let provider = ....
      let newSupplementarySectionItems = [....]
      let sectionIndices: [Int] = [....]
-     dataSource.updateSupplementarySectionItems(atSections: sectionIndices, withNewSupplementarySectionItems: newSupplementarySectionItems)
+     provider.updateSupplementarySectionItems(atSections: sectionIndices, withNewSupplementarySectionItems: newSupplementarySectionItems)
      ```
      
     - Note:
@@ -479,10 +793,10 @@ public protocol CollectionDataProvider {
           
     - Usage:
      ```
-     let dataSource = ....
+     let provider = ....
      let sectionIndices: [Int] = [....]
      let newCellItems = [[....]] // Nested array
-     dataSource.updateSections(sectionIndices, withNewCellItems: newCellItems)
+     provider.updateSections(sectionIndices, withNewCellItems: newCellItems)
      ```
      
     - Note:
@@ -499,12 +813,12 @@ public protocol CollectionDataProvider {
           
     - Usage:
      ```
-     let dataSource = ....
+     let provider = ....
      let itemSectionIndices: [Int] = [0, 1, 5, 8]
      let supplementarySectionIndices: [Int] = [1, 3, 4]
      let newCellItems = [[....]] // Nested array
      let newSupplementarySectionItems: [Int] = [....]
-     dataSource.updateSections(atItemSectionIndices: iteSectionIndices, newCellItems: newCellItems, supplementarySectionIndices: supplementarySectionIndices, newSupplementarySectionItems: newSupplementarySectionItems)
+     provider.updateSections(atItemSectionIndices: iteSectionIndices, newCellItems: newCellItems, supplementarySectionIndices: supplementarySectionIndices, newSupplementarySectionItems: newSupplementarySectionItems)
      ```
      
     - Note:
@@ -530,9 +844,9 @@ public protocol CollectionDataProvider {
      
     - Usage:
      ```
-     let dataSource = ....
+     let provider = ....
      let indexPathsOfItems = [....]
-     let sectionsToDelete = dataSource.deleteCellItems(atIndexPaths: indexPathsOfItems)
+     let sectionsToDelete = provider.deleteCellItems(atIndexPaths: indexPathsOfItems)
      
      // delete sections or call collectionView.reloadData()
      ```
@@ -551,9 +865,9 @@ public protocol CollectionDataProvider {
      
     - Usage:
      ```
-     let dataSource = ....
+     let provider = ....
      let sectionIndices: [Int] = [....]
-     let sectionsToDelete = dataSource.deleteSupplementarySectionItems(atSections: sectionIndices)
+     let sectionsToDelete = provider.deleteSupplementarySectionItems(atSections: sectionIndices)
      ```
      
     - Parameters:
@@ -567,10 +881,10 @@ public protocol CollectionDataProvider {
           
     - Usage:
      ```
-     let dataSource = ....
+     let provider = ....
      let newCellItems = [[....]] // Nested array
      let newSupplementarySectionItems = [....]
-     dataSource.replaceDataSource(withCellItems: newCellItems, supplementarySectionItems: supplementarySectionItems)
+     provider.replaceDataSource(withCellItems: newCellItems, supplementarySectionItems: supplementarySectionItems)
      ```
      
     - Parameters:
@@ -584,8 +898,8 @@ public protocol CollectionDataProvider {
      
     - Usage:
      ```
-     let dataSource = ....
-     dataSource.reset(keepingStructure: true)
+     let provider = ....
+     provider.reset(keepingStructure: true)
      ```
      
     - Parameters:
