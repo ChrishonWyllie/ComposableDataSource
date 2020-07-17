@@ -63,6 +63,19 @@ public typealias OptionalCompletionHandler = ((Bool) -> ())?
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 // MARK: - Action Handlers
 
 public typealias ComposableItemSelectionHandler<T> = (IndexPath, T) -> Void
@@ -84,6 +97,33 @@ public typealias ComposableScrollViewDidEndDraggingHandler = (UIScrollView, Bool
 
 
 
+
+
+
+
+
+
+
+
+/**
+
+Typealias for conforming to CollectionDataSource object
+ 
+    - Parameters:
+        - T: The expected cell model used to configure the Configurable Resuable UICollectionViewCell
+        - S: The expected supplementary section model used to contain a header and/or footer supplementary item
+        - U: The expected supplementary item used to configure the Configurable Reusable Supplementary UICollectionReusableView
+        - Cell: The Configurable Reusable UICollectionViewCell
+        - View: The Configurable Reusable Supplementary UICollectionReusableView
+*/
+public typealias CollectionDataSourceInheritableProtocol<T, S, U, Cell, View> = CollectionDataSource<DataSourceProvider<T, S, U>, Cell, View>
+    where Cell: ConfigurableReusableCellProtocol, Cell.T == T, View: ConfigurableReusableViewProtocol, View.T == U
+
+/// Convenient combination of ConfigurableReusableCell and UICollectionViewCell
+public typealias ConfigurableReusableCellProtocol = ConfigurableReusableCell & UICollectionViewCell
+
+/// Convenient combination of ConfigurableReusableSupplementaryView and UICollectionReusableView
+public typealias ConfigurableReusableViewProtocol = ConfigurableReusableSupplementaryView & UICollectionReusableView
 
 
 
