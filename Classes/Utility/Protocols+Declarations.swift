@@ -7,6 +7,8 @@
 
 import Foundation
 
+// MARK: - Configurable Views
+
 public protocol ReusableUIElement {
     static var reuseIdentifier: String { get }
 }
@@ -26,6 +28,78 @@ public protocol ConfigurableReusableSupplementaryView: ReusableUIElement {
     associatedtype T
     func configure(with item: T, at indexPath: IndexPath)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public enum DataSourceUpdateStyle {
+    case withBatchUpdates
+    case immediately
+}
+
+public typealias OptionalCompletionHandler = ((Bool) -> ())?
+
+
+
+
+
+
+
+
+
+
+
+
+// MARK: - Action Handlers
+
+public typealias ComposableItemSelectionHandler<T> = (IndexPath, T) -> Void
+public typealias ComposableItemDeselectionHandler<T> = (IndexPath, T) -> Void
+public typealias ComposableItemSizeHandler<T> = (IndexPath, T) -> CGSize
+public typealias ComposableSupplementaryHeaderSizeHandler<U> = (Int, U) -> CGSize
+public typealias ComposableSupplementaryFooterSizeHandler<U> = (Int, U) -> CGSize
+public typealias ComposableBeginPrefetchingHandler<T> = ([IndexPath], [T]) -> Void
+public typealias ComposableCancelPrefetchingHandler<T> = ([IndexPath], [T]) -> Void
+
+public typealias ComposableContentOffsetHandler = (CGPoint) -> Void
+public typealias ComposableScrollViewWillBeginDraggingHandler = (UIScrollView) -> Void
+public typealias ComposableScrollViewDidEndScrollAnimationHandler = (UIScrollView) -> Void
+public typealias ComposableScrollViewDidEndDeceleratingHandler = (UIScrollView) -> Void
+public typealias ComposableScrollViewWillEndDraggingHandler = (UIScrollView, CGPoint, UnsafeMutablePointer<CGPoint>) -> Void
+public typealias ComposableScrollViewDidEndDraggingHandler = (UIScrollView, Bool) -> Void
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// MARK: - CollectionDataProvider
 
 /// Provides conformance by which UICollectionView data source provider must conform to
 public protocol CollectionDataProvider {
@@ -521,48 +595,3 @@ public protocol CollectionDataProvider {
     */
     func replaceDataSource(withCellItems cellItems: [[T]], supplementarySectionItems: [S])
 }
-
-
-
-
-
-
-
-
-
-
-
-public enum DataSourceUpdateStyle {
-    case withBatchUpdates
-    case immediately
-}
-
-public typealias OptionalCompletionHandler = ((Bool) -> ())?
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-public typealias CollectionItemSelectionHandler<T> = (IndexPath, T) -> Void
-public typealias CollectionItemDeselectionHandler<T> = (IndexPath, T) -> Void
-public typealias CollectionItemSizeHandler<T> = (IndexPath, T) -> CGSize
-public typealias CollectionSupplementaryHeaderSizeHandler<U> = (Int, U) -> CGSize
-public typealias CollectionSupplementaryFooterSizeHandler<U> = (Int, U) -> CGSize
-public typealias CollectionBeginPrefetchingHandler<T> = ([IndexPath], [T]) -> Void
-public typealias CollectionCancelPrefetchingHandler<T> = ([IndexPath], [T]) -> Void
-
-public typealias CollectionContentOffset = (CGPoint) -> Void
-public typealias CollectionScrollViewWillBeginDragging = (UIScrollView) -> Void
-public typealias CollectionScrollViewDidEndScrollAnimation = (UIScrollView) -> Void
-public typealias CollectionScrollViewDidEndDecelerating = (UIScrollView) -> Void
-public typealias CollectionScrollViewWillEndDragging = (UIScrollView, CGPoint, UnsafeMutablePointer<CGPoint>) -> Void
-public typealias CollectionScrollViewDidEndDragging = (UIScrollView, Bool) -> Void
