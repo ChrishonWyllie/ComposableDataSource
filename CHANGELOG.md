@@ -1,3 +1,16 @@
+## [Version 0.5.0](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.5.0) 
+
+### New
+* Added DebugLogger, replacing print statements
+
+### Improvements
+* Cleaned up the header declarations of the data source functions by using convenient typealiases
+* Added documentation for ComposableCollectionDataSource builder pattern functions
+* More documentation for functions and classes
+
+### Bug fixes
+* N/A
+
 ## [Version 0.4.0](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.4.0) 
 
 ### New
