@@ -12,20 +12,22 @@ Subclass of `CollectionDataSource` to provide CRUD functions for cell and supple
 
 */
 open class SectionableCollectionDataSource
-    <T, S, U, Cell: UICollectionViewCell, View: UICollectionReusableView>:
-    CollectionDataSource<DataSourceProvider<T, S, U>, Cell, View>
-where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSupplementaryView, View.T == U
+    <T, S, U, Cell: ConfigurableReusableCellProtocol, View: ConfigurableReusableViewProtocol>:
+    CollectionDataSourceInheritableProtocol<T, S, U, Cell, View>,
+    SectionableDataSourceProtocol
+    where Cell.T == T, View.T == U
 {
     
-    // MARK: - Lifecycle
+    // MARK: - Initializers
     
-    public init(collectionView: UICollectionView, cellItems: [[T]], supplementarySectionItems: [S]) {
-        let provider = DataSourceProvider<T, S, U>(cellItems: cellItems, supplementarySectionItems: supplementarySectionItems)
+    internal init(collectionView: UICollectionView, cellItems: [[T]], supplementarySectionItems: [S]) {
+        let provider = DataSourceProvider<T, S, U>(cellItems: cellItems,
+                                                   supplementarySectionItems: supplementarySectionItems)
         super.init(collectionView: collectionView, provider: provider)
         register(cellItems: cellItems, supplementarySectionItems: supplementarySectionItems)
     }
     
-    public init(collectionView: UICollectionView, dataProvider: DataSourceProvider<T, S, U>) {
+    internal init(collectionView: UICollectionView, dataProvider: DataSourceProvider<T, S, U>) {
         super.init(collectionView: collectionView, provider: dataProvider)
         registerItems(in: dataProvider)
     }
@@ -75,7 +77,7 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
     
     
     
-    // MARK: - Public Methods
+    // MARK: - Public Functions
     
     public func item(atIndexPath indexPath: IndexPath) -> T? {
         return super.provider.item(atIndexPath: indexPath)
@@ -351,11 +353,8 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         }
     }
     
-    public func reset(keepingStructure: Bool = true, reload: Bool = true) {
+    public func reset(keepingStructure: Bool = true) {
         provider.reset(keepingStructure: keepingStructure)
-        
-        if reload == true {
-            super.collectionView.reloadData()
-        }
+        super.collectionView.reloadData()
     }
 }
