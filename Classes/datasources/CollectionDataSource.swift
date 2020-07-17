@@ -195,17 +195,17 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     // MARK: - UICollectionViewDataSourcePrefetching
     
     open func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        guard let models = provider.items(atIndexPaths: indexPaths) else {
+        guard let items = provider.items(atIndexPaths: indexPaths) else {
             return
         }
-        collectionBeginPrefetchingHandler?(indexPaths, models)
+        collectionBeginPrefetchingHandler?(indexPaths, items)
     }
     
     open func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-        guard let models = provider.items(atIndexPaths: indexPaths) else {
+        guard let items = provider.items(atIndexPaths: indexPaths) else {
             return
         }
-        collectionCancelPrefetchingHandler?(indexPaths, models)
+        collectionCancelPrefetchingHandler?(indexPaths, items)
     }
     
     

@@ -93,7 +93,7 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource<Gener
     
     open override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
-        guard let supplementaryContainerModel = super.supplementarySectionItem(atSection: indexPath.section) else {
+        guard let supplementarySectionItem = super.supplementarySectionItem(atSection: indexPath.section) else {
             print("Could not get supplementary item at index section: \(indexPath.section)")
             print("supplementary items: \(String(describing: super.provider.allSupplementarySectionItems().count))")
             print("supplementary items: \(String(describing: super.supplementarySectionItem(atSection: indexPath.section)))")
@@ -104,9 +104,9 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource<Gener
         
         switch kind {
         case UICollectionView.elementKindSectionHeader:
-            supplementaryItem = supplementaryContainerModel.header
+            supplementaryItem = supplementarySectionItem.header
         case UICollectionView.elementKindSectionFooter:
-            supplementaryItem = supplementaryContainerModel.footer
+            supplementaryItem = supplementarySectionItem.footer
         default: fatalError()
         }
         
@@ -130,17 +130,17 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource<Gener
     
     open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
-        guard let supplementaryModel = provider.supplementarySectionItem(atSection: section)?.header else {
+        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.header else {
             return .zero
         }
-        return collectionHeaderItemSizeHandler?(section, supplementaryModel) ?? .zero
+        return collectionHeaderItemSizeHandler?(section, supplementarySectionItem) ?? .zero
     }
     
     open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        guard let supplementaryModel = provider.supplementarySectionItem(atSection: section)?.footer else {
+        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.footer else {
             return .zero
         }
-        return collectionFooterItemSizeHandler?(section, supplementaryModel) ?? .zero
+        return collectionFooterItemSizeHandler?(section, supplementarySectionItem) ?? .zero
     }
     
     // Since each collectionView/dataSource displays different cells,
