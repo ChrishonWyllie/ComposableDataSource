@@ -7,7 +7,11 @@
 
 import UIKit
 
-open class CollectionDataSource<Provider: CollectionDataProvider, Cell: UICollectionViewCell>:
+/**
+ Object for encapsulating UICollectionView delegate, datasource, delegateFlowLayout and datasourcePrefetching
+ 
+ */
+open class CollectionDataSource<Provider: CollectionDataProvider, Cell: UICollectionViewCell, View: UICollectionReusableView>:
     NSObject,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
@@ -21,26 +25,26 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     public private(set) var collectionView: UICollectionView
     public var emptyDataSourceView: UIView?
     
-    internal var collectionItemSelectionHandler: CollectionItemSelectionHandler<Provider.T>?
-    internal var collectionItemDeselectionHandler: CollectionItemDeselectionHandler<Provider.T>?
-    internal var collectionItemSizeHandler: CollectionItemSizeHandler<Provider.T>?
-    internal var collectionHeaderItemSizeHandler: CollectionSupplementaryHeaderSizeHandler<Provider.U>?
-    internal var collectionFooterItemSizeHandler: CollectionSupplementaryFooterSizeHandler<Provider.U>?
-    internal var collectionBeginPrefetchingHandler: CollectionBeginPrefetchingHandler<Provider.T>?
-    internal var collectionCancelPrefetchingHandler: CollectionCancelPrefetchingHandler<Provider.T>?
+    internal var composableItemSelectionHandler: ComposableItemSelectionHandler<Provider.T>?
+    internal var composableItemDeselectionHandler: ComposableItemDeselectionHandler<Provider.T>?
+    internal var composableItemSizeHandler: ComposableItemSizeHandler<Provider.T>?
+    internal var composableHeaderItemSizeHandler: ComposableSupplementaryHeaderSizeHandler<Provider.U>?
+    internal var composableFooterItemSizeHandler: ComposableSupplementaryFooterSizeHandler<Provider.U>?
+    internal var composableBeginPrefetchingHandler: ComposableBeginPrefetchingHandler<Provider.T>?
+    internal var composableCancelPrefetchingHandler: ComposableCancelPrefetchingHandler<Provider.T>?
     
-    internal var collectionContentOffsetHandler: CollectionContentOffset?
-    internal var scrollViewWillBeginDraggingHandler: CollectionScrollViewWillBeginDragging?
-    internal var scrollViewDidEndScrollAnimationHandler: CollectionScrollViewDidEndScrollAnimation?
-    internal var scrollViewDidEndDeceleratingHandler: CollectionScrollViewDidEndDecelerating?
-    internal var scrollViewWillEndDraggingHandler: CollectionScrollViewWillEndDragging?
-    internal var scrollViewDidEndDraggingHandler: CollectionScrollViewDidEndDragging?
+    internal var composableContentOffsetHandler: ComposableContentOffsetHandler?
+    internal var composableScrollViewWillBeginDraggingHandler: ComposableScrollViewWillBeginDraggingHandler?
+    internal var composableScrollViewDidEndScrollAnimationHandler: ComposableScrollViewDidEndScrollAnimationHandler?
+    internal var composableScrollViewDidEndDeceleratingHandler: ComposableScrollViewDidEndDeceleratingHandler?
+    internal var composableScrollViewWillEndDraggingHandler: ComposableScrollViewWillEndDraggingHandler?
+    internal var composableScrollViewDidEndDraggingHandler: ComposableScrollViewDidEndDraggingHandler?
     
     
 
     // MARK: - Initialiers
     
-    public init(collectionView: UICollectionView, provider: Provider) {
+    internal init(collectionView: UICollectionView, provider: Provider) {
         self.collectionView = collectionView
         self.provider = provider
         super.init()
@@ -111,14 +115,14 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
         // Here's another link on the subject
         // https://www.raywenderlich.com/667-bond-tutorial-bindings-in-swift
         // https://stackoverflow.com/questions/50039663/uicollectionviewcell-talking-to-its-uicollectionviewcontroller
-        collectionItemSelectionHandler?(indexPath, item)
+        composableItemSelectionHandler?(indexPath, item)
     }
     
     open func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         guard let item = provider.item(atIndexPath: indexPath) else {
             return
         }
-        collectionItemDeselectionHandler?(indexPath, item)
+        composableItemDeselectionHandler?(indexPath, item)
     }
     
     open func collectionView(_ collectionView: UICollectionView,
@@ -138,7 +142,7 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
             return .zero
         }
         
-        return collectionItemSizeHandler?(indexPath, item) ?? .init(width: 50, height: 50)
+        return composableItemSizeHandler?(indexPath, item) ?? .init(width: 50, height: 50)
     }
     
     open func collectionView(_ collectionView: UICollectionView,
@@ -198,14 +202,14 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
         guard let items = provider.items(atIndexPaths: indexPaths) else {
             return
         }
-        collectionBeginPrefetchingHandler?(indexPaths, items)
+        composableBeginPrefetchingHandler?(indexPaths, items)
     }
     
     open func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
         guard let items = provider.items(atIndexPaths: indexPaths) else {
             return
         }
-        collectionCancelPrefetchingHandler?(indexPaths, items)
+        composableCancelPrefetchingHandler?(indexPaths, items)
     }
     
     
@@ -215,26 +219,26 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     // MARK: - UIScrollView delegate
     
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        collectionContentOffsetHandler?(scrollView.contentOffset)
+        composableContentOffsetHandler?(scrollView.contentOffset)
     }
     
     open func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        scrollViewWillBeginDraggingHandler?(scrollView)
+        composableScrollViewWillBeginDraggingHandler?(scrollView)
     }
     
     open func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        scrollViewWillEndDraggingHandler?(scrollView, velocity, targetContentOffset)
+        composableScrollViewWillEndDraggingHandler?(scrollView, velocity, targetContentOffset)
     }
     
     open func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        scrollViewDidEndDraggingHandler?(scrollView, decelerate)
+        composableScrollViewDidEndDraggingHandler?(scrollView, decelerate)
     }
     
     open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        scrollViewDidEndScrollAnimationHandler?(scrollView)
+        composableScrollViewDidEndScrollAnimationHandler?(scrollView)
     }
     
     open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        scrollViewDidEndDeceleratingHandler?(scrollView)
+        composableScrollViewDidEndDeceleratingHandler?(scrollView)
     }
 }

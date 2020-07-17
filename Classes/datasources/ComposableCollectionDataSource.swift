@@ -133,14 +133,14 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource<Gener
         guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.header else {
             return .zero
         }
-        return collectionHeaderItemSizeHandler?(section, supplementarySectionItem) ?? .zero
+        return composableHeaderItemSizeHandler?(section, supplementarySectionItem) ?? .zero
     }
     
     open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
         guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.footer else {
             return .zero
         }
-        return collectionFooterItemSizeHandler?(section, supplementarySectionItem) ?? .zero
+        return composableFooterItemSizeHandler?(section, supplementarySectionItem) ?? .zero
     }
     
     // Since each collectionView/dataSource displays different cells,
@@ -257,38 +257,38 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource<Gener
     
     
     
-    @discardableResult open func handleSelection(_ completion: @escaping CollectionItemSelectionHandler<GenericCellModel>) -> ComposableCollectionDataSource {
-        super.collectionItemSelectionHandler = completion
+    @discardableResult open func handleSelection(_ completion: @escaping ComposableItemSelectionHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+        super.composableItemSelectionHandler = completion
         return self
     }
        
-    @discardableResult open func handleDeselection(_ completion: @escaping CollectionItemDeselectionHandler<GenericCellModel>) -> ComposableCollectionDataSource {
-        super.collectionItemDeselectionHandler = completion
+    @discardableResult open func handleDeselection(_ completion: @escaping ComposableItemDeselectionHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+        super.composableItemDeselectionHandler = completion
         return self
     }
     
-    @discardableResult open func handleItemSize(_ completion: @escaping CollectionItemSizeHandler<GenericCellModel>) -> ComposableCollectionDataSource {
-        super.collectionItemSizeHandler = completion
+    @discardableResult open func handleItemSize(_ completion: @escaping ComposableItemSizeHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+        super.composableItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handleSupplementaryHeaderItemSize(_ completion: @escaping CollectionSupplementaryHeaderSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource {
-        super.collectionHeaderItemSizeHandler = completion
+    @discardableResult open func handleSupplementaryHeaderItemSize(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource {
+        super.composableHeaderItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handleSupplementaryFooterItemSize(_ completion: @escaping CollectionSupplementaryFooterSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource {
-        super.collectionFooterItemSizeHandler = completion
+    @discardableResult open func handleSupplementaryFooterItemSize(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource {
+        super.composableFooterItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handlRequestedPrefetching(_ completion: @escaping CollectionBeginPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource {
-        super.collectionBeginPrefetchingHandler = completion
+    @discardableResult open func handlRequestedPrefetching(_ completion: @escaping ComposableBeginPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+        super.composableBeginPrefetchingHandler = completion
         return self
     }
     
-    @discardableResult open func handleCanceledPrefetching(_ completion: @escaping CollectionCancelPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource {
-        super.collectionCancelPrefetchingHandler = completion
+    @discardableResult open func handleCanceledPrefetching(_ completion: @escaping ComposableCancelPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+        super.composableCancelPrefetchingHandler = completion
         return self
     }
 }

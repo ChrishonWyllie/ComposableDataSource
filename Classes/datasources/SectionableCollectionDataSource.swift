@@ -9,7 +9,7 @@ import UIKit
 
 open class SectionableCollectionDataSource
     <T, Cell: UICollectionViewCell, S, U, View: UICollectionReusableView>:
-    CollectionDataSource<DataSourceProvider<T, S, U>, Cell>
+    CollectionDataSource<DataSourceProvider<T, S, U>, Cell, View>
 where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSupplementaryView, View.T == U
 {
     
