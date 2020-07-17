@@ -30,6 +30,51 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         registerItems(in: dataProvider)
     }
     
+    
+    
+    
+    
+    internal func registerItems(in dataProvider: DataSourceProvider<T, S, U>) {
+        register(cellItems: dataProvider.allCellItems(), supplementarySectionItems: dataProvider.allSupplementarySectionItems())
+    }
+    
+    internal func register(cellItems: [[T]], supplementarySectionItems: [S]) {
+        register(cellItems: cellItems.flatten() as! [T], supplementarySectionItems: supplementarySectionItems)
+    }
+    
+    internal func register(cellItems: [T], supplementarySectionItems: [S]) {
+        
+        if cellItems.count > 0 {
+            cellItems.compactMap { (cellItem) -> GenericCellModel in
+                return (cellItem as! GenericCellModel)
+            }.forEach { (cellItem) in
+                super.collectionView.register((cellItem.cellClass).self,
+                                                forCellWithReuseIdentifier: String(describing: type(of: (cellItem.cellClass))))
+            }
+        }
+        
+        if supplementarySectionItems.count > 0 {
+            supplementarySectionItems.forEach { (supplementarySectionItem) in
+                guard let supplementarySectionItem = supplementarySectionItem as? GenericSupplementarySectionModel else { fatalError() }
+                
+                if let header = supplementarySectionItem.header {
+                    super.collectionView.register((header.supplementaryViewClass).self,
+                                                  forSupplementaryViewOfKind: header.viewKind,
+                                                  withReuseIdentifier: String(describing: type(of: header.supplementaryViewClass.self)))
+                }
+                if let footer = supplementarySectionItem.footer {
+                    super.collectionView.register((footer.supplementaryViewClass).self,
+                                                  forSupplementaryViewOfKind: footer.viewKind,
+                                                  withReuseIdentifier: String(describing: type(of: footer.supplementaryViewClass.self)))
+                }
+            }
+        }
+    }
+    
+    
+    
+    
+    
     // MARK: - Public Methods
     
     public func item(atIndexPath indexPath: IndexPath) -> T? {
@@ -63,43 +108,6 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
     
     public func numberOfItems(in section: Int) -> Int {
         return super.provider.numberOfItems(in: section)
-    }
-    
-    public func registerItems(in dataProvider: DataSourceProvider<T, S, U>) {
-        register(cellItems: dataProvider.allCellItems(), supplementarySectionItems: dataProvider.allSupplementarySectionItems())
-    }
-    
-    public func register(cellItems: [[T]], supplementarySectionItems: [S]) {
-        register(cellItems: cellItems.flatten() as! [T], supplementarySectionItems: supplementarySectionItems)
-    }
-    
-    public func register(cellItems: [T], supplementarySectionItems: [S]) {
-        
-        if cellItems.count > 0 {
-            cellItems.compactMap { (cellItem) -> GenericCellModel in
-                return (cellItem as! GenericCellModel)
-            }.forEach { (cellItem) in
-                super.collectionView.register((cellItem.cellClass).self,
-                                                forCellWithReuseIdentifier: String(describing: type(of: (cellItem.cellClass))))
-            }
-        }
-        
-        if supplementarySectionItems.count > 0 {
-            supplementarySectionItems.forEach { (supplementarySectionItem) in
-                guard let supplementarySectionItem = supplementarySectionItem as? GenericSupplementarySectionModel else { fatalError() }
-                
-                if let header = supplementarySectionItem.header {
-                    super.collectionView.register((header.supplementaryViewClass).self,
-                                                  forSupplementaryViewOfKind: header.viewKind,
-                                                  withReuseIdentifier: String(describing: type(of: header.supplementaryViewClass.self)))
-                }
-                if let footer = supplementarySectionItem.footer {
-                    super.collectionView.register((footer.supplementaryViewClass).self,
-                                                  forSupplementaryViewOfKind: footer.viewKind,
-                                                  withReuseIdentifier: String(describing: type(of: footer.supplementaryViewClass.self)))
-                }
-            }
-        }
     }
     
     public func updateCellItems(atIndexPaths indexPaths: [IndexPath],
@@ -315,14 +323,6 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
         }
     }
     
-    public func reset(keepingStructure: Bool = true, reload: Bool? = nil) {
-        provider.reset(keepingStructure: keepingStructure)
-        
-        if reload == true {
-            super.collectionView.reloadData()
-        }
-    }
-    
     public func replaceDataSource(withCellItems cellItems: [[T]],
                                   supplementarySectionItems: [S],
                                   updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
@@ -348,6 +348,14 @@ where Cell: ConfigurableReusableCell, Cell.T == T, View: ConfigurableReusableSup
             replaceWithBatchUpdates()
         } else {
             replaceImmediately()
+        }
+    }
+    
+    public func reset(keepingStructure: Bool = true, reload: Bool = true) {
+        provider.reset(keepingStructure: keepingStructure)
+        
+        if reload == true {
+            super.collectionView.reloadData()
         }
     }
 }

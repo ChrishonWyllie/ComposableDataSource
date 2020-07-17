@@ -562,22 +562,6 @@ public protocol CollectionDataProvider {
     */
     func deleteSupplementarySectionItems(atSections sections: [Int])
     
-    
-    /**
-     Resets the data provider to its initial empty state
-     
-    - Usage:
-     ```
-     let dataSource = ....
-     dataSource.reset(keepingStructure: true)
-     ```
-     
-    - Parameters:
-        - keepingStructure: Determines if only the cell items and supplementary section items in each section will be removed, but the stucture of sections is maintained, i.e., empty sections will be left over. Otherwise, everything is purged, leaving a completely empty data source with 0 sections
-     
-    */
-    func reset(keepingStructure: Bool)
-    
     /**
      Completely replaces entire data source with new cell items and supplementary section items, regardless of existing items and/or section structure
           
@@ -594,4 +578,20 @@ public protocol CollectionDataProvider {
         - supplementarySectionItems: The new supplementary section items to replace with
     */
     func replaceDataSource(withCellItems cellItems: [[T]], supplementarySectionItems: [S])
+    
+    /**
+     Resets the data provider to its initial empty state
+     
+    - Usage:
+     ```
+     let dataSource = ....
+     dataSource.reset(keepingStructure: true)
+     ```
+     
+    - Parameters:
+        - keepingStructure: Determines if only the cell items and supplementary section items in each section will be removed, but the stucture of sections is maintained, i.e., empty sections will be left over. Otherwise, everything is purged, leaving a completely empty data source with 0 sections
+     
+    */
+    func reset(keepingStructure: Bool)
+    
 }
