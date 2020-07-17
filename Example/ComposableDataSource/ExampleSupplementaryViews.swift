@@ -9,21 +9,6 @@
 import UIKit
 import ComposableDataSource
 
-protocol SupplementaryItemModel {
-    var title: String { get }
-}
-
-struct HeaderItemModel: GenericSupplementaryModel, SupplementaryItemModel {
-    var viewKind: String {
-        return UICollectionView.elementKindSectionHeader
-    }
-    
-    var supplementaryViewClass: AnyClass {
-        return ExampleSupplementaryHeaderView.self
-    }
-    let title: String
-}
-
 class ExampleSupplementaryHeaderView: GenericCollectionReusableView {
     
     override func configure(with item: GenericSupplementaryModel, at indexPath: IndexPath) {

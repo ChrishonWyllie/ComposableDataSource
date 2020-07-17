@@ -297,6 +297,14 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
     
     
     
+    // MARK: - Overwrite
+    
+    public func replaceDataSource(withCellItems cellItems: [[T]], supplementarySectionItems: [S]) {
+        self.reset()
+        self.cellItems = cellItems
+        self.supplementarySectionItems = supplementarySectionItems
+    }
+    
     public func reset(keepingStructure: Bool = true) {
         if keepingStructure == true {
             for i in 0..<cellItems.count {
@@ -310,11 +318,5 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
             cellItems.removeAll()
             supplementarySectionItems.removeAll()
         }
-    }
-    
-    public func replaceDataSource(withCellItems cellItems: [[T]], supplementarySectionItems: [S]) {
-        self.reset()
-        self.cellItems = cellItems
-        self.supplementarySectionItems = supplementarySectionItems
     }
 }
