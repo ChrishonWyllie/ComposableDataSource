@@ -57,7 +57,7 @@ class ViewController: UIViewController {
             return
         }
         
-        var supplementaryModels: [GenericSupplementaryHeaderFooterModel] = []
+        var supplementaryModels: [GenericSupplementarySectionModel] = []
         var cellModels: [GenericCellModel] = []
         
         let group = DispatchGroup()
@@ -67,7 +67,7 @@ class ViewController: UIViewController {
         URLSession.shared.dataTask(with: url) { (data, response, error) in
             
             let headerModel = HeaderItemModel(title: urlString)
-            let containerModel = GenericSupplementaryHeaderFooterModel(header: headerModel, footer: nil)
+            let containerModel = GenericSupplementarySectionModel(header: headerModel, footer: nil)
             supplementaryModels.append(containerModel)
             
             guard let data = data else { return }
@@ -90,18 +90,20 @@ class ViewController: UIViewController {
         }.resume()
         
         group.notify(queue: DispatchQueue.main) {
-            self.dataSource?.replaceAllItems(with: [cellModels], supplementaryContainerItems: supplementaryModels, updateStyle: .withBatchUpdates, completion: nil)
+            self.dataSource?.replaceDataSource(withCellItems: [cellModels],
+                                               supplementarySectionItems: supplementaryModels,
+                                               completion: nil)
         }
     }
 
     private func setupDataSource() -> ComposableCollectionDataSource {
             
         let models: [[GenericCellModel]] = [[]]
-        let supplementaryModels: [GenericSupplementaryContainerModel] = []
+        let supplementaryModels: [GenericSupplementarySectionModel] = []
         
-        let dataSource = ComposableCollectionDataSource(collectionView: collectionView, array: models, supplementaryItems: supplementaryModels)
+        let dataSource = ComposableCollectionDataSource(collectionView: collectionView, cellItems: models, supplementarySectionItems: supplementaryModels)
         .handleSelection { (indexPath, model) in
-                print("selected model: \(model) at indexPath: \(indexPath)")
+            print("selected model: \(model) at indexPath: \(indexPath)")
         }.handleItemSize { [unowned self] (indexPath, model) -> CGSize in
             return CGSize.init(width: self.collectionView.frame.size.width, height: 400.0)
         }.handleSupplementaryHeaderItemSize { [unowned self] (indexPath, model) -> CGSize in

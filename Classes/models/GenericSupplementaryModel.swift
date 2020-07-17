@@ -29,16 +29,13 @@ public protocol GenericSupplementaryModel {
 // and some show both.
 // The properties are optional
 
-// TODO
-// This protocol is somewhat unnecessary since the GenericSupplementaryHeaderFooterModel
-// is the only model that implements it
 
-public protocol GenericSupplementaryContainerModel {
+public protocol GenericSupplementarySectionModelProtocol {
     var header: GenericSupplementaryModel? { get }
     var footer: GenericSupplementaryModel? { get }
 }
 
-public struct GenericSupplementaryHeaderFooterModel: GenericSupplementaryContainerModel {
+public struct GenericSupplementarySectionModel: GenericSupplementarySectionModelProtocol {
     public private(set) var header: GenericSupplementaryModel?
     public private(set) var footer: GenericSupplementaryModel?
     
