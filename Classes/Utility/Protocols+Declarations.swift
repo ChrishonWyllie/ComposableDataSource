@@ -5,7 +5,7 @@
 //  Created by Chrishon Wyllie on 7/8/20.
 //
 
-import Foundation
+import UIKit
 
 // MARK: - Configurable Views
 
@@ -132,6 +132,201 @@ GenericSupplementarySectionModel,
 GenericSupplementaryModel,
 GenericCollectionViewCell,
 GenericCollectionReusableView>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public protocol ComposableDataSourceProtocol {
+    
+    /**
+     Provides completion block for handling UICollectionView selection events.
+     Treat completion block as you would when implementing `collectionView(_:didSelectItemAt:)`
+     
+    - Usage:
+    ```
+    let dataSource = ...
+    dataSource.handleSelection { (indexPath: IndexPath, cellItem: GenericCellModel) in
+        // ... Handle cell selection
+    }
+    ```
+     
+    - Parameters:
+        - completion: Completion handler block in which you will handle selection events using the selected cell item at the selected IndexPath
+    */
+    @discardableResult func handleSelection(_ completion: @escaping ComposableItemSelectionHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+       
+    /**
+     Provides completion block for handling UICollectionView deselection events.
+     Treat completion block as you would when implementing `collectionView(_:didDeselectItemAt:)`
+     
+    - Usage:
+    ```
+    let dataSource = ...
+    dataSource.handleDeselection { (indexPath: IndexPath, cellItem: GenericCellModel) in
+        // ... Handle cell deselection
+    }
+    ```
+     
+    - Parameters:
+        - completion: Completion handler block in which you will handle deselection events using the deselected cell item at the deselected IndexPath
+    */
+    @discardableResult func handleDeselection(_ completion: @escaping ComposableItemDeselectionHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+    
+    /**
+     Provides completion block for returning UICollectionViewCell sizes at specific indexPaths
+     Treat completion block as you would when implementing `collectionView(_:layout:sizeForItemAt:)`
+     
+    - Usage:
+    ```
+    let dataSource = ...
+    dataSource.handleItemSize { (indexPath: IndexPath, cellItem: GenericCellModel) in
+        // ... Handle cell size
+    }
+    ```
+     
+    - Parameters:
+        - completion: Completion handler block in which you will provide custom cell sizing using the deselected cell item at the deselected IndexPath
+    */
+    @discardableResult func handleItemSize(_ completion: @escaping ComposableItemSizeHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+    
+    /**
+     Provides completion block for returning UICollectionReusableView header sizes at specific indexPaths
+     Treat completion block as you would when implementing `collectionView(_:layout:referenceSizeForHeaderInSection:)`
+     
+    - Usage:
+    ```
+    let dataSource = ...
+    dataSource.handleSupplementaryHeaderItemSize { (section: Int, supplementaryItem: GenericSupplementaryModel) in
+        // ... Handle header supplementary view size
+    }
+    ```
+     
+    - Parameters:
+        - completion: Completion handler block in which you will provide custom supplementary view sizing using the supplementary view item at the section index
+    */
+    @discardableResult func handleSupplementaryHeaderItemSize(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<GenericSupplementaryModel>) -> ComposableDataSourceProtocol
+    
+    /**
+     Provides completion block for returning UICollectionReusableView footer sizes at specific indexPaths
+     Treat completion block as you would when implementing `collectionView(_:layout:referenceSizeForFooterInSection:)`
+     
+    - Usage:
+    ```
+    let dataSource = ...
+    dataSource.handleSupplementaryFooterItemSize { (section: Int, supplementaryItem: GenericSupplementaryModel) in
+        // ... Handle footer supplementary view size
+    }
+    ```
+     
+    - Parameters:
+        - completion: Completion handler block in which you will provide custom supplementary view sizing using the supplementary view item at the section index
+    */
+    @discardableResult func handleSupplementaryFooterItemSize(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<GenericSupplementaryModel>) -> ComposableDataSourceProtocol
+    
+    /**
+     Provides completion block for handling UICollectionView prefetching events.
+     Treat completion block as you would when implementing `collectionView(_:prefetchItemsAt:)`
+     
+    - Usage:
+    ```
+    let dataSource = ...
+    dataSource.handlRequestedPrefetching { (indexPaths: [IndexPath], cellItems: [GenericCellModel]) in
+        // ... Handle prefetching with the requested cell items
+    }
+    ```
+     
+    - Parameters:
+        - completion: Completion handler block in which you will perform some "pre-heat" action on the requested cell items that are about to be displayed
+    */
+    @discardableResult func handlRequestedPrefetching(_ completion: @escaping ComposableBeginPrefetchingHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+    
+    /**
+     Provides completion block for handling UICollectionView cancelled prefetching events.
+     Treat completion block as you would when implementing `collectionView(_:cancelPrefetchingForItemsAt:)`
+     
+    - Usage:
+    ```
+    let dataSource = ...
+    dataSource.handleCanceledPrefetching { (indexPaths: [IndexPath], cellItems: [GenericCellModel]) in
+        // ... Handle cancellations on the previously requested/prefetched cell items
+    }
+    ```
+     
+    - Parameters:
+        - completion: Completion handler block in which you will cancel some "pre-heat" action on the requested cell items
+    */
+    @discardableResult func handleCanceledPrefetching(_ completion: @escaping ComposableCancelPrefetchingHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

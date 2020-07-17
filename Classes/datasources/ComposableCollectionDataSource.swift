@@ -9,9 +9,7 @@ import UIKit
 
 // This class can handle multiple kinds of UICollectionViewCells
 
-open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtocol {
-    
-    
+open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtocol, ComposableDataSourceProtocol {
     
     // MARK: - Variables
     
@@ -183,37 +181,37 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     
     // MARK: - Builder functions
     
-    @discardableResult open func handleSelection(_ completion: @escaping ComposableItemSelectionHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleSelection(_ completion: @escaping ComposableItemSelectionHandler<GenericCellModel>) -> ComposableDataSourceProtocol {
         super.composableItemSelectionHandler = completion
         return self
     }
        
-    @discardableResult open func handleDeselection(_ completion: @escaping ComposableItemDeselectionHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleDeselection(_ completion: @escaping ComposableItemDeselectionHandler<GenericCellModel>) -> ComposableDataSourceProtocol {
         super.composableItemDeselectionHandler = completion
         return self
     }
     
-    @discardableResult open func handleItemSize(_ completion: @escaping ComposableItemSizeHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleItemSize(_ completion: @escaping ComposableItemSizeHandler<GenericCellModel>) -> ComposableDataSourceProtocol {
         super.composableItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handleSupplementaryHeaderItemSize(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleSupplementaryHeaderItemSize(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<GenericSupplementaryModel>) -> ComposableDataSourceProtocol {
         super.composableHeaderItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handleSupplementaryFooterItemSize(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleSupplementaryFooterItemSize(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<GenericSupplementaryModel>) -> ComposableDataSourceProtocol {
         super.composableFooterItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handlRequestedPrefetching(_ completion: @escaping ComposableBeginPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handlRequestedPrefetching(_ completion: @escaping ComposableBeginPrefetchingHandler<GenericCellModel>) -> ComposableDataSourceProtocol {
         super.composableBeginPrefetchingHandler = completion
         return self
     }
     
-    @discardableResult open func handleCanceledPrefetching(_ completion: @escaping ComposableCancelPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleCanceledPrefetching(_ completion: @escaping ComposableCancelPrefetchingHandler<GenericCellModel>) -> ComposableDataSourceProtocol {
         super.composableCancelPrefetchingHandler = completion
         return self
     }
