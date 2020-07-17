@@ -16,10 +16,23 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource
     GenericCollectionViewCell,
     GenericCollectionReusableView> {
     
+    
+    
+    // MARK: - Variables
+    
     public static var debugModeIsActive: Bool = false
     
     private var cellPadding: UIEdgeInsets = .zero
     private var cellCornerRadius: CGFloat = 0.0
+    
+    public var isEmpty: Bool {
+        return super.provider.isEmpty
+    }
+    
+    
+    
+    
+    // MARK: - Initializers
     
     public init(collectionView: UICollectionView,
                 cellItems: [[GenericCellModel]],
@@ -44,9 +57,7 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource
         self.cellCornerRadius = cellCornerRadius
     }
     
-    public var isEmpty: Bool {
-        return super.provider.isEmpty
-    }
+    
     
     private func getRoundedRectCorners(for indexPath: IndexPath) -> UIRectCorner {
         var corners: UIRectCorner = []
@@ -61,94 +72,7 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource
         return corners
     }
     
-    open override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if self.cellPadding != .zero && self.cellCornerRadius > 0.0 {
-            let corners: UIRectCorner = getRoundedRectCorners(for: indexPath)
-            cell.roundCellCorners(with: cellPadding,
-                                  corners: corners,
-                                  cornerRadius: cellCornerRadius,
-                                  forItemAt: indexPath,
-                                  in: collectionView)
-        }
-    }
     
-    open override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        guard let item = super.provider.item(atIndexPath: indexPath) else {
-            return UICollectionViewCell()
-        }
-        
-        let cellType = type(of: item.cellClass)
-        
-        var cell: GenericCollectionViewCell?
-        
-        cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: cellType), for: indexPath) as? GenericCollectionViewCell
-        cell?.configure(with: item, at: indexPath)
-        
-        if self.cellPadding != .zero {
-            cell?.setContentViewPadding(padding: cellPadding)
-        }
-        
-        return cell!
-    }
-    
-    open override func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
-        if self.cellPadding != .zero && self.cellCornerRadius > 0.0 {
-            view.roundCorners(with: cellPadding, corners: [.allCorners], cornerRadius: cellCornerRadius)
-        }
-    }
-    
-    open override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        
-        guard let supplementarySectionItem = super.supplementarySectionItem(atSection: indexPath.section) else {
-            DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - Could not get supplementary item at index section: \(indexPath.section)")
-            DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - supplementary items: \(String(describing: super.provider.allSupplementarySectionItems().count))")
-            DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - supplementary items: \(String(describing: super.supplementarySectionItem(atSection: indexPath.section)))")
-            return UICollectionReusableView()
-        }
-        
-        var supplementaryItem: GenericSupplementaryModel?
-        
-        switch kind {
-        case UICollectionView.elementKindSectionHeader:
-            supplementaryItem = supplementarySectionItem.header
-        case UICollectionView.elementKindSectionFooter:
-            supplementaryItem = supplementarySectionItem.footer
-        default: fatalError()
-        }
-        
-        guard let item = supplementaryItem else {
-            return UICollectionReusableView()
-        }
-        
-        let viewType = type(of: item.supplementaryViewClass)
-        
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: viewType), for: indexPath) as? GenericCollectionReusableView
-        DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - generic supplementary item: \(item)")
-        DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - generic supplementary view type: \(viewType)")
-        view?.configure(with: item, at: indexPath)
-        
-        if self.cellPadding != .zero {//&& self.cellCornerRadius > 0.0 {
-            view?.setContentViewPadding(padding: cellPadding)
-        }
-        
-        return view!
-    }
-    
-    open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        
-        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.header else {
-            return .zero
-        }
-        return composableHeaderItemSizeHandler?(section, supplementarySectionItem) ?? .zero
-    }
-    
-    open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.footer else {
-            return .zero
-        }
-        return composableFooterItemSizeHandler?(section, supplementarySectionItem) ?? .zero
-    }
     
     // Since each collectionView/dataSource displays different cells,
     // The method of determing the IndexPath of a specific model will
@@ -262,7 +186,7 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource
     
     
     
-    
+    // MARK: - Builder functions
     
     @discardableResult open func handleSelection(_ completion: @escaping ComposableItemSelectionHandler<GenericCellModel>) -> ComposableCollectionDataSource {
         super.composableItemSelectionHandler = completion
@@ -297,5 +221,105 @@ open class ComposableCollectionDataSource: SectionableCollectionDataSource
     @discardableResult open func handleCanceledPrefetching(_ completion: @escaping ComposableCancelPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource {
         super.composableCancelPrefetchingHandler = completion
         return self
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // MARK: - Overriden functions
+    
+    open override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if self.cellPadding != .zero && self.cellCornerRadius > 0.0 {
+            let corners: UIRectCorner = getRoundedRectCorners(for: indexPath)
+            cell.roundCellCorners(with: cellPadding,
+                                  corners: corners,
+                                  cornerRadius: cellCornerRadius,
+                                  forItemAt: indexPath,
+                                  in: collectionView)
+        }
+    }
+    
+    open override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        guard let item = super.provider.item(atIndexPath: indexPath) else {
+            return UICollectionViewCell()
+        }
+        
+        let cellType = type(of: item.cellClass)
+        
+        var cell: GenericCollectionViewCell?
+        
+        cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: cellType), for: indexPath) as? GenericCollectionViewCell
+        cell?.configure(with: item, at: indexPath)
+        
+        if self.cellPadding != .zero {
+            cell?.setContentViewPadding(padding: cellPadding)
+        }
+        
+        return cell!
+    }
+    
+    open override func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+        if self.cellPadding != .zero && self.cellCornerRadius > 0.0 {
+            view.roundCorners(with: cellPadding, corners: [.allCorners], cornerRadius: cellCornerRadius)
+        }
+    }
+    
+    open override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        guard let supplementarySectionItem = super.supplementarySectionItem(atSection: indexPath.section) else {
+            DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - Could not get supplementary item at index section: \(indexPath.section)")
+            DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - supplementary items: \(String(describing: super.provider.allSupplementarySectionItems().count))")
+            DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - supplementary items: \(String(describing: super.supplementarySectionItem(atSection: indexPath.section)))")
+            return UICollectionReusableView()
+        }
+        
+        var supplementaryItem: GenericSupplementaryModel?
+        
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            supplementaryItem = supplementarySectionItem.header
+        case UICollectionView.elementKindSectionFooter:
+            supplementaryItem = supplementarySectionItem.footer
+        default: fatalError()
+        }
+        
+        guard let item = supplementaryItem else {
+            return UICollectionReusableView()
+        }
+        
+        let viewType = type(of: item.supplementaryViewClass)
+        
+        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: viewType), for: indexPath) as? GenericCollectionReusableView
+        DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - generic supplementary item: \(item)")
+        DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - generic supplementary view type: \(viewType)")
+        view?.configure(with: item, at: indexPath)
+        
+        if self.cellPadding != .zero {//&& self.cellCornerRadius > 0.0 {
+            view?.setContentViewPadding(padding: cellPadding)
+        }
+        
+        return view!
+    }
+    
+    open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        
+        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.header else {
+            return .zero
+        }
+        return composableHeaderItemSizeHandler?(section, supplementarySectionItem) ?? .zero
+    }
+    
+    open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.footer else {
+            return .zero
+        }
+        return composableFooterItemSizeHandler?(section, supplementarySectionItem) ?? .zero
     }
 }
