@@ -106,8 +106,13 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
         self.cellItems[section].insert(contentsOf: cellItems, at: index ?? 0)
     }
     
-    public func insertNewSection(with cellItems: [T], atSection section: Int) {
-        self.cellItems.insert(cellItems, at: section)
+    public func insertNewSection(withCellItems cellItems: [T], supplementarySectionItem: S, atSection section: Int) {
+        if cellItems.isEmpty == false {
+            self.cellItems.insert(cellItems, at: section)
+        }
+        if supplementarySectionItems.isEmpty == false {
+            self.supplementarySectionItems.insert(supplementarySectionItem, at: section)
+        }
     }
     
     public func insert(supplementarySectionItem: S, atSection section: Int) {

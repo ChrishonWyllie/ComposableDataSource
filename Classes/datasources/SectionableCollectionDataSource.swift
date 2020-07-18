@@ -162,6 +162,30 @@ open class SectionableCollectionDataSource
         }
     }
     
+    public func insertNewSection(withCellItems cellItems: [T], supplementarySectionItem: S, atSection section: Int, updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
+        
+        register(cellItems: cellItems, supplementarySectionItems: [supplementarySectionItem])
+        
+        func insertWithBatchUpdates() {
+            super.collectionView.performBatchUpdates({
+                super.provider.insertNewSection(withCellItems: cellItems, supplementarySectionItem: supplementarySectionItem, atSection: section)
+                super.collectionView.insertSections(IndexSet(integer: section))
+            }, completion: completion)
+        }
+        
+        func insertImmediately() {
+            super.provider.insertNewSection(withCellItems: cellItems, supplementarySectionItem: supplementarySectionItem, atSection: section)
+            super.collectionView.reloadData()
+            super.collectionView.performBatchUpdates(nil, completion: completion)
+        }
+        
+        if updateStyle == .withBatchUpdates {
+            insertWithBatchUpdates()
+        } else {
+            insertImmediately()
+        }
+    }
+    
     public func item(atIndexPath indexPath: IndexPath) -> T? {
         return super.provider.item(atIndexPath: indexPath)
     }

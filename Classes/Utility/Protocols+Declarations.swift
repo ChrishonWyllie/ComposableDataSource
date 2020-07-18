@@ -429,6 +429,31 @@ public protocol SectionableDataSourceProtocol {
                 completion: OptionalCompletionHandler)
     
     /**
+     Inserts a new section with a new array of cell items and supplementary section items at a specified section index. Essentially, moves down sections after this index and creates room for new section
+     
+    - Usage:
+     ```
+     let dataSource = ....
+     let itemsToInsert = [....]
+     let supplementarySectionItem = ....
+     let sectionIndex: Int = 3
+     dataSource.insertNewSection(withCellItems: itemsToInsert, supplementarySectionItem: supplementarySectionItem, atSection: sectionIndex, updateStyle: .withBatchUpdates, completion: nil)
+     ```
+     
+    - Parameters:
+        - cellItems: The new cell items to insert
+        - supplementarySectionItem: The new supplementary section item to insert
+        - section: The section index that will be created/inserted with the new cell items
+        - updateStyle: Enum dictating how the updates will happen, either by calling `performBatchUpdates(...)` or with `reloadData()`
+        - completion: Completion handler called at the end of function
+    */
+    func insertNewSection(withCellItems cellItems: [T],
+                          supplementarySectionItem: S,
+                          atSection section: Int,
+                          updateStyle: DataSourceUpdateStyle,
+                          completion: OptionalCompletionHandler)
+    
+    /**
      Returns a cell item at the specified indexPath
      
     - Note:
@@ -844,7 +869,7 @@ public protocol CollectionDataProvider {
     func insert(cellItems: [T], inNestedSection section: Int, atIndex index: Int?)
     
     /**
-     Inserts a new section with a new array of cell items at a specified section index. Essentially, moves down sections after this index and creates room for new section
+     Inserts a new section with a new array of cell items and supplementary section items at a specified section index. Essentially, moves down sections after this index and creates room for new section
      
     - Note:
      Be aware that adding new sections will require calling `collectionView.insertSections()` if using `collectionView.performBatchUpdates(...)`
@@ -853,16 +878,18 @@ public protocol CollectionDataProvider {
      ```
      let provider = ....
      let itemsToInsert = [....]
+     let supplementarySectionItem = ....
      let sectionIndex: Int = 3
-     provider.insertNewSection(with: itemsToInsert, atSection: sectionIndex)
+     provider.insertNewSection(withCellItems: itemsToInsert, supplementarySectionItem: supplementarySectionItem, atSection: sectionIndex)
      ```
      
     - Parameters:
-        - cellItems: Array of items representing each cell to append
+        - cellItems: The new cell items to insert
+        - supplementarySectionItem: The new supplementary section item to insert
         - section: The section index that will be created/inserted with the new cell items
      
     */
-    func insertNewSection(with cellItems: [T], atSection section: Int)
+    func insertNewSection(withCellItems cellItems: [T], supplementarySectionItem: S, atSection section: Int)
     
     /**
      Inserts a supplementary section item at a specified section index
