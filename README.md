@@ -20,8 +20,6 @@ ComposableDataSource wraps the typically verbose UICollectionView data source an
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
-## Requirements
-
 ## Installation
 
 ComposableDataSource is available through [CocoaPods](https://cocoapods.org). To install
