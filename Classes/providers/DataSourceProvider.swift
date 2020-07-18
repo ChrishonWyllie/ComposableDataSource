@@ -106,12 +106,12 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
         self.cellItems[section].insert(contentsOf: cellItems, at: index ?? 0)
     }
     
-    public func insertNewSection(withCellItems cellItems: [T], supplementarySectionItem: S, atSection section: Int) {
+    public func insertNewSection(withCellItems cellItems: [T], supplementarySectionItem: S? = nil, atSection section: Int) {
         if cellItems.isEmpty == false {
             self.cellItems.insert(cellItems, at: section)
         }
-        if supplementarySectionItems.isEmpty == false {
-            self.supplementarySectionItems.insert(supplementarySectionItem, at: section)
+        if let unwrappedSupplementarySectionItem = supplementarySectionItem {
+            self.supplementarySectionItems.insert(unwrappedSupplementarySectionItem, at: section)
         }
     }
     
@@ -233,18 +233,21 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
     
     public func updateSections(atItemSectionIndices sections: [Int],
                                newCellItems: [[T]],
-                               supplementarySectionIndices: [Int],
-                               newSupplementarySectionItems: [S]) {
+                               supplementarySectionIndices: [Int]? = nil,
+                               newSupplementarySectionItems: [S]? = nil) {
         
         guard
             sections.count == newCellItems.count,
-            supplementarySectionIndices.count == newSupplementarySectionItems.count
+            supplementarySectionIndices?.count == newSupplementarySectionItems?.count
         else {
-            fatalError("The number of sections must match the number of items. index count: \(sections.count). values: \(newCellItems.count). supplementary section indices count: \(supplementarySectionIndices.count). items: \(newSupplementarySectionItems.count)")
+            fatalError("The number of sections must match the number of items. index count: \(sections.count). values: \(newCellItems.count). supplementary section indices count: \(String(describing: supplementarySectionIndices?.count)). items: \(String(describing: newSupplementarySectionItems?.count))")
         }
         
         updateSections(sections, withNewCellItems: newCellItems)
-        updateSupplementarySectionItems(atSections: supplementarySectionIndices, withNewSupplementarySectionItems: supplementarySectionItems)
+        
+        if let unwrappedSupplementarySectionItems = newSupplementarySectionItems, let unwrappedSupplementarySectionIndices = supplementarySectionIndices {
+            updateSupplementarySectionItems(atSections: unwrappedSupplementarySectionIndices, withNewSupplementarySectionItems: unwrappedSupplementarySectionItems)
+        }
         
     }
     
@@ -294,7 +297,26 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
         supplementarySectionItems.remove(atIndices: sections)
     }
     
-    
+    public func deleteSections(atSections sections: [Int]) {
+        guard
+            sections.count > 0,
+            sections.max()! <= (cellItems.count - 1)
+        else {
+            return
+        }
+        cellItems.remove(atIndices: sections)
+        
+        for section in sections.sorted().reversed() {
+            // There is a chance that the dataSource/provider did not
+            // have supplementary section items for each actual section
+            // e.g.:
+            // 5 sections
+            // only 2 supplementary headers
+            if (supplementarySectionItems.count - 1) >= section {
+                supplementarySectionItems.remove(at: section)
+            }
+        }
+    }
     
     
     

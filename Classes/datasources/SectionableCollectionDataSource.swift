@@ -40,11 +40,11 @@ open class SectionableCollectionDataSource
         register(cellItems: dataProvider.allCellItems(), supplementarySectionItems: dataProvider.allSupplementarySectionItems())
     }
     
-    internal func register(cellItems: [[T]], supplementarySectionItems: [S]) {
+    internal func register(cellItems: [[T]], supplementarySectionItems: [S]?) {
         register(cellItems: cellItems.flatten() as! [T], supplementarySectionItems: supplementarySectionItems)
     }
     
-    internal func register(cellItems: [T], supplementarySectionItems: [S]) {
+    internal func register(cellItems: [T], supplementarySectionItems: [S]?) {
         
         if cellItems.count > 0 {
             cellItems.compactMap { (cellItem) -> GenericCellModel in
@@ -55,8 +55,8 @@ open class SectionableCollectionDataSource
             }
         }
         
-        if supplementarySectionItems.count > 0 {
-            supplementarySectionItems.forEach { (supplementarySectionItem) in
+        if let unwrappedSupplementarySectionItems = supplementarySectionItems {
+            unwrappedSupplementarySectionItems.forEach { (supplementarySectionItem) in
                 guard let supplementarySectionItem = supplementarySectionItem as? GenericSupplementarySectionModel else { fatalError() }
                 
                 if let header = supplementarySectionItem.header {
@@ -164,16 +164,22 @@ open class SectionableCollectionDataSource
     }
     
     public func insertNewSection(withCellItems cellItems: [T],
-                                 supplementarySectionItem: S,
+                                 supplementarySectionItem: S? = nil,
                                  atSection section: Int,
                                  updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
                                  completion: OptionalCompletionHandler) {
         
-        register(cellItems: cellItems, supplementarySectionItems: [supplementarySectionItem])
+        var supplementarySectionItems: [S] = []
+        if let unwrappedSupplementarySectionItem = supplementarySectionItem {
+            supplementarySectionItems.append(unwrappedSupplementarySectionItem)
+        }
+        register(cellItems: cellItems, supplementarySectionItems: supplementarySectionItems)
         
         func insertWithBatchUpdates() {
             super.collectionView.performBatchUpdates({
-                super.provider.insertNewSection(withCellItems: cellItems, supplementarySectionItem: supplementarySectionItem, atSection: section)
+                super.provider.insertNewSection(withCellItems: cellItems,
+                                                supplementarySectionItem: supplementarySectionItem,
+                                                atSection: section)
                 super.collectionView.insertSections(IndexSet(integer: section))
             }, completion: completion)
         }
@@ -228,19 +234,19 @@ open class SectionableCollectionDataSource
     
     public func updateSections(atItemSectionIndices itemSectionIndices: [Int],
                                newCellItems: [[T]],
-                               supplementarySectionItems: [S]? = nil,
                                supplementarySectionIndices: [Int]? = nil,
+                               supplementarySectionItems: [S]? = nil,
                                updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
                                completion: OptionalCompletionHandler) {
         
-        register(cellItems: newCellItems, supplementarySectionItems: supplementarySectionItems ?? [])
+        register(cellItems: newCellItems, supplementarySectionItems: supplementarySectionItems)
         
         func updateWithBatchUpdates() {
             super.collectionView.performBatchUpdates({
                 super.provider.updateSections(atItemSectionIndices: itemSectionIndices,
                                               newCellItems: newCellItems,
-                                              supplementarySectionIndices: supplementarySectionIndices ?? [],
-                                              newSupplementarySectionItems:  supplementarySectionItems ?? [])
+                                              supplementarySectionIndices: supplementarySectionIndices,
+                                              newSupplementarySectionItems:  supplementarySectionItems)
                 let indexSet = IndexSet(itemSectionIndices)
                 super.collectionView.reloadSections(indexSet)
             }, completion: completion)
@@ -321,8 +327,6 @@ open class SectionableCollectionDataSource
             super.collectionView.performBatchUpdates(nil, completion: completion)
         }
         
-        
-        
         if updateStyle == .withBatchUpdates {
             deleteWithBatchUpdates()
         } else {
@@ -343,6 +347,30 @@ open class SectionableCollectionDataSource
         
         func deleteImmediately() {
             super.provider.deleteSupplementarySectionItems(atSections: sections)
+            super.collectionView.reloadData()
+            super.collectionView.performBatchUpdates(nil, completion: completion)
+        }
+        
+        if updateStyle == .withBatchUpdates {
+            deleteWithBatchUpdates()
+        } else {
+            deleteImmediately()
+        }
+    }
+    
+    public func deleteSections(atSectionIndices sections: [Int],
+                               updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                               completion: OptionalCompletionHandler) {
+        
+        func deleteWithBatchUpdates() {
+            super.collectionView.performBatchUpdates({
+                super.provider.deleteSections(atSections: sections)
+                super.collectionView.deleteSections(IndexSet(sections))
+            }, completion: completion)
+        }
+        
+        func deleteImmediately() {
+            super.provider.deleteSections(atSections: sections)
             super.collectionView.reloadData()
             super.collectionView.performBatchUpdates(nil, completion: completion)
         }

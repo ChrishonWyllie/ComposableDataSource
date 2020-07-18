@@ -448,7 +448,7 @@ public protocol SectionableDataSourceProtocol {
         - completion: Completion handler called at the end of function
     */
     func insertNewSection(withCellItems cellItems: [T],
-                          supplementarySectionItem: S,
+                          supplementarySectionItem: S?,
                           atSection section: Int,
                           updateStyle: DataSourceUpdateStyle,
                           completion: OptionalCompletionHandler)
@@ -577,8 +577,8 @@ public protocol SectionableDataSourceProtocol {
     */
     func updateSections(atItemSectionIndices itemSectionIndices: [Int],
                         newCellItems: [[T]],
-                        supplementarySectionItems: [S]?,
                         supplementarySectionIndices: [Int]?,
+                        supplementarySectionItems: [S]?,
                         updateStyle: DataSourceUpdateStyle,
                         completion: OptionalCompletionHandler)
     
@@ -620,6 +620,25 @@ public protocol SectionableDataSourceProtocol {
     func deleteSupplementarySectionItems(atSections sections: [Int],
                                          updateStyle: DataSourceUpdateStyle,
                                          completion: OptionalCompletionHandler)
+    
+    /**
+     Deletes cell items and supplementary section items at the specifed section indices
+          
+    - Usage:
+     ```
+     let dataSource = ....
+     let sectionIndices: [Int] = [0, 1, 5, 8]
+     dataSource.deleteSections(atSections: sectionIndices, updateStyle: .withBatchUpdates, completion: nil)
+     ```
+        
+    - Parameters:
+        - sections: The section indices which will be deleted
+        - updateStyle: Enum dictating how the updates will happen, either by calling `performBatchUpdates(...)` or with `reloadData()`
+        - completion: Completion handler called at the end of function
+    */
+    func deleteSections(atSectionIndices sections: [Int],
+                        updateStyle: DataSourceUpdateStyle,
+                        completion: OptionalCompletionHandler)
     
     /**
      Completely replaces entire data source with new cell items and supplementary section items, regardless of existing items and/or section structure
@@ -889,7 +908,7 @@ public protocol CollectionDataProvider {
         - section: The section index that will be created/inserted with the new cell items
      
     */
-    func insertNewSection(withCellItems cellItems: [T], supplementarySectionItem: S, atSection section: Int)
+    func insertNewSection(withCellItems cellItems: [T], supplementarySectionItem: S?, atSection section: Int)
     
     /**
      Inserts a supplementary section item at a specified section index
@@ -1057,26 +1076,6 @@ public protocol CollectionDataProvider {
     func updateSupplementarySectionItems(atSections sections: [Int], withNewSupplementarySectionItems supplementarySectionItems: [S])
     
     /**
-     Replaces entire sections with new cell items
-          
-    - Usage:
-     ```
-     let provider = ....
-     let sectionIndices: [Int] = [....]
-     let newCellItems = [[....]] // Nested array
-     provider.updateSections(sectionIndices, withNewCellItems: newCellItems)
-     ```
-     
-    - Note:
-        - Since each section index corresponds to a nested array of cell items, `sectionIndices.count` must equal `newCellItems.count`
-     
-    - Parameters:
-        - sections: The section indices at which the cell items will be updated
-        - newCellItems: The double nested array of new cell items to replace with
-    */
-    func updateSections(_ sections: [Int], withNewCellItems newCellItems: [[T]])
-    
-    /**
      Replaces entire sections with new cell items and supplementary section items
           
     - Usage:
@@ -1099,7 +1098,10 @@ public protocol CollectionDataProvider {
         - supplementarySectionIndices: The indices of each section to be updated with new supplementary section items
         - newSupplementarySectionItems: The array of new supplementary section items to replace with
     */
-    func updateSections(atItemSectionIndices sections: [Int], newCellItems: [[T]], supplementarySectionIndices: [Int], newSupplementarySectionItems: [S])
+    func updateSections(atItemSectionIndices sections: [Int],
+                        newCellItems: [[T]],
+                        supplementarySectionIndices: [Int]?,
+                        newSupplementarySectionItems: [S]?)
     
     // Delete
     
@@ -1143,6 +1145,22 @@ public protocol CollectionDataProvider {
      
     */
     func deleteSupplementarySectionItems(atSections sections: [Int])
+    
+    
+    /**
+     Deletes cell items and supplementary section items at the specifed section indices
+          
+    - Usage:
+     ```
+     let provider = ....
+     let sectionIndices: [Int] = [0, 1, 5, 8]
+     provider.deleteSections(atSections: sectionIndices)
+     ```
+        
+    - Parameters:
+        - sections: The section indices which will be deleted
+    */
+    func deleteSections(atSections sections: [Int])
     
     /**
      Completely replaces entire data source with new cell items and supplementary section items, regardless of existing items and/or section structure
