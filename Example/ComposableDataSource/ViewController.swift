@@ -43,11 +43,40 @@ class ViewController: UIViewController {
         
         dataSource = setupDataSource()
         fetchData()
+        
+        addVideos()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    private func addVideos() {
+        Timer.scheduledTimer(withTimeInterval: 5, repeats: false) { (_) in
+            
+            let urlStrings: [String] = [
+                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
+                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
+            ]
+            
+            let videoCellModels: [GenericCellModel] = urlStrings.map {
+                return VideoCellModel(urlString: $0)
+            }
+            
+            let headerModel = HeaderItemModel(title: "Videos")
+            let supplementarySectionItem = GenericSupplementarySectionModel(header: headerModel, footer: nil)
+            
+            DispatchQueue.main.async {
+                self.dataSource?.insertNewSection(withCellItems: videoCellModels, supplementarySectionItem: supplementarySectionItem, atSection: 0, completion: nil)
+            }
+        }
     }
     
     private func fetchData() {
@@ -101,18 +130,25 @@ class ViewController: UIViewController {
         let models: [[GenericCellModel]] = [[]]
         let supplementaryModels: [GenericSupplementarySectionModel] = []
         
-        let dataSource = ComposableCollectionDataSource(collectionView: collectionView, cellItems: models, supplementarySectionItems: supplementaryModels)
+//        let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
+//                                                        cellItems: models,
+//                                                        supplementarySectionItems: supplementaryModels)
+        let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
+                                                        cellItems: models,
+                                                        supplementarySectionItems: supplementaryModels,
+                                                        cellPadding: .init(top: 12, left: 12, bottom: 12, right: 12),
+                                                        cellCornerRadius: 8)
         .handleSelection { (indexPath, model) in
             print("selected model: \(model) at indexPath: \(indexPath)")
         }.handleItemSize { [unowned self] (indexPath, model) -> CGSize in
             return CGSize.init(width: self.collectionView.frame.size.width, height: 400.0)
         }.handleSupplementaryHeaderItemSize { [unowned self] (indexPath, model) -> CGSize in
-            return CGSize.init(width: self.collectionView.frame.size.width, height: 50.0)
+            return CGSize.init(width: self.collectionView.frame.size.width, height: 60.0)
         }.handlRequestedPrefetching { (indexPaths, models) in
-            let models = models as! [ImageCellModel]
+            let models = models as! [URLCellModel]
             Celestial.shared.prefetchResources(at: models.map { $0.urlString} )
         }.handleCanceledPrefetching { (indexPaths, models) in
-            let models = models as! [ImageCellModel]
+            let models = models as! [URLCellModel]
             Celestial.shared.pausePrefetchingForResources(at: models.map { $0.urlString}, cancelCompletely: false)
         }
         
