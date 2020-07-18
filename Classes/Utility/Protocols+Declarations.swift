@@ -170,7 +170,7 @@ GenericCollectionReusableView>
 
 
 
-public protocol ComposableDataSourceProtocol {
+public protocol ComposableDataSourceActionHandlerProtocol {
     
     /**
      Provides completion block for handling UICollectionView selection events.
@@ -187,7 +187,7 @@ public protocol ComposableDataSourceProtocol {
     - Parameters:
         - completion: Completion handler block in which you will handle selection events using the selected cell item at the selected IndexPath
     */
-    @discardableResult func handleSelection(_ completion: @escaping ComposableItemSelectionHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+    @discardableResult func handleSelection(_ completion: @escaping ComposableItemSelectionHandler<GenericCellModel>) -> ComposableCollectionDataSource
        
     /**
      Provides completion block for handling UICollectionView deselection events.
@@ -204,7 +204,7 @@ public protocol ComposableDataSourceProtocol {
     - Parameters:
         - completion: Completion handler block in which you will handle deselection events using the deselected cell item at the deselected IndexPath
     */
-    @discardableResult func handleDeselection(_ completion: @escaping ComposableItemDeselectionHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+    @discardableResult func handleDeselection(_ completion: @escaping ComposableItemDeselectionHandler<GenericCellModel>) -> ComposableCollectionDataSource
     
     /**
      Provides completion block for returning UICollectionViewCell sizes at specific indexPaths
@@ -221,7 +221,7 @@ public protocol ComposableDataSourceProtocol {
     - Parameters:
         - completion: Completion handler block in which you will provide custom cell sizing using the deselected cell item at the deselected IndexPath
     */
-    @discardableResult func handleItemSize(_ completion: @escaping ComposableItemSizeHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+    @discardableResult func handleItemSize(_ completion: @escaping ComposableItemSizeHandler<GenericCellModel>) -> ComposableCollectionDataSource
     
     /**
      Provides completion block for returning UICollectionReusableView header sizes at specific indexPaths
@@ -238,7 +238,7 @@ public protocol ComposableDataSourceProtocol {
     - Parameters:
         - completion: Completion handler block in which you will provide custom supplementary view sizing using the supplementary view item at the section index
     */
-    @discardableResult func handleSupplementaryHeaderItemSize(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<GenericSupplementaryModel>) -> ComposableDataSourceProtocol
+    @discardableResult func handleSupplementaryHeaderItemSize(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource
     
     /**
      Provides completion block for returning UICollectionReusableView footer sizes at specific indexPaths
@@ -255,7 +255,7 @@ public protocol ComposableDataSourceProtocol {
     - Parameters:
         - completion: Completion handler block in which you will provide custom supplementary view sizing using the supplementary view item at the section index
     */
-    @discardableResult func handleSupplementaryFooterItemSize(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<GenericSupplementaryModel>) -> ComposableDataSourceProtocol
+    @discardableResult func handleSupplementaryFooterItemSize(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource
     
     /**
      Provides completion block for handling UICollectionView prefetching events.
@@ -272,7 +272,7 @@ public protocol ComposableDataSourceProtocol {
     - Parameters:
         - completion: Completion handler block in which you will perform some "pre-heat" action on the requested cell items that are about to be displayed
     */
-    @discardableResult func handlRequestedPrefetching(_ completion: @escaping ComposableBeginPrefetchingHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+    @discardableResult func handlRequestedPrefetching(_ completion: @escaping ComposableBeginPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource
     
     /**
      Provides completion block for handling UICollectionView cancelled prefetching events.
@@ -289,7 +289,7 @@ public protocol ComposableDataSourceProtocol {
     - Parameters:
         - completion: Completion handler block in which you will cancel some "pre-heat" action on the requested cell items
     */
-    @discardableResult func handleCanceledPrefetching(_ completion: @escaping ComposableCancelPrefetchingHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+    @discardableResult func handleCanceledPrefetching(_ completion: @escaping ComposableCancelPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource
 }
 
 
