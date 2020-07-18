@@ -7,13 +7,43 @@
 
 ComposableDataSource wraps the typically verbose UICollectionView data source and delegate implementation into a more neatly packed builder pattern
 
+```swift
+
+    private func setupDataSource() -> ComposableCollectionDataSource {
+            
+        let models: [[GenericCellModel]] = [[]]
+        let supplementaryModels: [GenericSupplementarySectionModel] = []
+        
+        let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
+                                                        cellItems: models,
+                                                        supplementarySectionItems: supplementaryModels)
+        .handleSelection { (indexPath, model) in
+            // Handle selection at indexPath
+        }.handleItemSize { [unowned self] (indexPath: IndexPath, model: GenericCellModel) -> CGSize in
+            // Return CGSize
+        }.handleSupplementaryHeaderItemSize { [unowned self] (section: Int, model: GenericSupplementaryModel) -> CGSize in
+            // Return CGSize
+        }
+        
+        let emptyView = UILabel()
+        emptyView.text = "Still loading data... :)"
+        emptyView.font = UIFont.boldSystemFont(ofSize: 25)
+        emptyView.numberOfLines = 0
+        emptyView.textAlignment = .center
+        
+        dataSource.emptyDataSourceView = emptyView
+        return dataSource
+    }
+
+```
+
 ## Requirements
 
 <hr />
 
 <ul>
-<li>Xcode 9.0+</li>
-<li>iOS 11.0+</li>
+    <li>Xcode 9.0+</li>
+    <li>iOS 11.0+</li>
 </ul>
 
 ## Example
