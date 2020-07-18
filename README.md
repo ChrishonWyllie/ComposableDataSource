@@ -7,6 +7,15 @@
 
 ComposableDataSource wraps the typically verbose UICollectionView data source and delegate implementation into a more neatly packed builder pattern
 
+## Requirements
+
+<hr />
+
+<ul>
+<li>Xcode 9.0+</li>
+<li>iOS 11.0+</li>
+</ul>
+
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
