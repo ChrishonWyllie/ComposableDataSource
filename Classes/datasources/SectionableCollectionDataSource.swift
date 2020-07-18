@@ -79,14 +79,6 @@ open class SectionableCollectionDataSource
     
     // MARK: - Public Functions
     
-    public func item(atIndexPath indexPath: IndexPath) -> T? {
-        return super.provider.item(atIndexPath: indexPath)
-    }
-    
-    public func supplementarySectionItem(atSection section: Int) -> S? {
-        return super.provider.supplementarySectionItem(atSection: section)
-    }
-    
     public func numberOfSections() -> Int {
         return super.provider.numberOfSections()
     }
@@ -110,6 +102,72 @@ open class SectionableCollectionDataSource
     
     public func numberOfItems(in section: Int) -> Int {
         return super.provider.numberOfItems(in: section)
+    }
+    
+    public func insert(cellItems: [T], atIndexPaths indexPaths: [IndexPath],
+                       updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                       completion: OptionalCompletionHandler) {
+        
+        register(cellItems: cellItems, supplementarySectionItems: [])
+        
+        func insertWithBatchUpdates() {
+            super.collectionView.performBatchUpdates({
+                let indicesOfNewSectionsToInsert = super.provider.insert(cellItems: cellItems, atIndexPaths: indexPaths)
+                super.collectionView.insertItems(at: indexPaths)
+                if indicesOfNewSectionsToInsert.count > 0 {
+                    let indexSet = IndexSet(integersIn: indicesOfNewSectionsToInsert.min()!...indicesOfNewSectionsToInsert.max()!)
+                    super.collectionView.insertSections(indexSet)
+                }
+            }, completion: completion)
+        }
+        
+        func insertImmediately() {
+            super.provider.insert(cellItems: cellItems, atIndexPaths: indexPaths)
+            super.collectionView.reloadData()
+            super.collectionView.performBatchUpdates(nil, completion: completion)
+        }
+        
+        
+        if updateStyle == .withBatchUpdates {
+            insertWithBatchUpdates()
+        } else {
+            insertImmediately()
+        }
+    }
+    
+    public func insert(supplementarySectionItems: [S],
+                       atSections sections: [Int],
+                       updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                       completion: OptionalCompletionHandler) {
+        
+        register(cellItems: [[]], supplementarySectionItems: supplementarySectionItems)
+        
+        func insertWithBatchUpdates() {
+            super.collectionView.performBatchUpdates({
+                super.provider.insert(supplementarySectionItems: supplementarySectionItems, atSections: sections)
+                super.collectionView.reloadSections(IndexSet(sections))
+            }, completion: completion)
+        }
+        
+        func insertImmediately() {
+            super.provider.insert(supplementarySectionItems: supplementarySectionItems, atSections: sections)
+            super.collectionView.reloadData()
+            super.collectionView.performBatchUpdates(nil, completion: completion)
+        }
+        
+        if updateStyle == .withBatchUpdates {
+            insertWithBatchUpdates()
+        } else {
+            insertImmediately()
+        }
+    }
+    
+    public func item(atIndexPath indexPath: IndexPath) -> T? {
+        return super.provider.item(atIndexPath: indexPath)
+    }
+    
+    public func supplementarySectionItem(atSection section: Int) -> S? {
+        return super.provider.supplementarySectionItem(atSection: section)
     }
     
     public func updateCellItems(atIndexPaths indexPaths: [IndexPath],
@@ -181,34 +239,31 @@ open class SectionableCollectionDataSource
         }
     }
     
-    public func insert(cellItems: [T], atIndexPaths indexPaths: [IndexPath],
-                       updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                       completion: OptionalCompletionHandler) {
+    public func updateSupplementarySectionsItems(atSections sections: [Int],
+                                                 withNewSupplementarySectionItems supplementarySectionItems: [S],
+                                                 updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                                                 completion: OptionalCompletionHandler) {
         
-        register(cellItems: cellItems, supplementarySectionItems: [])
+        register(cellItems: [[]], supplementarySectionItems: supplementarySectionItems)
         
-        func insertWithBatchUpdates() {
+        func updateWithBatchUpdates() {
             super.collectionView.performBatchUpdates({
-                let indicesOfNewSectionsToInsert = super.provider.insert(cellItems: cellItems, atIndexPaths: indexPaths)
-                super.collectionView.insertItems(at: indexPaths)
-                if indicesOfNewSectionsToInsert.count > 0 {
-                    let indexSet = IndexSet(integersIn: indicesOfNewSectionsToInsert.min()!...indicesOfNewSectionsToInsert.max()!)
-                    super.collectionView.insertSections(indexSet)
-                }
+                super.provider.updateSupplementarySectionItems(atSections: sections, withNewSupplementarySectionItems: supplementarySectionItems)
+                let indexSet = IndexSet(sections)
+                super.collectionView.reloadSections(indexSet)
             }, completion: completion)
         }
         
-        func insertImmediately() {
-            super.provider.insert(cellItems: cellItems, atIndexPaths: indexPaths)
+        func updateImmediately() {
+            super.provider.updateSupplementarySectionItems(atSections: sections, withNewSupplementarySectionItems: supplementarySectionItems)
             super.collectionView.reloadData()
             super.collectionView.performBatchUpdates(nil, completion: completion)
         }
         
-        
         if updateStyle == .withBatchUpdates {
-            insertWithBatchUpdates()
+            updateWithBatchUpdates()
         } else {
-            insertImmediately()
+            updateImmediately()
         }
     }
     
@@ -243,61 +298,6 @@ open class SectionableCollectionDataSource
             deleteWithBatchUpdates()
         } else {
             deleteImmediately()
-        }
-    }
-    
-    public func updateSupplementarySectionsItems(atSections sections: [Int],
-                                                 withNewSupplementarySectionItems supplementarySectionItems: [S],
-                                                 updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                                                 completion: OptionalCompletionHandler) {
-        
-        register(cellItems: [[]], supplementarySectionItems: supplementarySectionItems)
-        
-        func updateWithBatchUpdates() {
-            super.collectionView.performBatchUpdates({
-                super.provider.updateSupplementarySectionItems(atSections: sections, withNewSupplementarySectionItems: supplementarySectionItems)
-                let indexSet = IndexSet(sections)
-                super.collectionView.reloadSections(indexSet)
-            }, completion: completion)
-        }
-        
-        func updateImmediately() {
-            super.provider.updateSupplementarySectionItems(atSections: sections, withNewSupplementarySectionItems: supplementarySectionItems)
-            super.collectionView.reloadData()
-            super.collectionView.performBatchUpdates(nil, completion: completion)
-        }
-        
-        if updateStyle == .withBatchUpdates {
-            updateWithBatchUpdates()
-        } else {
-            updateImmediately()
-        }
-    }
-    
-    public func insert(supplementarySectionItems: [S],
-                       atSections sections: [Int],
-                       updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                       completion: OptionalCompletionHandler) {
-        
-        register(cellItems: [[]], supplementarySectionItems: supplementarySectionItems)
-        
-        func insertWithBatchUpdates() {
-            super.collectionView.performBatchUpdates({
-                super.provider.insert(supplementarySectionItems: supplementarySectionItems, atSections: sections)
-                super.collectionView.reloadSections(IndexSet(sections))
-            }, completion: completion)
-        }
-        
-        func insertImmediately() {
-            super.provider.insert(supplementarySectionItems: supplementarySectionItems, atSections: sections)
-            super.collectionView.reloadData()
-            super.collectionView.performBatchUpdates(nil, completion: completion)
-        }
-        
-        if updateStyle == .withBatchUpdates {
-            insertWithBatchUpdates()
-        } else {
-            insertImmediately()
         }
     }
     
