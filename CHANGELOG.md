@@ -1,3 +1,15 @@
+## [Version 0.5.9](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.5.9)
+
+### New
+* Added function for deleting sections
+* Adding function for inserting new section with cell items and supplementary section items
+
+### Improvements
+* Replaced return value of generic protocol to return ComposableCollectionDataSource instead. Type casting the final builder pattern function’s return value to the desired dataSource class no longer necessary
+
+### Bug fixes
+* N/A
+
 ## [Version 0.5.0](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.5.0) 
 
 ### New

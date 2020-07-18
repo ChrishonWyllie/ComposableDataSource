@@ -34,7 +34,8 @@ extension Array {
     
     mutating func remove(atIndices indices: [Int]) {
         var lastIndex: Int? = nil
-        for index in indices.sorted(by: >) {
+        let reversedIndices = indices.sorted(by: >)
+        for index in reversedIndices {
             guard lastIndex != index else {
                 continue
             }

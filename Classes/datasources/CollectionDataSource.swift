@@ -79,9 +79,10 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     }
     
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if provider.numberOfItems(in: section) > 0 {
+        let numItemsInSection = provider.numberOfItems(in: section)
+        if numItemsInSection > 0 {
             collectionView.backgroundView = nil
-            return provider.numberOfItems(in: section)
+            return numItemsInSection
         } else {
             collectionView.backgroundView = emptyDataSourceView
             return 0

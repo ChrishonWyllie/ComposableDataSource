@@ -170,7 +170,7 @@ GenericCollectionReusableView>
 
 
 
-public protocol ComposableDataSourceProtocol {
+public protocol ComposableDataSourceActionHandlerProtocol {
     
     /**
      Provides completion block for handling UICollectionView selection events.
@@ -187,7 +187,7 @@ public protocol ComposableDataSourceProtocol {
     - Parameters:
         - completion: Completion handler block in which you will handle selection events using the selected cell item at the selected IndexPath
     */
-    @discardableResult func handleSelection(_ completion: @escaping ComposableItemSelectionHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+    @discardableResult func handleSelection(_ completion: @escaping ComposableItemSelectionHandler<GenericCellModel>) -> ComposableCollectionDataSource
        
     /**
      Provides completion block for handling UICollectionView deselection events.
@@ -204,7 +204,7 @@ public protocol ComposableDataSourceProtocol {
     - Parameters:
         - completion: Completion handler block in which you will handle deselection events using the deselected cell item at the deselected IndexPath
     */
-    @discardableResult func handleDeselection(_ completion: @escaping ComposableItemDeselectionHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+    @discardableResult func handleDeselection(_ completion: @escaping ComposableItemDeselectionHandler<GenericCellModel>) -> ComposableCollectionDataSource
     
     /**
      Provides completion block for returning UICollectionViewCell sizes at specific indexPaths
@@ -221,7 +221,7 @@ public protocol ComposableDataSourceProtocol {
     - Parameters:
         - completion: Completion handler block in which you will provide custom cell sizing using the deselected cell item at the deselected IndexPath
     */
-    @discardableResult func handleItemSize(_ completion: @escaping ComposableItemSizeHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+    @discardableResult func handleItemSize(_ completion: @escaping ComposableItemSizeHandler<GenericCellModel>) -> ComposableCollectionDataSource
     
     /**
      Provides completion block for returning UICollectionReusableView header sizes at specific indexPaths
@@ -238,7 +238,7 @@ public protocol ComposableDataSourceProtocol {
     - Parameters:
         - completion: Completion handler block in which you will provide custom supplementary view sizing using the supplementary view item at the section index
     */
-    @discardableResult func handleSupplementaryHeaderItemSize(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<GenericSupplementaryModel>) -> ComposableDataSourceProtocol
+    @discardableResult func handleSupplementaryHeaderItemSize(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource
     
     /**
      Provides completion block for returning UICollectionReusableView footer sizes at specific indexPaths
@@ -255,7 +255,7 @@ public protocol ComposableDataSourceProtocol {
     - Parameters:
         - completion: Completion handler block in which you will provide custom supplementary view sizing using the supplementary view item at the section index
     */
-    @discardableResult func handleSupplementaryFooterItemSize(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<GenericSupplementaryModel>) -> ComposableDataSourceProtocol
+    @discardableResult func handleSupplementaryFooterItemSize(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource
     
     /**
      Provides completion block for handling UICollectionView prefetching events.
@@ -272,7 +272,7 @@ public protocol ComposableDataSourceProtocol {
     - Parameters:
         - completion: Completion handler block in which you will perform some "pre-heat" action on the requested cell items that are about to be displayed
     */
-    @discardableResult func handlRequestedPrefetching(_ completion: @escaping ComposableBeginPrefetchingHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+    @discardableResult func handlRequestedPrefetching(_ completion: @escaping ComposableBeginPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource
     
     /**
      Provides completion block for handling UICollectionView cancelled prefetching events.
@@ -289,7 +289,7 @@ public protocol ComposableDataSourceProtocol {
     - Parameters:
         - completion: Completion handler block in which you will cancel some "pre-heat" action on the requested cell items
     */
-    @discardableResult func handleCanceledPrefetching(_ completion: @escaping ComposableCancelPrefetchingHandler<GenericCellModel>) -> ComposableDataSourceProtocol
+    @discardableResult func handleCanceledPrefetching(_ completion: @escaping ComposableCancelPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource
 }
 
 
@@ -429,6 +429,31 @@ public protocol SectionableDataSourceProtocol {
                 completion: OptionalCompletionHandler)
     
     /**
+     Inserts a new section with a new array of cell items and supplementary section items at a specified section index. Essentially, moves down sections after this index and creates room for new section
+     
+    - Usage:
+     ```
+     let dataSource = ....
+     let itemsToInsert = [....]
+     let supplementarySectionItem = ....
+     let sectionIndex: Int = 3
+     dataSource.insertNewSection(withCellItems: itemsToInsert, supplementarySectionItem: supplementarySectionItem, atSection: sectionIndex, updateStyle: .withBatchUpdates, completion: nil)
+     ```
+     
+    - Parameters:
+        - cellItems: The new cell items to insert
+        - supplementarySectionItem: The new supplementary section item to insert
+        - section: The section index that will be created/inserted with the new cell items
+        - updateStyle: Enum dictating how the updates will happen, either by calling `performBatchUpdates(...)` or with `reloadData()`
+        - completion: Completion handler called at the end of function
+    */
+    func insertNewSection(withCellItems cellItems: [T],
+                          supplementarySectionItem: S?,
+                          atSection section: Int,
+                          updateStyle: DataSourceUpdateStyle,
+                          completion: OptionalCompletionHandler)
+    
+    /**
      Returns a cell item at the specified indexPath
      
     - Note:
@@ -552,8 +577,8 @@ public protocol SectionableDataSourceProtocol {
     */
     func updateSections(atItemSectionIndices itemSectionIndices: [Int],
                         newCellItems: [[T]],
-                        supplementarySectionItems: [S]?,
                         supplementarySectionIndices: [Int]?,
+                        supplementarySectionItems: [S]?,
                         updateStyle: DataSourceUpdateStyle,
                         completion: OptionalCompletionHandler)
     
@@ -595,6 +620,25 @@ public protocol SectionableDataSourceProtocol {
     func deleteSupplementarySectionItems(atSections sections: [Int],
                                          updateStyle: DataSourceUpdateStyle,
                                          completion: OptionalCompletionHandler)
+    
+    /**
+     Deletes cell items and supplementary section items at the specifed section indices
+          
+    - Usage:
+     ```
+     let dataSource = ....
+     let sectionIndices: [Int] = [0, 1, 5, 8]
+     dataSource.deleteSections(atSections: sectionIndices, updateStyle: .withBatchUpdates, completion: nil)
+     ```
+        
+    - Parameters:
+        - sections: The section indices which will be deleted
+        - updateStyle: Enum dictating how the updates will happen, either by calling `performBatchUpdates(...)` or with `reloadData()`
+        - completion: Completion handler called at the end of function
+    */
+    func deleteSections(atSectionIndices sections: [Int],
+                        updateStyle: DataSourceUpdateStyle,
+                        completion: OptionalCompletionHandler)
     
     /**
      Completely replaces entire data source with new cell items and supplementary section items, regardless of existing items and/or section structure
@@ -844,7 +888,7 @@ public protocol CollectionDataProvider {
     func insert(cellItems: [T], inNestedSection section: Int, atIndex index: Int?)
     
     /**
-     Inserts a new section with a new array of cell items at a specified section index. Essentially, moves down sections after this index and creates room for new section
+     Inserts a new section with a new array of cell items and supplementary section items at a specified section index. Essentially, moves down sections after this index and creates room for new section
      
     - Note:
      Be aware that adding new sections will require calling `collectionView.insertSections()` if using `collectionView.performBatchUpdates(...)`
@@ -853,16 +897,18 @@ public protocol CollectionDataProvider {
      ```
      let provider = ....
      let itemsToInsert = [....]
+     let supplementarySectionItem = ....
      let sectionIndex: Int = 3
-     provider.insertNewSection(with: itemsToInsert, atSection: sectionIndex)
+     provider.insertNewSection(withCellItems: itemsToInsert, supplementarySectionItem: supplementarySectionItem, atSection: sectionIndex)
      ```
      
     - Parameters:
-        - cellItems: Array of items representing each cell to append
+        - cellItems: The new cell items to insert
+        - supplementarySectionItem: The new supplementary section item to insert
         - section: The section index that will be created/inserted with the new cell items
      
     */
-    func insertNewSection(with cellItems: [T], atSection section: Int)
+    func insertNewSection(withCellItems cellItems: [T], supplementarySectionItem: S?, atSection section: Int)
     
     /**
      Inserts a supplementary section item at a specified section index
@@ -1030,26 +1076,6 @@ public protocol CollectionDataProvider {
     func updateSupplementarySectionItems(atSections sections: [Int], withNewSupplementarySectionItems supplementarySectionItems: [S])
     
     /**
-     Replaces entire sections with new cell items
-          
-    - Usage:
-     ```
-     let provider = ....
-     let sectionIndices: [Int] = [....]
-     let newCellItems = [[....]] // Nested array
-     provider.updateSections(sectionIndices, withNewCellItems: newCellItems)
-     ```
-     
-    - Note:
-        - Since each section index corresponds to a nested array of cell items, `sectionIndices.count` must equal `newCellItems.count`
-     
-    - Parameters:
-        - sections: The section indices at which the cell items will be updated
-        - newCellItems: The double nested array of new cell items to replace with
-    */
-    func updateSections(_ sections: [Int], withNewCellItems newCellItems: [[T]])
-    
-    /**
      Replaces entire sections with new cell items and supplementary section items
           
     - Usage:
@@ -1072,7 +1098,10 @@ public protocol CollectionDataProvider {
         - supplementarySectionIndices: The indices of each section to be updated with new supplementary section items
         - newSupplementarySectionItems: The array of new supplementary section items to replace with
     */
-    func updateSections(atItemSectionIndices sections: [Int], newCellItems: [[T]], supplementarySectionIndices: [Int], newSupplementarySectionItems: [S])
+    func updateSections(atItemSectionIndices sections: [Int],
+                        newCellItems: [[T]],
+                        supplementarySectionIndices: [Int]?,
+                        newSupplementarySectionItems: [S]?)
     
     // Delete
     
@@ -1116,6 +1145,22 @@ public protocol CollectionDataProvider {
      
     */
     func deleteSupplementarySectionItems(atSections sections: [Int])
+    
+    
+    /**
+     Deletes cell items and supplementary section items at the specifed section indices
+          
+    - Usage:
+     ```
+     let provider = ....
+     let sectionIndices: [Int] = [0, 1, 5, 8]
+     provider.deleteSections(atSections: sectionIndices)
+     ```
+        
+    - Parameters:
+        - sections: The section indices which will be deleted
+    */
+    func deleteSections(atSections sections: [Int])
     
     /**
      Completely replaces entire data source with new cell items and supplementary section items, regardless of existing items and/or section structure

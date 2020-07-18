@@ -37,6 +37,13 @@ class ExampleSupplementaryHeaderView: GenericCollectionReusableView {
             super.containerView.addSubview(subview)
         }
         
+        if #available(iOS 13.0, *) {
+            super.containerView.backgroundColor = UIColor.systemGroupedBackground
+        } else {
+            // Fallback on earlier versions
+            super.containerView.backgroundColor = UIColor.groupTableViewBackground
+        }
+        
         // Handle layout...
         
         let padding: CGFloat = 12.0

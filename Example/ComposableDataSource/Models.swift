@@ -6,7 +6,7 @@
 //  Copyright © 2020 CocoaPods. All rights reserved.
 //
 
-import Foundation
+import ComposableDataSource
 
 protocol URLCellModel {
     var urlString: String { get }
