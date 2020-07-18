@@ -104,7 +104,8 @@ open class SectionableCollectionDataSource
         return super.provider.numberOfItems(in: section)
     }
     
-    public func insert(cellItems: [T], atIndexPaths indexPaths: [IndexPath],
+    public func insert(cellItems: [T],
+                       atIndexPaths indexPaths: [IndexPath],
                        updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
                        completion: OptionalCompletionHandler) {
         
@@ -162,7 +163,11 @@ open class SectionableCollectionDataSource
         }
     }
     
-    public func insertNewSection(withCellItems cellItems: [T], supplementarySectionItem: S, atSection section: Int, updateStyle: DataSourceUpdateStyle = .withBatchUpdates, completion: OptionalCompletionHandler) {
+    public func insertNewSection(withCellItems cellItems: [T],
+                                 supplementarySectionItem: S,
+                                 atSection section: Int,
+                                 updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                                 completion: OptionalCompletionHandler) {
         
         register(cellItems: cellItems, supplementarySectionItems: [supplementarySectionItem])
         
