@@ -7,6 +7,24 @@
 
 ComposableDataSource wraps the typically verbose UICollectionView data source and delegate implementation into a more neatly packed builder pattern
 
+## Usage
+
+There are three components to creating a ComposableDataSource:
+
+
+## Step 1/3: Setting up the data source
+
+<hr />
+
+
+
+## Step 2/3: Setting up a cell
+
+<hr />
+
+
+## Step 3/3: Setting up the data source
+
 ```swift
 
 private func setupDataSource() -> ComposableCollectionDataSource {
@@ -36,7 +54,6 @@ private func setupDataSource() -> ComposableCollectionDataSource {
     dataSource.emptyDataSourceView = emptyView
     return dataSource
 }
-
 ```
 
 ## Requirements
