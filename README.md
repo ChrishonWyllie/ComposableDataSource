@@ -11,17 +11,83 @@ ComposableDataSource wraps the typically verbose UICollectionView data source an
 
 There are three components to creating a ComposableDataSource:
 
+<ul>
+    <li>Setting up a View Model to represent and configure a cell</li>
+    <li>Creating a Configurable Cell, using the `GenericCollectionViewCell` superclass</li>
+    <li>Creating a Composable Data Source</li>
+</ul>
 
-## Step 1/3: Setting up the data source
+## Step 1/3: Setting up the View Model
 
 <hr />
 
+The cell model is the struct that is used to decorate the cell with data. Conform your cell models to the `GenericCellModel` protocol in order to link the cell model to desired Configurable Cell class:
 
+```swift
+
+struct ChatroomViewModel: GenericCellModel {
+    var cellClass {
+        return ChatroomCell.self
+    }
+
+    let chatroom: Chatroom
+}
+
+struct Chatroom {
+    // ...
+}
+```
+
+Your View Model must conform to `GenericCellModel` and provide a subclass of `GenericCollectionViewCell` subclass. Similar to how you would normally use `collectionView.register(:forCellWithReuseIdentifier:)`
 
 ## Step 2/3: Setting up a cell
 
 <hr />
 
+```swift
+
+class ChatroomCell: GenericCollectionViewCell {
+
+    override func configure(with item: GenericCellModel, at indexPath: IndexPath) {
+        let chatroomViewModel = item as! ChatroomViewModel
+        let chatroom = chatroomViewModel.chatroom
+        // Decorate cell using chatroom object
+    }
+
+    // UIViews ...
+
+    override func setupUIElements() {
+        super.setupUIElements()
+
+        // Use `super.containerView` instead of contentView to add your subviews
+    
+    }
+
+}
+```
+
+Your UICollectionViewCell must subclass `GenericCollectionViewCell`. Additionally, take advantage of two overridable functions:
+
+```swift
+
+func configure(with item: GenericCellModel, at indexPath: IndexPath) {
+
+}
+```
+And
+
+```swift
+func setupUIElements() {
+
+}
+```
+
+The `configure(with:at:)` function is an overridable function from the `GenericCollectionViewCell` that is automatically called when the cell is dequeued with `collectionView(_:cellForItemAt:)`. Use this to decorate your cell with data.
+
+The `setupUIElements()` function is an overridable function from the `GenericCollectionViewCell` that is automatically called when the cell is initialized. Add your subviews, constraints, etc. here.
+
+<br />
+<br />
 
 ## Step 3/3: Setting up the data source
 
