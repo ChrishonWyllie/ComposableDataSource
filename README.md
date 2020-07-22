@@ -18,6 +18,7 @@ ComposableDataSource wraps the typically verbose UICollectionView data source an
 <br />
 
 <a name="prerequisites"/>
+
 ## Prerequisites
 
 <hr />
@@ -28,6 +29,7 @@ ComposableDataSource wraps the typically verbose UICollectionView data source an
 </ul>
 
 <a name="installation"/>
+
 ## Installation
 
 ComposableDataSource is available through [CocoaPods](https://cocoapods.org). To install
@@ -164,6 +166,7 @@ private func setupDataSource() -> ComposableCollectionDataSource {
 ```
 
 <a name="example-app"/>
+
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
