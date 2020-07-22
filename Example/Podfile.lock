@@ -1,5 +1,5 @@
 PODS:
-  - Celestial (0.8.13)
+  - Celestial (0.8.25)
   - ComposableDataSource (0.5.9)
   - FBSnapshotTestCase (2.1.4):
     - FBSnapshotTestCase/SwiftSupport (= 2.1.4)
@@ -41,7 +41,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Celestial: 7e239867e0b6b57038125c4d46e2b363646c844f
+  Celestial: 4a66a2a28327f813f1f8f4a1960acb4b2d692085
   ComposableDataSource: 1a12ea0b0c3937c8c1a96efc7eda99ca1d71bd39
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
   iOSSnapshotTestCase: 9ab44cb5aa62b84d31847f40680112e15ec579a6
