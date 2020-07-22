@@ -253,6 +253,7 @@ extension UIView {
         bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
     
+    @available(iOS 11.0, *)
     func anchorWithSafeLayouts(to view: UIView) {
         translatesAutoresizingMaskIntoConstraints = false
         leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
