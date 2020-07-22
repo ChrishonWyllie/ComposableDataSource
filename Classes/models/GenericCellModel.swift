@@ -15,5 +15,17 @@ import Foundation
 // and allow for Multiple cell types
 
 public protocol GenericCellModel {
-    var cellClass: AnyClass { get }
+    var cellClass: UICollectionViewCell.Type { get }
+}
+
+public typealias AnyComposableCellClass = BaseComposableCollectionViewCell.Type
+
+public protocol BaseCollectionCellModel: GenericCellModel {
+    func getCellClass() -> AnyComposableCellClass
+}
+
+extension BaseCollectionCellModel {
+    public var cellClass: UICollectionViewCell.Type {
+        return getCellClass()
+    }
 }

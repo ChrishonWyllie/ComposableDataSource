@@ -16,7 +16,7 @@ import UIKit.UICollectionView
 // But this is to allow for generic supplementary views (header and footer)
 
 public protocol GenericSupplementaryModel {
-    var supplementaryViewClass: AnyClass { get }
+    var supplementaryViewClass: UICollectionReusableView.Type { get }
     var viewKind: String { get }
 }
 
@@ -48,5 +48,30 @@ public struct GenericSupplementarySectionModel: GenericSupplementarySectionModel
         }
         self.header = header
         self.footer = footer
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public typealias AnyComposableCollectionReusableViewClass = BaseComposableCollectionReusableView.Type
+
+public protocol BaseComposableSupplementaryViewModel: GenericSupplementaryModel {
+    func getReusableViewClass() -> AnyComposableCollectionReusableViewClass
+}
+
+extension BaseComposableSupplementaryViewModel {
+    public var supplementaryViewClass: UICollectionReusableView.Type {
+        return getReusableViewClass()
     }
 }
