@@ -40,6 +40,7 @@ pod 'ComposableDataSource'
 ```
 
 <a name="usage"/>
+
 ## Usage
 
 There are three components to creating a ComposableDataSource:
