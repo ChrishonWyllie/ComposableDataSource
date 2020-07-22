@@ -181,37 +181,37 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     
     // MARK: - Builder functions
     
-    @discardableResult open func handleSelection(_ completion: @escaping ComposableItemSelectionHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleSelection(_ completion: @escaping ComposableItemSelectionHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableItemSelectionHandler = completion
         return self
     }
        
-    @discardableResult open func handleDeselection(_ completion: @escaping ComposableItemDeselectionHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleDeselection(_ completion: @escaping ComposableItemDeselectionHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableItemDeselectionHandler = completion
         return self
     }
     
-    @discardableResult open func handleItemSize(_ completion: @escaping ComposableItemSizeHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleItemSize(_ completion: @escaping ComposableItemSizeHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handleSupplementaryHeaderItemSize(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleSupplementaryHeaderItemSize(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<BaseComposableSupplementaryViewModel>) -> ComposableCollectionDataSource {
         super.composableHeaderItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handleSupplementaryFooterItemSize(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleSupplementaryFooterItemSize(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<BaseComposableSupplementaryViewModel>) -> ComposableCollectionDataSource {
         super.composableFooterItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handlRequestedPrefetching(_ completion: @escaping ComposableBeginPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handlRequestedPrefetching(_ completion: @escaping ComposableBeginPrefetchingHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableBeginPrefetchingHandler = completion
         return self
     }
     
-    @discardableResult open func handleCanceledPrefetching(_ completion: @escaping ComposableCancelPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleCanceledPrefetching(_ completion: @escaping ComposableCancelPrefetchingHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableCancelPrefetchingHandler = completion
         return self
     }
@@ -245,11 +245,11 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
             return UICollectionViewCell()
         }
         
-        let cellType = type(of: item.cellClass)
+        let cellIdentifier = String(describing: item.getCellClass())
         
         var cell: BaseComposableCollectionViewCell?
         
-        cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: cellType), for: indexPath) as? BaseComposableCollectionViewCell
+        cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: cellIdentifier), for: indexPath) as? BaseComposableCollectionViewCell
         cell?.configure(with: item, at: indexPath)
         
         if self.cellPadding != .zero {
@@ -288,11 +288,11 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
             return UICollectionReusableView()
         }
         
-        let viewType = type(of: item.supplementaryViewClass)
+        let viewIdentifier = String(describing: item.getReusableViewClass())
         
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: viewType), for: indexPath) as? BaseComposableCollectionReusableView
+        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: viewIdentifier), for: indexPath) as? BaseComposableCollectionReusableView
         DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - generic supplementary item: \(item)")
-        DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - generic supplementary view type: \(viewType)")
+        DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - generic supplementary view type: \(viewIdentifier)")
         view?.configure(with: item, at: indexPath)
         
         if self.cellPadding != .zero {

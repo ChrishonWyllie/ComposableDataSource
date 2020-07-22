@@ -50,8 +50,8 @@ open class SectionableCollectionDataSource
             cellItems.compactMap { (cellItem) -> GenericCellModel in
                 return (cellItem as! GenericCellModel)
             }.forEach { (cellItem) in
-                super.collectionView.register((cellItem.cellClass).self,
-                                                forCellWithReuseIdentifier: String(describing: type(of: (cellItem.cellClass))))
+                super.collectionView.register((cellItem.cellClass),
+                                                forCellWithReuseIdentifier: String(describing: cellItem.cellClass))
             }
         }
         
@@ -60,14 +60,14 @@ open class SectionableCollectionDataSource
                 guard let supplementarySectionItem = supplementarySectionItem as? GenericSupplementarySectionModel else { fatalError() }
                 
                 if let header = supplementarySectionItem.header {
-                    super.collectionView.register((header.supplementaryViewClass).self,
+                    super.collectionView.register((header.supplementaryViewClass),
                                                   forSupplementaryViewOfKind: header.viewKind,
-                                                  withReuseIdentifier: String(describing: type(of: header.supplementaryViewClass.self)))
+                                                  withReuseIdentifier: String(describing: header.supplementaryViewClass))
                 }
                 if let footer = supplementarySectionItem.footer {
-                    super.collectionView.register((footer.supplementaryViewClass).self,
+                    super.collectionView.register((footer.supplementaryViewClass),
                                                   forSupplementaryViewOfKind: footer.viewKind,
-                                                  withReuseIdentifier: String(describing: type(of: footer.supplementaryViewClass.self)))
+                                                  withReuseIdentifier: String(describing: footer.supplementaryViewClass))
                 }
             }
         }
@@ -411,7 +411,7 @@ open class SectionableCollectionDataSource
     }
     
     public func reset(keepingStructure: Bool = true) {
-        provider.reset(keepingStructure: keepingStructure)
+        super.provider.reset(keepingStructure: keepingStructure)
         super.collectionView.reloadData()
     }
 }
