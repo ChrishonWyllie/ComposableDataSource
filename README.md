@@ -7,13 +7,22 @@
 
 ComposableDataSource wraps the typically verbose UICollectionView data source and delegate implementation into a more neatly packed builder pattern
 
+## Prerequisites
+
+<hr />
+
+<ul>
+    <li>Xcode 8.0 or higher</li>
+    <li>iOS 10.0 or higher</li>
+</ul>
+
 ## Usage
 
 There are three components to creating a ComposableDataSource:
 
 <ul>
     <li>Setting up a View Model to represent and configure a cell</li>
-    <li>Creating a Configurable Cell, using the `GenericCollectionViewCell` superclass</li>
+    <li>Creating a Configurable Cell, using the BaseComposableCollectionViewCell superclass</li>
     <li>Creating a Composable Data Source</li>
 </ul>
 
@@ -21,24 +30,34 @@ There are three components to creating a ComposableDataSource:
 
 <hr />
 
-The cell model is the struct that is used to decorate the cell with data. Conform your cell models to the `GenericCellModel` protocol in order to link the cell model to desired Configurable Cell class:
+Technically, there's two steps here:
+<ul>
+    <li>Creating a View Model</li>
+    <li>Creating a Model (Optional)</li>
+</ul>
+
+The view model decorates the cell with info from the model when the cell is dequeued with `collectionView(_:cellForItemAt:)`.
+Your View Model but conform to the `BaseCollectionCellModel` protocol. Doing so will require you to return the UICollectionViewCell class
 
 ```swift
 
-struct ChatroomViewModel: GenericCellModel {
-    var cellClass {
-        return ChatroomCell.self
+// View Model
+struct ChatroomViewModel: BaseCollectionCellModel {
+    
+    func getCellClass() -> AnyComposableCellClass {
+        return VideoCell.self
     }
 
     let chatroom: Chatroom
 }
 
+// Model
 struct Chatroom {
     // ...
 }
 ```
 
-Your View Model must conform to `GenericCellModel` and provide a subclass of `GenericCollectionViewCell` subclass. Similar to how you would normally use `collectionView.register(:forCellWithReuseIdentifier:)`
+Your View Model must conform to `BaseCollectionCellModel` and provide a subclass of `BaseComposableCollectionViewCell` subclass. Similar to how you would normally use `collectionView.register(:forCellWithReuseIdentifier:)`
 
 ## Step 2/3: Setting up a cell
 
@@ -46,9 +65,9 @@ Your View Model must conform to `GenericCellModel` and provide a subclass of `Ge
 
 ```swift
 
-class ChatroomCell: GenericCollectionViewCell {
+class ChatroomCell: BaseComposableCollectionViewCell {
 
-    override func configure(with item: GenericCellModel, at indexPath: IndexPath) {
+    override func configure(with item: BaseCollectionCellModel, at indexPath: IndexPath) {
         let chatroomViewModel = item as! ChatroomViewModel
         let chatroom = chatroomViewModel.chatroom
         // Decorate cell using chatroom object
@@ -66,11 +85,11 @@ class ChatroomCell: GenericCollectionViewCell {
 }
 ```
 
-Your UICollectionViewCell must subclass `GenericCollectionViewCell`. Additionally, take advantage of two overridable functions:
+Your UICollectionViewCell must subclass `BaseComposableCollectionViewCell`. Additionally, take advantage of two overridable functions:
 
 ```swift
 
-func configure(with item: GenericCellModel, at indexPath: IndexPath) {
+func configure(with item: BaseCollectionCellModel, at indexPath: IndexPath) {
 
 }
 ```
@@ -82,9 +101,9 @@ func setupUIElements() {
 }
 ```
 
-The `configure(with:at:)` function is an overridable function from the `GenericCollectionViewCell` that is automatically called when the cell is dequeued with `collectionView(_:cellForItemAt:)`. Use this to decorate your cell with data.
+The `configure(with:at:)` function is an overridable function from the `BaseComposableCollectionViewCell` that is automatically called when the cell is dequeued with `collectionView(_:cellForItemAt:)`. Use this to decorate your cell with data.
 
-The `setupUIElements()` function is an overridable function from the `GenericCollectionViewCell` that is automatically called when the cell is initialized. Add your subviews, constraints, etc. here.
+The `setupUIElements()` function is an overridable function from the `BaseComposableCollectionViewCell` that is automatically called when the cell is initialized. Add your subviews, constraints, etc. here.
 
 <br />
 <br />
@@ -95,17 +114,17 @@ The `setupUIElements()` function is an overridable function from the `GenericCol
 
 private func setupDataSource() -> ComposableCollectionDataSource {
         
-    let models: [[GenericCellModel]] = [[]]
+    let models: [[BaseCollectionCellModel]] = [[]]
     let supplementaryModels: [GenericSupplementarySectionModel] = []
     
     let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
                                                     cellItems: models,
                                                     supplementarySectionItems: supplementaryModels)
-    .handleSelection { (indexPath: IndexPath, model: GenericCellModel) in
+    .handleSelection { (indexPath: IndexPath, model: BaseCollectionCellModel) in
         // Handle selection at indexPath
-    }.handleItemSize { (indexPath: IndexPath, model: GenericCellModel) -> CGSize in
+    }.handleItemSize { (indexPath: IndexPath, model: BaseCollectionCellModel) -> CGSize in
         // Return CGSize
-    }.handleSupplementaryHeaderItemSize { (section: Int, model: GenericSupplementaryModel) -> CGSize in
+    }.handleSupplementaryHeaderItemSize { (section: Int, model: BaseComposableSupplementaryViewModel) -> CGSize in
         // Return CGSize
     }
     // Chain more handlers
@@ -121,15 +140,6 @@ private func setupDataSource() -> ComposableCollectionDataSource {
     return dataSource
 }
 ```
-
-## Requirements
-
-<hr />
-
-<ul>
-    <li>Xcode 9.0+</li>
-    <li>iOS 11.0+</li>
-</ul>
 
 ## Example
 
