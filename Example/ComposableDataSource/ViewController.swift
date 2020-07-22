@@ -66,7 +66,7 @@ class ViewController: UIViewController {
                 "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
             ]
             
-            let videoCellModels: [GenericCellModel] = urlStrings.map {
+            let videoCellModels: [BaseCollectionCellModel] = urlStrings.map {
                 return VideoCellModel(urlString: $0)
             }
             
@@ -87,7 +87,7 @@ class ViewController: UIViewController {
         }
         
         var supplementaryModels: [GenericSupplementarySectionModel] = []
-        var cellModels: [GenericCellModel] = []
+        var cellModels: [BaseCollectionCellModel] = []
         
         let group = DispatchGroup()
         
@@ -127,31 +127,25 @@ class ViewController: UIViewController {
 
     private func setupDataSource() -> ComposableCollectionDataSource {
             
-        let models: [[GenericCellModel]] = [[]]
+        let models: [[BaseCollectionCellModel]] = [[]]
         let supplementaryModels: [GenericSupplementarySectionModel] = []
         
-//        let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
-//                                                        cellItems: models,
-//                                                        supplementarySectionItems: supplementaryModels)
         let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
                                                         cellItems: models,
-                                                        supplementarySectionItems: supplementaryModels,
-                                                        cellPadding: .init(top: 12, left: 12, bottom: 12, right: 12),
-                                                        cellCornerRadius: 8)
+                                                        supplementarySectionItems: supplementaryModels)
         .handleSelection { (indexPath, model) in
             print("selected model: \(model) at indexPath: \(indexPath)")
-        }.handleItemSize { [unowned self] (indexPath, model) -> CGSize in
+        }.handleItemSize { [unowned self] (indexPath: IndexPath, model: GenericCellModel) -> CGSize in
             return CGSize.init(width: self.collectionView.frame.size.width, height: 400.0)
-        }.handleSupplementaryHeaderItemSize { [unowned self] (indexPath, model) -> CGSize in
+        }.handleSupplementaryHeaderItemSize { [unowned self] (section: Int, model: GenericSupplementaryModel) -> CGSize in
             return CGSize.init(width: self.collectionView.frame.size.width, height: 60.0)
-        }.handlRequestedPrefetching { (indexPaths, models) in
+        }.handlRequestedPrefetching { (indexPaths: [IndexPath], models: [GenericCellModel]) in
             let models = models as! [URLCellModel]
             Celestial.shared.prefetchResources(at: models.map { $0.urlString} )
-        }.handleCanceledPrefetching { (indexPaths, models) in
+        }.handleCanceledPrefetching { (indexPaths: [IndexPath], models: [GenericCellModel]) in
             let models = models as! [URLCellModel]
             Celestial.shared.pausePrefetchingForResources(at: models.map { $0.urlString}, cancelCompletely: false)
         }
-        
         
         let emptyView = UILabel()
         emptyView.text = "Still loading data... :)"
