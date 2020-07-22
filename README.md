@@ -7,6 +7,17 @@
 
 ComposableDataSource wraps the typically verbose UICollectionView data source and delegate implementation into a more neatly packed builder pattern
 
+### Table of Contents  
+[Prerequisites](#prerequisites)
+<br />
+[Installation](#installation)
+<br />
+[Usage](#usage)
+<br />
+[Example App](#example-app)
+<br />
+
+<a name="prerequisites"/>
 ## Prerequisites
 
 <hr />
@@ -16,6 +27,7 @@ ComposableDataSource wraps the typically verbose UICollectionView data source an
     <li>iOS 10.0 or higher</li>
 </ul>
 
+<a name="installation"/>
 ## Installation
 
 ComposableDataSource is available through [CocoaPods](https://cocoapods.org). To install
@@ -25,6 +37,7 @@ it, simply add the following line to your Podfile:
 pod 'ComposableDataSource'
 ```
 
+<a name="usage"/>
 ## Usage
 
 There are three components to creating a ComposableDataSource:
@@ -150,6 +163,7 @@ private func setupDataSource() -> ComposableCollectionDataSource {
 }
 ```
 
+<a name="example-app"/>
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
