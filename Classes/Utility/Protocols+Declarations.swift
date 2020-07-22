@@ -31,6 +31,11 @@ public protocol ConfigurableReusableSupplementaryView: ReusableUIElement {
 
 
 
+/// Convenient combination of ConfigurableReusableCell and UICollectionViewCell
+public typealias ConfigurableReusableCellProtocol = ConfigurableReusableCell & UICollectionViewCell
+
+/// Convenient combination of ConfigurableReusableSupplementaryView and UICollectionReusableView
+public typealias ConfigurableReusableViewProtocol = ConfigurableReusableSupplementaryView & UICollectionReusableView
 
 
 
@@ -119,19 +124,13 @@ Typealias for conforming to CollectionDataSource superclass
 public typealias CollectionDataSourceInheritableProtocol<T, S, U, Cell, View> = CollectionDataSource<DataSourceProvider<T, S, U>, Cell, View>
     where Cell: ConfigurableReusableCellProtocol, Cell.T == T, View: ConfigurableReusableViewProtocol, View.T == U
 
-/// Convenient combination of ConfigurableReusableCell and UICollectionViewCell
-public typealias ConfigurableReusableCellProtocol = ConfigurableReusableCell & UICollectionViewCell
-
-/// Convenient combination of ConfigurableReusableSupplementaryView and UICollectionReusableView
-public typealias ConfigurableReusableViewProtocol = ConfigurableReusableSupplementaryView & UICollectionReusableView
-
 /// Typealias for conforming to SectionableDataSource superclass
 public typealias SectionableDataSourceInheriableProtocol = SectionableCollectionDataSource
-<GenericCellModel,
+<BaseCollectionCellModel,
 GenericSupplementarySectionModel,
-GenericSupplementaryModel,
-GenericCollectionViewCell,
-GenericCollectionReusableView>
+BaseComposableSupplementaryViewModel,
+BaseComposableCollectionViewCell,
+BaseComposableCollectionReusableView>
 
 
 
