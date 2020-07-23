@@ -162,7 +162,13 @@ private func setupDataSource() -> ComposableCollectionDataSource {
     // NOTE
     // Each inner array represents each section of your data source
     // in the order they are added
-    let models: [[ChatroomViewModel]] = [[....]]
+    let models: [[ChatroomViewModel]] = [
+        // Section 0
+        [
+            ChatroomViewModel(chatroom: ....)
+        ],
+        // Section 1, etc....
+    ]
     
     // Initialize array of supplementary models
     // NOTE
