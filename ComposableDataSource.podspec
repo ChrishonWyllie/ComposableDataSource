@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'ComposableDataSource'
-  s.version          = '0.6.0'
+  s.version          = '0.6.5'
   s.summary          = 'A more contained and composable method of creating scrollView datasources'
 
 # This description is used to generate tags and improve search results.

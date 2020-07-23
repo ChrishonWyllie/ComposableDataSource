@@ -1,3 +1,14 @@
+## [Version 0.6.5](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.6.5)
+
+### New
+* N/A
+
+### Improvements
+* Replaced builder pattern function names with ones similar to original delegate function names
+
+### Bug fixes
+* N/A
+
 ## [Version 0.6.0](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.6.0)
 
 ### New
