@@ -17,7 +17,7 @@ open class CollectionDataSource<Provider: CollectionDataProvider, Cell: UICollec
     UICollectionViewDelegate,
     UICollectionViewDelegateFlowLayout,
     UICollectionViewDataSourcePrefetching
-where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
+where Cell: ConfigurableReusableCell, Provider.T == Cell.T, View: ConfigurableReusableSupplementaryView {
     
     // MARK: - Variables
     
@@ -57,12 +57,6 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
         collectionView.prefetchDataSource = self
         
         collectionView.register(Cell.self, forCellWithReuseIdentifier: Cell.reuseIdentifier)
-        collectionView.register(UICollectionReusableView.self,
-                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                                withReuseIdentifier: Constants.ReuseIdentifiers.defaultHeaderReuseIdentifier)
-        collectionView.register(UICollectionReusableView.self,
-                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-                                withReuseIdentifier: Constants.ReuseIdentifiers.defaultFooterReuseIdentifier)
     }
     
     
@@ -92,14 +86,19 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T {
     open func collectionView(_ collectionView: UICollectionView,
                              cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.reuseIdentifier,
-                                                            for: indexPath) as? Cell else {
-                                                                return UICollectionViewCell()
+        
+        guard let item = provider.item(atIndexPath: indexPath) else {
+            DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - Internal inconsistency. No cell model for indexPath: \(indexPath)")
+            return UICollectionViewCell()
         }
         
-        if let item = provider.item(atIndexPath: indexPath) {
-            cell.configure(with: item, at: indexPath)
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.reuseIdentifier, for: indexPath) as? Cell else {
+            DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - Internal inconsistency. Could not dequeue cell with reuse identifier: \(Cell.reuseIdentifier)")
+            return UICollectionViewCell()
         }
+        
+        cell.configure(with: item, at: indexPath)
+        
         return cell
     }
 

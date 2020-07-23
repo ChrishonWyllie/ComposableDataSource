@@ -11,9 +11,9 @@ import ComposableDataSource
 import Celestial
 import AVFoundation
 
-class TestCollectionCell: GenericCollectionViewCell {
+class TestCollectionCell: BaseComposableCollectionViewCell {
     
-    override func configure(with item: GenericCellModel, at indexPath: IndexPath) {
+    override func configure(with item: BaseCollectionCellModel, at indexPath: IndexPath) {
         guard let item = item as? URLCellModel else { fatalError() }
         titleLabel.text = item.urlString
     }
@@ -103,7 +103,7 @@ class TestCollectionCell: GenericCollectionViewCell {
 
 class VideoCell: TestCollectionCell {
     
-    override func configure(with item: GenericCellModel, at indexPath: IndexPath) {
+    override func configure(with item: BaseCollectionCellModel, at indexPath: IndexPath) {
         super.configure(with: item, at: indexPath)
         guard let item = item as? VideoCellModel else { fatalError() }
         
@@ -236,7 +236,7 @@ extension VideoCell: URLVideoPlayerViewDelegate {
 
 class ImageCell: TestCollectionCell {
     
-    override func configure(with item: GenericCellModel, at indexPath: IndexPath) {
+    override func configure(with item: BaseCollectionCellModel, at indexPath: IndexPath) {
         super.configure(with: item, at: indexPath)
         
         guard let item = item as? ImageCellModel else { fatalError() }

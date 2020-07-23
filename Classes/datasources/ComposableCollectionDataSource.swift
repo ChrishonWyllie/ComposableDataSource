@@ -28,7 +28,7 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     // MARK: - Initializers
     
     public init(collectionView: UICollectionView,
-                cellItems: [[GenericCellModel]],
+                cellItems: [[BaseCollectionCellModel]],
                 supplementarySectionItems: [GenericSupplementarySectionModel],
                 cellPadding: UIEdgeInsets = .zero,
                 cellCornerRadius: CGFloat = 0.0) {
@@ -40,7 +40,7 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     }
     
     public init(collectionView: UICollectionView,
-                dataProvider: DataSourceProvider<GenericCellModel, GenericSupplementarySectionModel, GenericSupplementaryModel>,
+                dataProvider: DataSourceProvider<BaseCollectionCellModel, GenericSupplementarySectionModel, BaseComposableSupplementaryViewModel>,
                 cellPadding: UIEdgeInsets = .zero,
                 cellCornerRadius: CGFloat = 0.0) {
         
@@ -73,16 +73,16 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     // e.g. id of a ProjectUser,
     // localIdentifier of a PHAsset
     // So by default, this implementation will also vary
-    open func indexPath(for model: GenericCellModel) -> IndexPath? {
+    open func indexPath(for model: BaseCollectionCellModel) -> IndexPath? {
         fatalError("This needs to be subclassed to provide the proper comparison")
     }
     
     // Same for this function
-    open func contains(model: GenericCellModel) -> Bool {
+    open func contains(model: BaseCollectionCellModel) -> Bool {
         fatalError("This needs to be subclassed to provide the proper comparison")
     }
     
-    open func updateItemAndResortDataSource(indexPaths: [IndexPath], values: [GenericCellModel], completion: OptionalCompletionHandler) {
+    open func updateItemAndResortDataSource(indexPaths: [IndexPath], values: [BaseCollectionCellModel], completion: OptionalCompletionHandler) {
         fatalError("This needs to be subclassed to provide the proper comparison")
     }
     
@@ -117,7 +117,7 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
         }
     }
     
-    public func insertItemsMaintainingPosition(cellItems: [GenericCellModel], indexPaths: [IndexPath], completion: OptionalCompletionHandler) {
+    public func insertItemsMaintainingPosition(cellItems: [BaseCollectionCellModel], indexPaths: [IndexPath], completion: OptionalCompletionHandler) {
         
         let currentOffsetBeforeChanges = getCurrentOffset()
         DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - maintain offset: \(currentOffsetBeforeChanges)")
@@ -181,37 +181,37 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     
     // MARK: - Builder functions
     
-    @discardableResult open func handleSelection(_ completion: @escaping ComposableItemSelectionHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleSelection(_ completion: @escaping ComposableItemSelectionHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableItemSelectionHandler = completion
         return self
     }
        
-    @discardableResult open func handleDeselection(_ completion: @escaping ComposableItemDeselectionHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleDeselection(_ completion: @escaping ComposableItemDeselectionHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableItemDeselectionHandler = completion
         return self
     }
     
-    @discardableResult open func handleItemSize(_ completion: @escaping ComposableItemSizeHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleItemSize(_ completion: @escaping ComposableItemSizeHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handleSupplementaryHeaderItemSize(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleSupplementaryHeaderItemSize(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<BaseComposableSupplementaryViewModel>) -> ComposableCollectionDataSource {
         super.composableHeaderItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handleSupplementaryFooterItemSize(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<GenericSupplementaryModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleSupplementaryFooterItemSize(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<BaseComposableSupplementaryViewModel>) -> ComposableCollectionDataSource {
         super.composableFooterItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handlRequestedPrefetching(_ completion: @escaping ComposableBeginPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handlRequestedPrefetching(_ completion: @escaping ComposableBeginPrefetchingHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableBeginPrefetchingHandler = completion
         return self
     }
     
-    @discardableResult open func handleCanceledPrefetching(_ completion: @escaping ComposableCancelPrefetchingHandler<GenericCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func handleCanceledPrefetching(_ completion: @escaping ComposableCancelPrefetchingHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableCancelPrefetchingHandler = completion
         return self
     }
@@ -241,14 +241,15 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     open override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         guard let item = super.provider.item(atIndexPath: indexPath) else {
+            DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - Internal inconsistency. No cell model for indexPath: \(indexPath)")
             return UICollectionViewCell()
         }
         
-        let cellType = type(of: item.cellClass)
+        let cellIdentifier = String(describing: item.getCellClass())
         
-        var cell: GenericCollectionViewCell?
+        var cell: BaseComposableCollectionViewCell?
         
-        cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: cellType), for: indexPath) as? GenericCollectionViewCell
+        cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: cellIdentifier), for: indexPath) as? BaseComposableCollectionViewCell
         cell?.configure(with: item, at: indexPath)
         
         if self.cellPadding != .zero {
@@ -283,18 +284,18 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
         default: fatalError()
         }
         
-        guard let item = supplementaryItem else {
+        guard let item = supplementaryItem as? BaseComposableSupplementaryViewModel else {
             return UICollectionReusableView()
         }
         
-        let viewType = type(of: item.supplementaryViewClass)
+        let viewIdentifier = String(describing: item.getReusableViewClass())
         
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: viewType), for: indexPath) as? GenericCollectionReusableView
+        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: viewIdentifier), for: indexPath) as? BaseComposableCollectionReusableView
         DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - generic supplementary item: \(item)")
-        DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - generic supplementary view type: \(viewType)")
+        DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - generic supplementary view type: \(viewIdentifier)")
         view?.configure(with: item, at: indexPath)
         
-        if self.cellPadding != .zero {//&& self.cellCornerRadius > 0.0 {
+        if self.cellPadding != .zero {
             view?.setContentViewPadding(padding: cellPadding)
         }
         
@@ -303,14 +304,14 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     
     open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
-        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.header else {
+        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.header as? BaseComposableSupplementaryViewModel else {
             return .zero
         }
         return composableHeaderItemSizeHandler?(section, supplementarySectionItem) ?? .zero
     }
     
     open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.footer else {
+        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.footer as? BaseComposableSupplementaryViewModel else {
             return .zero
         }
         return composableFooterItemSizeHandler?(section, supplementarySectionItem) ?? .zero

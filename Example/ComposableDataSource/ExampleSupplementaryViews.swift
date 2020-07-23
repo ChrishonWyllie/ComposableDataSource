@@ -9,9 +9,9 @@
 import UIKit
 import ComposableDataSource
 
-class ExampleSupplementaryHeaderView: GenericCollectionReusableView {
+class ExampleSupplementaryHeaderView: BaseComposableCollectionReusableView {
     
-    override func configure(with item: GenericSupplementaryModel, at indexPath: IndexPath) {
+    override func configure(with item: BaseComposableSupplementaryViewModel, at indexPath: IndexPath) {
         guard let item = item as? SupplementaryItemModel else { fatalError() }
         titleLabel.text = item.title
     }

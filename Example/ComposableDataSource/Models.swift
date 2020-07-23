@@ -16,26 +16,26 @@ protocol SupplementaryItemModel {
     var title: String { get }
 }
 
-struct HeaderItemModel: GenericSupplementaryModel, SupplementaryItemModel {
+struct HeaderItemModel: BaseComposableSupplementaryViewModel, SupplementaryItemModel {
     var viewKind: String {
         return UICollectionView.elementKindSectionHeader
     }
     
-    var supplementaryViewClass: AnyClass {
+    func getReusableViewClass() -> AnyComposableCollectionReusableViewClass {
         return ExampleSupplementaryHeaderView.self
     }
     let title: String
 }
 
-struct VideoCellModel: GenericCellModel, URLCellModel {
-    var cellClass: AnyClass {
+struct VideoCellModel: BaseCollectionCellModel, URLCellModel {
+    func getCellClass() -> AnyComposableCellClass {
         return VideoCell.self
     }
     let urlString: String
 }
 
-struct ImageCellModel: GenericCellModel, URLCellModel {
-    var cellClass: AnyClass {
+struct ImageCellModel: BaseCollectionCellModel, URLCellModel {
+    func getCellClass() -> AnyComposableCellClass {
         return ImageCell.self
     }
     let urlString: String

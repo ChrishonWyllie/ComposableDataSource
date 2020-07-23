@@ -12,7 +12,15 @@ import Celestial
 
 class ViewController: UIViewController {
     
+    // MARK: - Variables
+    
     private var dataSource: ComposableCollectionDataSource?
+    
+    
+    
+    
+    
+    // MARK: - UI Elements
     
     private var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -27,56 +35,130 @@ class ViewController: UIViewController {
         collectionView.alwaysBounceVertical = true
         return collectionView
     }()
+    
+    private lazy var addItemsButton: UIBarButtonItem = {
+        let btn = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(addItems))
+        return btn
+    }()
+    
+    private lazy var updateItemsButton: UIBarButtonItem = {
+        let btn = UIBarButtonItem(title: "Update", style: .plain, target: self, action: #selector(updateItems))
+        return btn
+    }()
+    
+    private lazy var deleteItemsButton: UIBarButtonItem = {
+        let btn = UIBarButtonItem(title: "Delete", style: .plain, target: self, action: #selector(deleteItems))
+        return btn
+    }()
+    
+    
+    
+    
+    
+    // MARK: - View life cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        view.addSubview(collectionView)
+        navigationItem.rightBarButtonItems = [deleteItemsButton, updateItemsButton, addItemsButton]
         
-//        Celestial.shared.setDebugMode(on: true)
-        
-        collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        
+        setupCollectionView()
         dataSource = setupDataSource()
-        fetchData()
         
-        addVideos()
+        fetchData()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+}
+
+// MARK: - Setup functions
+
+extension ViewController {
     
-    private func addVideos() {
-        Timer.scheduledTimer(withTimeInterval: 5, repeats: false) { (_) in
-            
-            let urlStrings: [String] = [
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
-                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
-            ]
-            
-            let videoCellModels: [GenericCellModel] = urlStrings.map {
-                return VideoCellModel(urlString: $0)
-            }
-            
-            let headerModel = HeaderItemModel(title: "Videos")
-            let supplementarySectionItem = GenericSupplementarySectionModel(header: headerModel, footer: nil)
-            
-            DispatchQueue.main.async {
-                self.dataSource?.insertNewSection(withCellItems: videoCellModels, supplementarySectionItem: supplementarySectionItem, atSection: 0, completion: nil)
-            }
+    private func setupCollectionView() {
+        view.addSubview(collectionView)
+        collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        if #available(iOS 11.0, *) {
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        } else {
+            // Fallback on earlier versions
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         }
+        collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+    }
+
+    private func setupDataSource() -> ComposableCollectionDataSource {
+            
+        let models: [[BaseCollectionCellModel]] = [[]]
+        let supplementaryModels: [GenericSupplementarySectionModel] = []
+        
+        let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
+                                                        cellItems: models,
+                                                        supplementarySectionItems: supplementaryModels)
+        .handleSelection { (indexPath, model) in
+            print("selected model: \(model) at indexPath: \(indexPath)")
+        }.handleItemSize { [unowned self] (indexPath: IndexPath, model: BaseCollectionCellModel) -> CGSize in
+            return CGSize.init(width: self.collectionView.frame.size.width, height: 400.0)
+        }.handleSupplementaryHeaderItemSize { [unowned self] (section: Int, model: BaseComposableSupplementaryViewModel) -> CGSize in
+            return CGSize.init(width: self.collectionView.frame.size.width, height: 60.0)
+        }.handlRequestedPrefetching { (indexPaths: [IndexPath], models: [BaseCollectionCellModel]) in
+            let models = models as! [URLCellModel]
+            Celestial.shared.prefetchResources(at: models.map { $0.urlString} )
+        }.handleCanceledPrefetching { (indexPaths: [IndexPath], models: [BaseCollectionCellModel]) in
+            let models = models as! [URLCellModel]
+            Celestial.shared.pausePrefetchingForResources(at: models.map { $0.urlString}, cancelCompletely: false)
+        }
+        
+        let emptyView = UILabel()
+        emptyView.text = "Still loading data... :)"
+        emptyView.font = UIFont.boldSystemFont(ofSize: 25)
+        emptyView.numberOfLines = 0
+        emptyView.textAlignment = .center
+        
+        dataSource.emptyDataSourceView = emptyView
+        return dataSource
+    }
+}
+
+// MARK: - CRUD functions
+
+extension ViewController {
+    
+    @objc private func addItems() {
+        let urlStrings: [String] = [
+            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
+            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
+        ]
+        
+        let videoCellModels: [BaseCollectionCellModel] = urlStrings.map {
+            return VideoCellModel(urlString: $0)
+        }
+        
+        let headerModel = HeaderItemModel(title: "Videos")
+        let supplementarySectionItem = GenericSupplementarySectionModel(header: headerModel, footer: nil)
+        
+        dataSource?.insertNewSection(withCellItems: videoCellModels, supplementarySectionItem: supplementarySectionItem, atSection: 0, completion: nil)
+        
+    }
+    
+    @objc private func updateItems() {
+//        dataSource?.updateSections(atItemSectionIndices: <#T##[Int]#>, newCellItems: <#T##[[BaseCollectionCellModel]]#>, completion: <#T##OptionalCompletionHandler##OptionalCompletionHandler##(Bool) -> ()#>)
+    }
+    
+    @objc private func deleteItems() {
+        dataSource?.deleteSections(atSectionIndices: [0], completion: nil)
     }
     
     private func fetchData() {
@@ -87,7 +169,7 @@ class ViewController: UIViewController {
         }
         
         var supplementaryModels: [GenericSupplementarySectionModel] = []
-        var cellModels: [GenericCellModel] = []
+        var cellModels: [BaseCollectionCellModel] = []
         
         let group = DispatchGroup()
         
@@ -123,44 +205,6 @@ class ViewController: UIViewController {
                                                supplementarySectionItems: supplementaryModels,
                                                completion: nil)
         }
-    }
-
-    private func setupDataSource() -> ComposableCollectionDataSource {
-            
-        let models: [[GenericCellModel]] = [[]]
-        let supplementaryModels: [GenericSupplementarySectionModel] = []
-        
-//        let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
-//                                                        cellItems: models,
-//                                                        supplementarySectionItems: supplementaryModels)
-        let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
-                                                        cellItems: models,
-                                                        supplementarySectionItems: supplementaryModels,
-                                                        cellPadding: .init(top: 12, left: 12, bottom: 12, right: 12),
-                                                        cellCornerRadius: 8)
-        .handleSelection { (indexPath, model) in
-            print("selected model: \(model) at indexPath: \(indexPath)")
-        }.handleItemSize { [unowned self] (indexPath, model) -> CGSize in
-            return CGSize.init(width: self.collectionView.frame.size.width, height: 400.0)
-        }.handleSupplementaryHeaderItemSize { [unowned self] (indexPath, model) -> CGSize in
-            return CGSize.init(width: self.collectionView.frame.size.width, height: 60.0)
-        }.handlRequestedPrefetching { (indexPaths, models) in
-            let models = models as! [URLCellModel]
-            Celestial.shared.prefetchResources(at: models.map { $0.urlString} )
-        }.handleCanceledPrefetching { (indexPaths, models) in
-            let models = models as! [URLCellModel]
-            Celestial.shared.pausePrefetchingForResources(at: models.map { $0.urlString}, cancelCompletely: false)
-        }
-        
-        
-        let emptyView = UILabel()
-        emptyView.text = "Still loading data... :)"
-        emptyView.font = UIFont.boldSystemFont(ofSize: 25)
-        emptyView.numberOfLines = 0
-        emptyView.textAlignment = .center
-        
-        dataSource.emptyDataSourceView = emptyView
-        return dataSource
     }
 }
 
