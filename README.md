@@ -149,8 +149,17 @@ The `setupUIElements()` function is an overridable function from the `BaseCompos
 
 private func setupDataSource() -> ComposableCollectionDataSource {
         
-    let models: [[BaseCollectionCellModel]] = [[]]
-    let supplementaryModels: [GenericSupplementarySectionModel] = []
+    // Initialize double nested array of view models
+    // NOTE
+    // Each inner array represents each section of your data source
+    // in the order they are added
+    let models: [[BaseCollectionCellModel]] = [[....]]
+    
+    // Initialize array of supplementary models
+    // NOTE
+    // Each item represents the header and/or footer supplementary view
+    // for a specific section in the order they are added
+    let supplementaryModels: [GenericSupplementarySectionModel] = [....]
     
     let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
                                                     cellItems: models,
