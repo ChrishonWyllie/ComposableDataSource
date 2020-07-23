@@ -1,3 +1,19 @@
+## [Version 0.6.0](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.6.0)
+
+### New
+* Added Table of Contents to README
+* Updated to latest version of Celestial
+* Downgraded minimum deployment target from iOS 11 to iOS 10
+
+### Improvements
+* Updated README
+* Added navigation buttons to test CRUD
+* Replaced generic protocols with Base protocols to be used ComposableCollectionDataSource
+* Renamed GenericCollectionViewCell and GenericCollectionReusableView to BaseComposableCollectionViewCell and BaseComposableCollectionReusableView
+
+### Bug fixes
+* N/A
+
 ## [Version 0.5.9](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.5.9)
 
 ### New
