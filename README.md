@@ -192,6 +192,7 @@ First, create new view models to represent the cells you want to add:
 ```swift
 
 let newSectionOfItems: [ChatroomViewModel] = [
+    ChatroomViewModel(chatroom: ....),
     // Array of items...
 ]
 
@@ -202,10 +203,8 @@ Then use the APIs provided by the `ComposableCollectionDataSource` to add the it
 ```swift
 
 let desiredSectionIndex: Int = 0
-self.dataSource.insertNewSection(withCellItems: newSectionOfItems, 
-                                 supplementarySectionItem: nil, 
-                                 atSection: desiredSectionIndex, 
-                                 completion: nil)
+
+self.dataSource.insertNewSection(withCellItems: newSectionOfItems, supplementarySectionItem: nil, atSection: desiredSectionIndex, completion: nil)
 
 ```
 
@@ -213,16 +212,11 @@ Additionally, inserting view models at varying indexPaths is supported:
 
 ```swift
 
-func insert(cellItems: [T],
-            atIndexPaths indexPaths: [IndexPath],
-            updateStyle: DataSourceUpdateStyle,
-            completion: OptionalCompletionHandler)
+// Inserts view models at varying index paths
+func insert(cellItems: [T], atIndexPaths indexPaths: [IndexPath], updateStyle: DataSourceUpdateStyle, completion: OptionalCompletionHandler)
 
-
-func insert(supplementarySectionItems: [S],
-            atSections sections: [Int],
-            updateStyle: DataSourceUpdateStyle,
-            completion: OptionalCompletionHandler)
+// Inserts supplementary section items (Struct containing view models for header and/or footer supplementary views)
+func insert(supplementarySectionItems: [S], atSections sections: [Int], updateStyle: DataSourceUpdateStyle, completion: OptionalCompletionHandler)
 
 ```
 
