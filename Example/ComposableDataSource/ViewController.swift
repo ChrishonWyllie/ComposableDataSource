@@ -101,16 +101,16 @@ extension ViewController {
         let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
                                                         cellItems: models,
                                                         supplementarySectionItems: supplementaryModels)
-        .handleSelection { (indexPath, model) in
+        .didSelectItem { (indexPath: IndexPath, model: BaseCollectionCellModel) in
             print("selected model: \(model) at indexPath: \(indexPath)")
-        }.handleItemSize { [unowned self] (indexPath: IndexPath, model: BaseCollectionCellModel) -> CGSize in
+        }.sizeForItem { [unowned self] (indexPath: IndexPath, model: BaseCollectionCellModel) -> CGSize in
             return CGSize.init(width: self.collectionView.frame.size.width, height: 400.0)
-        }.handleSupplementaryHeaderItemSize { [unowned self] (section: Int, model: BaseComposableSupplementaryViewModel) -> CGSize in
+        }.referenceSizeForHeader { [unowned self] (section: Int, model: BaseComposableSupplementaryViewModel) -> CGSize in
             return CGSize.init(width: self.collectionView.frame.size.width, height: 60.0)
-        }.handlRequestedPrefetching { (indexPaths: [IndexPath], models: [BaseCollectionCellModel]) in
+        }.prefetchItems { (indexPaths: [IndexPath], models: [BaseCollectionCellModel]) in
             let models = models as! [URLCellModel]
             Celestial.shared.prefetchResources(at: models.map { $0.urlString} )
-        }.handleCanceledPrefetching { (indexPaths: [IndexPath], models: [BaseCollectionCellModel]) in
+        }.cancelPrefetchingForItems { (indexPaths: [IndexPath], models: [BaseCollectionCellModel]) in
             let models = models as! [URLCellModel]
             Celestial.shared.pausePrefetchingForResources(at: models.map { $0.urlString}, cancelCompletely: false)
         }

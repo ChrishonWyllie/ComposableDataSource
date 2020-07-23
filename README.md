@@ -149,20 +149,30 @@ The `setupUIElements()` function is an overridable function from the `BaseCompos
 
 private func setupDataSource() -> ComposableCollectionDataSource {
         
-    let models: [[BaseCollectionCellModel]] = [[]]
-    let supplementaryModels: [GenericSupplementarySectionModel] = []
+    // Initialize double nested array of view models
+    // NOTE
+    // Each inner array represents each section of your data source
+    // in the order they are added
+    let models: [[BaseCollectionCellModel]] = [[....]]
+    
+    // Initialize array of supplementary models
+    // NOTE
+    // Each item represents the header and/or footer supplementary view
+    // for a specific section in the order they are added
+    let supplementaryModels: [GenericSupplementarySectionModel] = [....]
     
     let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
                                                     cellItems: models,
                                                     supplementarySectionItems: supplementaryModels)
-    .handleSelection { (indexPath: IndexPath, model: BaseCollectionCellModel) in
+    .didSelectItem { (indexPath: IndexPath, model: BaseCollectionCellModel) in
         // Handle selection at indexPath
-    }.handleItemSize { (indexPath: IndexPath, model: BaseCollectionCellModel) -> CGSize in
-        // Return CGSize
-    }.handleSupplementaryHeaderItemSize { (section: Int, model: BaseComposableSupplementaryViewModel) -> CGSize in
-        // Return CGSize
+    }.sizeForItem { [unowned self] (indexPath: IndexPath, model: BaseCollectionCellModel) -> CGSize in
+        // Return size for cell at the specified indexPath
+    }.referenceSizeForHeader { [unowned self] (section: Int, model: BaseComposableSupplementaryViewModel) -> CGSize in
+        // Return size for supplementary header view at the specified indexPath
+        // If your data source will have supplementary models 
     }
-    // Chain more handlers
+    // Chain more handlers ...
     
     
     let emptyView = UILabel()
