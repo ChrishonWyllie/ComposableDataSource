@@ -26,7 +26,7 @@ let dataSource = ComposableCollectionDataSource(....)
     * [Updating datasource](#updating-datasource)
     * [Deleting from datasource](#deleting-from-datasource)
     * [Empty backgroundView](#empty-background-view)
-[Example App](#example-app)
+* [Example App](#example-app)
 <br />
 
 <a name="prerequisites"/>
