@@ -32,8 +32,6 @@ let dataSource = ComposableCollectionDataSource(....)
 
 ## Prerequisites
 
-<hr />
-
 <ul>
     <li>Xcode 8.0 or higher</li>
     <li>iOS 10.0 or higher</li>
@@ -63,8 +61,6 @@ There are three components to creating a ComposableDataSource:
 </ul>
 
 ## Step 1/3: Setting up the View Model
-
-<hr />
 
 Technically, there's two steps here:
 <ul>
@@ -96,8 +92,6 @@ struct Chatroom {
 Your View Model must conform to `BaseCollectionCellModel` and provide a subclass of `BaseComposableCollectionViewCell` subclass. Similar to how you would normally use `collectionView.register(:forCellWithReuseIdentifier:)`
 
 ## Step 2/3: Setting up a cell
-
-<hr />
 
 ```swift
 
