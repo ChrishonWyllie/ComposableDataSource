@@ -7,6 +7,16 @@
 
 ComposableDataSource wraps the typically verbose UICollectionView data source and delegate implementation into a more neatly packed builder pattern
 
+Chain your UICollectionView delegate calls one after another as needed:
+
+```swift
+
+let dataSource = ComposableCollectionDataSource(....)
+// chain selection delegate function
+// chain cell size delegate function
+// ... and so on ...
+```
+
 ### Table of Contents  
 [Prerequisites](#prerequisites)
 <br />
