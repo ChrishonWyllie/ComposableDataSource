@@ -247,7 +247,7 @@ func insert(supplementarySectionItems: [S], atSections sections: [Int],
 
 ### Deleting from datasource
 
-Deleting from the datasource can be done in multiple ways: Deleting cell view models at varying indexPaths, deleting supplementary section view models at varying sections or deleting sections altogether:
+Deleting from the datasource can be done in multiple ways, deleting sections altogether:
 
 ```swift
 
@@ -255,6 +255,8 @@ let desiredSectionsToDelete: [Int] = [0, 2]
 
 dataSource.deleteSections(atSectionIndices: desiredSectionsToDelete, completion: nil)
 ```
+
+... or, by deleting cell view models at varying indexPaths, deleting supplementary section view models at varying sections
 
 ```swift
 
