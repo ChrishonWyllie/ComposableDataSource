@@ -25,7 +25,7 @@ let dataSource = ComposableCollectionDataSource(....)
     * [Adding to datasource](#adding-to-datasource)
     * [Updating datasource](#updating-datasource)
     * [Deleting from datasource](#deleting-from-datasource)
-    * [Empty backgroundView](#empty-background-view)
+    * [Empty backgroundView](#empty-backgroundview)
 * [Example App](#example-app)
 <br />
 
@@ -229,11 +229,11 @@ Additionally, inserting view models at varying indexPaths is supported:
 
 ```swift
 
-// Inserts view models at varying index paths
+// Inserts cell view models at varying index paths
 func insert(cellItems: [T], atIndexPaths indexPaths: [IndexPath], 
             updateStyle: DataSourceUpdateStyle, completion: OptionalCompletionHandler)
 
-// Inserts supplementary section items (Struct containing view models for header and/or footer supplementary views)
+// Inserts supplementary section view models (Struct containing view models for header and/or footer supplementary views)
 func insert(supplementarySectionItems: [S], atSections sections: [Int], 
             updateStyle: DataSourceUpdateStyle, completion: OptionalCompletionHandler)
 
@@ -247,7 +247,26 @@ func insert(supplementarySectionItems: [S], atSections sections: [Int],
 
 ### Deleting from datasource
 
-<a name="#empty-background-view"/>
+Deleting from the datasource can be done in multiple ways: Deleting cell view models at varying indexPaths, deleting supplementary section view models at varying sections or deleting sections altogether:
+
+```swift
+
+let desiredSectionsToDelete: [Int] = [0, 2]
+
+dataSource.deleteSections(atSectionIndices: desiredSectionsToDelete, completion: nil)
+```
+
+```swift
+
+// Deletes cell view models at varying index paths
+func deleteCellItems(atIndexPaths indexPaths: [IndexPath], updateStyle: DataSourceUpdateStyle, completion: OptionalCompletionHandler)
+
+// Deletes supplementary section view models (Struct containing view models for header and/or footer supplementary views)
+func deleteSupplementarySectionItems(atSections sections: [Int], updateStyle: DataSourceUpdateStyle, completion: OptionalCompletionHandler)
+
+```
+
+<a name="#empty-backgroundview"/>
 
 ### Empty backgroundView
 
