@@ -25,6 +25,7 @@ let dataSource = ComposableCollectionDataSource(....)
     * [Adding to datasource](#adding-to-datasource)
     * [Updating datasource](#updating-datasource)
     * [Deleting from datasource](#deleting-from-datasource)
+    * [Empty backgroundView](#empty-background-view)
 [Example App](#example-app)
 <br />
 
@@ -142,6 +143,19 @@ The `setupUIElements()` function is an overridable function from the `BaseCompos
 
 ```swift
 
+var dataSource: ComposableCollectionDataSource!
+var collectionView : UICollectionView = ...
+
+override func viewDidLoad() {
+    super.viewDidLoad()
+
+    setupUI()
+
+    dataSource = setupDataSource()
+}
+
+....
+
 private func setupDataSource() -> ComposableCollectionDataSource {
         
     // Initialize double nested array of view models
@@ -169,19 +183,15 @@ private func setupDataSource() -> ComposableCollectionDataSource {
     }
     // Chain more handlers ...
     
-    
-    let emptyView = UILabel()
-    emptyView.text = "Still loading data... :)"
-    emptyView.font = UIFont.boldSystemFont(ofSize: 25)
-    emptyView.numberOfLines = 0
-    emptyView.textAlignment = .center
-    
-    dataSource.emptyDataSourceView = emptyView
     return dataSource
 }
 ```
 
+<a name="#advanced-usage"/>
+
 ## Advanced Usage
+
+<a name="#adding-to-datasource"/>
 
 ### Adding to datasource
 
@@ -223,8 +233,31 @@ func insert(supplementarySectionItems: [S], atSections sections: [Int],
 
 ```
 
+<a name="#updating-datasource"/>
+
 ### Updating datasource
+
+<a name="#deleting-from-datasource"/>
+
 ### Deleting from datasource
+
+<a name="#empty-background-view"/>
+
+### Empty backgroundView
+
+If you'd like to display some kind of view when the dataSource is empty:
+
+```swift
+
+let emptyView = UILabel()
+emptyView.text = "Still loading data... :)"
+emptyView.font = UIFont.boldSystemFont(ofSize: 25)
+emptyView.numberOfLines = 0
+emptyView.textAlignment = .center
+
+dataSource.emptyDataSourceView = emptyView
+
+```
 
 <a name="example-app"/>
 
