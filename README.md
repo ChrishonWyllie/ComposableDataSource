@@ -18,12 +18,13 @@ let dataSource = ComposableCollectionDataSource(....)
 ```
 
 ### Table of Contents  
-[Prerequisites](#prerequisites)
-<br />
-[Installation](#installation)
-<br />
-[Usage](#usage)
-<br />
+* [Prerequisites](#prerequisites)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Advanced Usage](#advanced-usage)
+    * [Adding to datasource](#adding-to-datasource)
+    * [Updating datasource](#updating-datasource)
+    * [Deleting from datasource](#deleting-from-datasource)
 [Example App](#example-app)
 <br />
 
@@ -185,6 +186,12 @@ private func setupDataSource() -> ComposableCollectionDataSource {
     return dataSource
 }
 ```
+
+## Advanced Usage
+
+### Adding to datasource
+### Updating datasource
+### Deleting from datasource
 
 <a name="example-app"/>
 
