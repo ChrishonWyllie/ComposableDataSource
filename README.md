@@ -155,14 +155,15 @@ private func setupDataSource() -> ComposableCollectionDataSource {
     let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
                                                     cellItems: models,
                                                     supplementarySectionItems: supplementaryModels)
-    .handleSelection { (indexPath: IndexPath, model: BaseCollectionCellModel) in
+    .didSelectItem { (indexPath: IndexPath, model: BaseCollectionCellModel) in
         // Handle selection at indexPath
-    }.handleItemSize { (indexPath: IndexPath, model: BaseCollectionCellModel) -> CGSize in
-        // Return CGSize
-    }.handleSupplementaryHeaderItemSize { (section: Int, model: BaseComposableSupplementaryViewModel) -> CGSize in
-        // Return CGSize
+    }.sizeForItem { [unowned self] (indexPath: IndexPath, model: BaseCollectionCellModel) -> CGSize in
+        // Return size for cell at the specified indexPath
+    }.referenceSizeForHeader { [unowned self] (section: Int, model: BaseComposableSupplementaryViewModel) -> CGSize in
+        // Return size for supplementary header view at the specified indexPath
+        // If your data source will have supplementary models 
     }
-    // Chain more handlers
+    // Chain more handlers ...
     
     
     let emptyView = UILabel()

@@ -181,37 +181,37 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     
     // MARK: - Builder functions
     
-    @discardableResult open func handleSelection(_ completion: @escaping ComposableItemSelectionHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func didSelectItem(_ completion: @escaping ComposableItemSelectionHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableItemSelectionHandler = completion
         return self
     }
        
-    @discardableResult open func handleDeselection(_ completion: @escaping ComposableItemDeselectionHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func didDeselectItem(_ completion: @escaping ComposableItemDeselectionHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableItemDeselectionHandler = completion
         return self
     }
     
-    @discardableResult open func handleItemSize(_ completion: @escaping ComposableItemSizeHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func sizeForItem(_ completion: @escaping ComposableItemSizeHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handleSupplementaryHeaderItemSize(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<BaseComposableSupplementaryViewModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func referenceSizeForHeader(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<BaseComposableSupplementaryViewModel>) -> ComposableCollectionDataSource {
         super.composableHeaderItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handleSupplementaryFooterItemSize(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<BaseComposableSupplementaryViewModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func referenceSizeForFooter(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<BaseComposableSupplementaryViewModel>) -> ComposableCollectionDataSource {
         super.composableFooterItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func handlRequestedPrefetching(_ completion: @escaping ComposableBeginPrefetchingHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func prefetchItems(_ completion: @escaping ComposableBeginPrefetchingHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableBeginPrefetchingHandler = completion
         return self
     }
     
-    @discardableResult open func handleCanceledPrefetching(_ completion: @escaping ComposableCancelPrefetchingHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func cancelPrefetchingForItems(_ completion: @escaping ComposableCancelPrefetchingHandler<BaseCollectionCellModel>) -> ComposableCollectionDataSource {
         super.composableCancelPrefetchingHandler = completion
         return self
     }
