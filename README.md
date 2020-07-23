@@ -148,7 +148,7 @@ private func setupDataSource() -> ComposableCollectionDataSource {
     // NOTE
     // Each inner array represents each section of your data source
     // in the order they are added
-    let models: [[BaseCollectionCellModel]] = [[....]]
+    let models: [[ChatroomViewModel]] = [[....]]
     
     // Initialize array of supplementary models
     // NOTE
@@ -184,6 +184,48 @@ private func setupDataSource() -> ComposableCollectionDataSource {
 ## Advanced Usage
 
 ### Adding to datasource
+
+Adding new items the datasource is very straightforward with the public APIs offrered.
+
+First, create new view models to represent the cells you want to add:
+
+```swift
+
+let newSectionOfItems: [ChatroomViewModel] = [
+    // Array of items...
+]
+
+```
+
+Then use the APIs provided by the `ComposableCollectionDataSource` to add the items. In this example, we will insert a completely new section at section 0 (Essentially inserting at the top of the list and pushing any existing sections down, as expected)
+
+```swift
+
+let desiredSectionIndex: Int = 0
+self.dataSource.insertNewSection(withCellItems: newSectionOfItems, 
+                                 supplementarySectionItem: nil, 
+                                 atSection: desiredSectionIndex, 
+                                 completion: nil)
+
+```
+
+Additionally, inserting view models at varying indexPaths is supported:
+
+```swift
+
+func insert(cellItems: [T],
+            atIndexPaths indexPaths: [IndexPath],
+            updateStyle: DataSourceUpdateStyle,
+            completion: OptionalCompletionHandler)
+
+
+func insert(supplementarySectionItems: [S],
+            atSections sections: [Int],
+            updateStyle: DataSourceUpdateStyle,
+            completion: OptionalCompletionHandler)
+
+```
+
 ### Updating datasource
 ### Deleting from datasource
 
