@@ -104,6 +104,8 @@ open class SectionableCollectionDataSource
         return super.provider.numberOfItems(in: section)
     }
     
+    // MARK: - Create
+    
     public func insert(cellItems: [T],
                        atIndexPaths indexPaths: [IndexPath],
                        updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
@@ -197,6 +199,8 @@ open class SectionableCollectionDataSource
         }
     }
     
+    // MARK: - Read
+    
     public func item(atIndexPath indexPath: IndexPath) -> T? {
         return super.provider.item(atIndexPath: indexPath)
     }
@@ -204,6 +208,8 @@ open class SectionableCollectionDataSource
     public func supplementarySectionItem(atSection section: Int) -> S? {
         return super.provider.supplementarySectionItem(atSection: section)
     }
+    
+    // MARK: - Update
     
     public func updateCellItems(atIndexPaths indexPaths: [IndexPath],
                                 newCellItems: [T],
@@ -221,6 +227,34 @@ open class SectionableCollectionDataSource
         
         func updateImmediately() {
             super.provider.updateCellItems(atIndexPaths: indexPaths, newCellItems: newCellItems)
+            super.collectionView.reloadData()
+            super.collectionView.performBatchUpdates(nil, completion: completion)
+        }
+        
+        if updateStyle == .withBatchUpdates {
+            updateWithBatchUpdates()
+        } else {
+            updateImmediately()
+        }
+    }
+    
+    public func updateSupplementarySectionsItems(atSections sections: [Int],
+                                                 withNewSupplementarySectionItems supplementarySectionItems: [S],
+                                                 updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                                                 completion: OptionalCompletionHandler) {
+        
+        register(cellItems: [[]], supplementarySectionItems: supplementarySectionItems)
+        
+        func updateWithBatchUpdates() {
+            super.collectionView.performBatchUpdates({
+                super.provider.updateSupplementarySectionItems(atSections: sections, withNewSupplementarySectionItems: supplementarySectionItems)
+                let indexSet = IndexSet(sections)
+                super.collectionView.reloadSections(indexSet)
+            }, completion: completion)
+        }
+        
+        func updateImmediately() {
+            super.provider.updateSupplementarySectionItems(atSections: sections, withNewSupplementarySectionItems: supplementarySectionItems)
             super.collectionView.reloadData()
             super.collectionView.performBatchUpdates(nil, completion: completion)
         }
@@ -274,33 +308,7 @@ open class SectionableCollectionDataSource
         }
     }
     
-    public func updateSupplementarySectionsItems(atSections sections: [Int],
-                                                 withNewSupplementarySectionItems supplementarySectionItems: [S],
-                                                 updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                                                 completion: OptionalCompletionHandler) {
-        
-        register(cellItems: [[]], supplementarySectionItems: supplementarySectionItems)
-        
-        func updateWithBatchUpdates() {
-            super.collectionView.performBatchUpdates({
-                super.provider.updateSupplementarySectionItems(atSections: sections, withNewSupplementarySectionItems: supplementarySectionItems)
-                let indexSet = IndexSet(sections)
-                super.collectionView.reloadSections(indexSet)
-            }, completion: completion)
-        }
-        
-        func updateImmediately() {
-            super.provider.updateSupplementarySectionItems(atSections: sections, withNewSupplementarySectionItems: supplementarySectionItems)
-            super.collectionView.reloadData()
-            super.collectionView.performBatchUpdates(nil, completion: completion)
-        }
-        
-        if updateStyle == .withBatchUpdates {
-            updateWithBatchUpdates()
-        } else {
-            updateImmediately()
-        }
-    }
+    // MARK: - Delete
     
     public func deleteCellItems(atIndexPaths indexPaths: [IndexPath],
                                 updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
