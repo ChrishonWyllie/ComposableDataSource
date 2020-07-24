@@ -225,7 +225,7 @@ self.dataSource.insertNewSection(withCellItems: newSectionOfItems, supplementary
 
 ```
 
-Additionally, inserting view models at varying indexPaths is supported:
+Additionally, inserting view models at varying indexPaths and indices is supported:
 
 ```swift
 
@@ -245,6 +245,44 @@ func insert(supplementarySectionItems: [S], atSections sections: [Int],
 
 <a name="#deleting-from-datasource"/>
 
+Updating the datasource is similar to adding items. However, instead of providing indexPaths or section indices to insert items at, the values provided will update the existing items at said indexPaths/section indices. Example of updating sections:
+
+```swift
+
+let sectionIndicesToUpdate: [Int] = [0, 3]
+
+let replacementItems: [[ChatroomViewModel]] = [
+    [
+        ChatroomViewModel(chatroom: ....),
+        // Array of items...
+    ],
+    [
+        // Other items for next section in `sectionIndicesToUpdate` 
+    ]
+]
+
+self.dataSource.updateSections(atItemSectionIndices: sectionIndicesToUpdate,
+                                newCellItems: replacementItems, 
+                                completion: nil)
+```
+
+Additionally, updating view models at varying indexPaths and indices is supported:
+
+```swift
+
+public func updateCellItems(atIndexPaths indexPaths: [IndexPath],
+                            newCellItems: [T],
+                            updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                            completion: OptionalCompletionHandler)
+
+public func updateSupplementarySectionsItems(atSections sections: [Int],
+                                             withNewSupplementarySectionItems supplementarySectionItems: [S],
+                                             updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                                             completion: OptionalCompletionHandler)
+
+```
+
+
 ### Deleting from datasource
 
 Deleting from the datasource can be done in multiple ways, deleting sections altogether:
@@ -261,10 +299,14 @@ dataSource.deleteSections(atSectionIndices: desiredSectionsToDelete, completion:
 ```swift
 
 // Deletes cell view models at varying index paths
-func deleteCellItems(atIndexPaths indexPaths: [IndexPath], updateStyle: DataSourceUpdateStyle, completion: OptionalCompletionHandler)
+func deleteCellItems(atIndexPaths indexPaths: [IndexPath],
+                     updateStyle: DataSourceUpdateStyle, 
+                     completion: OptionalCompletionHandler)
 
 // Deletes supplementary section view models (Struct containing view models for header and/or footer supplementary views)
-func deleteSupplementarySectionItems(atSections sections: [Int], updateStyle: DataSourceUpdateStyle, completion: OptionalCompletionHandler)
+func deleteSupplementarySectionItems(atSections sections: [Int], 
+                                     updateStyle: DataSourceUpdateStyle, 
+                                     completion: OptionalCompletionHandler)
 
 ```
 
