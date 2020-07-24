@@ -16,6 +16,25 @@ class ViewController: UIViewController {
     
     private var dataSource: ComposableCollectionDataSource?
     
+    private let imagesURLString: String = "https://picsum.photos/v2/list?limit=25"
+    
+    private var imageCellModels: [BaseCollectionCellModel]  = []
+    
+    private var videoCellModels: [BaseCollectionCellModel] {
+        let urlStrings: [String] = [
+           "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+           "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+           "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+           "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+           "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+           "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+           "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
+           "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
+       ]
+       
+       return urlStrings.map { VideoCellModel(urlString: $0) }
+    }
+    
     
     
     
@@ -131,21 +150,6 @@ extension ViewController {
 extension ViewController {
     
     @objc private func addItems() {
-        let urlStrings: [String] = [
-            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
-            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
-            "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
-        ]
-        
-        let videoCellModels: [BaseCollectionCellModel] = urlStrings.map {
-            return VideoCellModel(urlString: $0)
-        }
-        
         let headerModel = HeaderItemModel(title: "Videos")
         let supplementarySectionItem = GenericSupplementarySectionModel(header: headerModel, footer: nil)
         
@@ -154,7 +158,18 @@ extension ViewController {
     }
     
     @objc private func updateItems() {
-//        dataSource?.updateSections(atItemSectionIndices: <#T##[Int]#>, newCellItems: <#T##[[BaseCollectionCellModel]]#>, completion: <#T##OptionalCompletionHandler##OptionalCompletionHandler##(Bool) -> ()#>)
+        let randomNumber = Int.random(in: 0...1)
+        let section: Int = 0
+        let headerTitle: String = randomNumber == 0 ? imagesURLString : "Videos"
+        let headerModel = HeaderItemModel(title: headerTitle)
+        let supplementarySectionItem = GenericSupplementarySectionModel(header: headerModel, footer: nil)
+        let models: [BaseCollectionCellModel] = randomNumber == 0 ? imageCellModels : videoCellModels
+
+        dataSource?.updateSections(atItemSectionIndices: [section],
+                                   newCellItems: [models],
+                                   supplementarySectionIndices: [section],
+                                   supplementarySectionItems: [supplementarySectionItem],
+                                   completion: nil)
     }
     
     @objc private func deleteItems() {
@@ -163,21 +178,19 @@ extension ViewController {
     
     private func fetchData() {
         
-        let urlString: String = "https://picsum.photos/v2/list?limit=25"
-        guard let url = URL(string: urlString) else {
+        guard let url = URL(string: imagesURLString) else {
             return
         }
         
         var supplementaryModels: [GenericSupplementarySectionModel] = []
-        var cellModels: [BaseCollectionCellModel] = []
         
         let group = DispatchGroup()
         
         group.enter()
         
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
+        URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
             
-            let headerModel = HeaderItemModel(title: urlString)
+            let headerModel = HeaderItemModel(title: self?.imagesURLString ?? "Images")
             let containerModel = GenericSupplementarySectionModel(header: headerModel, footer: nil)
             supplementaryModels.append(containerModel)
             
@@ -189,7 +202,7 @@ extension ViewController {
                 
                 jsonDataArray.forEach { (jsonObject) in
                     let urlSessionObject = URLSessionObject(object: jsonObject)
-                    cellModels.append(ImageCellModel(urlString: urlSessionObject.downloadURL))
+                    self?.imageCellModels.append(ImageCellModel(urlString: urlSessionObject.downloadURL))
                 }
                 
                 group.leave()
@@ -200,10 +213,11 @@ extension ViewController {
             
         }.resume()
         
-        group.notify(queue: DispatchQueue.main) {
-            self.dataSource?.replaceDataSource(withCellItems: [cellModels],
-                                               supplementarySectionItems: supplementaryModels,
-                                               completion: nil)
+        group.notify(queue: DispatchQueue.main) { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.dataSource?.replaceDataSource(withCellItems: [strongSelf.imageCellModels],
+                                                     supplementarySectionItems: supplementaryModels,
+                                                     completion: nil)
         }
     }
 }
