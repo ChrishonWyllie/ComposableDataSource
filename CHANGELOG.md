@@ -1,3 +1,14 @@
+## [Version 0.6.21](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.6.21)
+
+### New
+* N/A
+
+### Improvements
+* N/A
+
+### Bug fixes
+* Fixed bug where calling `DataProvider.updateSections(...)` would not update the actual backing-store of cell view models
+
 ## [Version 0.6.5](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.6.5)
 
 ### New
