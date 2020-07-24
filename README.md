@@ -18,20 +18,20 @@ let dataSource = ComposableCollectionDataSource(....)
 ```
 
 ### Table of Contents  
-[Prerequisites](#prerequisites)
-<br />
-[Installation](#installation)
-<br />
-[Usage](#usage)
-<br />
-[Example App](#example-app)
+* [Prerequisites](#prerequisites)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Advanced Usage](#advanced-usage)
+    * [Adding to datasource](#adding-to-datasource)
+    * [Updating datasource](#updating-datasource)
+    * [Deleting from datasource](#deleting-from-datasource)
+    * [Empty backgroundView](#empty-backgroundview)
+* [Example App](#example-app)
 <br />
 
 <a name="prerequisites"/>
 
 ## Prerequisites
-
-<hr />
 
 <ul>
     <li>Xcode 8.0 or higher</li>
@@ -63,8 +63,6 @@ There are three components to creating a ComposableDataSource:
 
 ## Step 1/3: Setting up the View Model
 
-<hr />
-
 Technically, there's two steps here:
 <ul>
     <li>Creating a View Model</li>
@@ -95,8 +93,6 @@ struct Chatroom {
 Your View Model must conform to `BaseCollectionCellModel` and provide a subclass of `BaseComposableCollectionViewCell` subclass. Similar to how you would normally use `collectionView.register(:forCellWithReuseIdentifier:)`
 
 ## Step 2/3: Setting up a cell
-
-<hr />
 
 ```swift
 
@@ -147,13 +143,32 @@ The `setupUIElements()` function is an overridable function from the `BaseCompos
 
 ```swift
 
+var dataSource: ComposableCollectionDataSource!
+var collectionView : UICollectionView = ...
+
+override func viewDidLoad() {
+    super.viewDidLoad()
+
+    setupUI()
+
+    dataSource = setupDataSource()
+}
+
+....
+
 private func setupDataSource() -> ComposableCollectionDataSource {
         
     // Initialize double nested array of view models
     // NOTE
     // Each inner array represents each section of your data source
     // in the order they are added
-    let models: [[BaseCollectionCellModel]] = [[....]]
+    let models: [[ChatroomViewModel]] = [
+        // Section 0
+        [
+            ChatroomViewModel(chatroom: ....)
+        ],
+        // Section 1, etc....
+    ]
     
     // Initialize array of supplementary models
     // NOTE
@@ -174,16 +189,143 @@ private func setupDataSource() -> ComposableCollectionDataSource {
     }
     // Chain more handlers ...
     
-    
-    let emptyView = UILabel()
-    emptyView.text = "Still loading data... :)"
-    emptyView.font = UIFont.boldSystemFont(ofSize: 25)
-    emptyView.numberOfLines = 0
-    emptyView.textAlignment = .center
-    
-    dataSource.emptyDataSourceView = emptyView
     return dataSource
 }
+```
+
+<a name="#advanced-usage"/>
+
+## Advanced Usage
+
+<a name="#adding-to-datasource"/>
+
+### Adding to datasource
+
+Adding new items the datasource is very straightforward with the public APIs offrered.
+
+First, create new view models to represent the cells you want to add:
+
+```swift
+
+let newSectionOfItems: [ChatroomViewModel] = [
+    ChatroomViewModel(chatroom: ....),
+    // Array of items...
+]
+
+```
+
+Then use the APIs provided by the `ComposableCollectionDataSource` to add the items. In this example, we will insert a completely new section at section 0 (Essentially inserting at the top of the list and pushing any existing sections down, as expected)
+
+```swift
+
+let desiredSectionIndex: Int = 0
+
+self.dataSource.insertNewSection(withCellItems: newSectionOfItems, supplementarySectionItem: nil, 
+                                 atSection: desiredSectionIndex, completion: nil)
+
+```
+
+Additionally, inserting view models at varying indexPaths and indices is supported:
+
+```swift
+
+// Inserts cell view models at varying index paths
+func insert(cellItems: [T], atIndexPaths indexPaths: [IndexPath], 
+            updateStyle: DataSourceUpdateStyle, completion: OptionalCompletionHandler)
+
+// Inserts supplementary section view models (Struct containing view models for header and/or footer supplementary views)
+func insert(supplementarySectionItems: [S], atSections sections: [Int], 
+            updateStyle: DataSourceUpdateStyle, completion: OptionalCompletionHandler)
+
+```
+
+<a name="#updating-datasource"/>
+
+### Updating datasource
+
+<a name="#deleting-from-datasource"/>
+
+Updating the datasource is similar to adding items. However, instead of providing indexPaths or section indices to insert items at, the values provided will update the existing items at said indexPaths/section indices. Example of updating sections:
+
+```swift
+
+let sectionIndicesToUpdate: [Int] = [0, 3]
+
+let replacementItems: [[ChatroomViewModel]] = [
+    [
+        ChatroomViewModel(chatroom: ....),
+        // Array of items...
+    ],
+    [
+        // Other items for next section in `sectionIndicesToUpdate` 
+    ]
+]
+
+self.dataSource.updateSections(atItemSectionIndices: sectionIndicesToUpdate,
+                                newCellItems: replacementItems, 
+                                completion: nil)
+```
+
+Additionally, updating view models at varying indexPaths and indices is supported:
+
+```swift
+
+public func updateCellItems(atIndexPaths indexPaths: [IndexPath],
+                            newCellItems: [T],
+                            updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                            completion: OptionalCompletionHandler)
+
+public func updateSupplementarySectionsItems(atSections sections: [Int],
+                                             withNewSupplementarySectionItems supplementarySectionItems: [S],
+                                             updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                                             completion: OptionalCompletionHandler)
+
+```
+
+
+### Deleting from datasource
+
+Deleting from the datasource can be done in multiple ways, deleting sections altogether:
+
+```swift
+
+let desiredSectionsToDelete: [Int] = [0, 2]
+
+dataSource.deleteSections(atSectionIndices: desiredSectionsToDelete, completion: nil)
+```
+
+... or, by deleting cell view models at varying indexPaths, deleting supplementary section view models at varying sections
+
+```swift
+
+// Deletes cell view models at varying index paths
+func deleteCellItems(atIndexPaths indexPaths: [IndexPath],
+                     updateStyle: DataSourceUpdateStyle, 
+                     completion: OptionalCompletionHandler)
+
+// Deletes supplementary section view models (Struct containing view models for header and/or footer supplementary views)
+func deleteSupplementarySectionItems(atSections sections: [Int], 
+                                     updateStyle: DataSourceUpdateStyle, 
+                                     completion: OptionalCompletionHandler)
+
+```
+
+<a name="#empty-backgroundview"/>
+
+### Empty backgroundView
+
+If you'd like to display some kind of view when the dataSource is empty:
+
+```swift
+
+let emptyView = UILabel()
+emptyView.text = "Still loading data... :)"
+emptyView.font = UIFont.boldSystemFont(ofSize: 25)
+emptyView.numberOfLines = 0
+emptyView.textAlignment = .center
+
+dataSource.emptyDataSourceView = emptyView
+
 ```
 
 <a name="example-app"/>

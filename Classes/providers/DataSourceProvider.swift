@@ -198,11 +198,11 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
             return
         }
         
-        guard cellItems.count == sections.count else {
-            fatalError("Attempting to update \(cellItems.count) items with mismatching number of sections: \(sections.count)")
+        guard newCellItems.count == sections.count else {
+            fatalError("Attempting to update \(newCellItems.count) items with mismatching number of sections: \(sections.count)")
         }
         
-        zip(sections, cellItems).forEach { (designatedSectionIndex, newSectionItemsToUpdate) in
+        zip(sections, newCellItems).forEach { (designatedSectionIndex, newSectionItemsToUpdate) in
             if self.cellItems.count == designatedSectionIndex {
                 self.appendNewSection(with: newSectionItemsToUpdate)
             } else {
