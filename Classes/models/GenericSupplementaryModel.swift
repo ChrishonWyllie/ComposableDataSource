@@ -66,11 +66,11 @@ public struct GenericSupplementarySectionModel: GenericSupplementarySectionModel
 
 public typealias AnyComposableCollectionReusableViewClass = BaseComposableCollectionReusableView.Type
 
-public protocol BaseComposableSupplementaryViewModel: GenericSupplementaryModel {
+public protocol BaseCollectionSupplementaryViewModel: GenericSupplementaryModel {
     func getReusableViewClass() -> AnyComposableCollectionReusableViewClass
 }
 
-extension BaseComposableSupplementaryViewModel {
+extension BaseCollectionSupplementaryViewModel {
     public var supplementaryViewClass: UICollectionReusableView.Type {
         return getReusableViewClass()
     }

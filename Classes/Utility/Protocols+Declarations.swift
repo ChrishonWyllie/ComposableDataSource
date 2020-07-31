@@ -128,7 +128,7 @@ public typealias CollectionDataSourceInheritableProtocol<T, S, U, Cell, View> = 
 public typealias SectionableDataSourceInheriableProtocol = SectionableCollectionDataSource
 <BaseCollectionCellModel,
 GenericSupplementarySectionModel,
-BaseComposableSupplementaryViewModel,
+BaseCollectionSupplementaryViewModel,
 BaseComposableCollectionViewCell,
 BaseComposableCollectionReusableView>
 
@@ -229,7 +229,7 @@ public protocol ComposableDataSourceActionHandlerProtocol {
     - Usage:
     ```
     let dataSource = ...
-    dataSource.referenceSizeForHeader { (section: Int, supplementaryItem: BaseComposableSupplementaryViewModel) in
+    dataSource.referenceSizeForHeader { (section: Int, supplementaryItem: BaseCollectionSupplementaryViewModel) in
         // ... Handle header supplementary view size
     }
     ```
@@ -237,7 +237,7 @@ public protocol ComposableDataSourceActionHandlerProtocol {
     - Parameters:
         - completion: Completion handler block in which you will provide custom supplementary view sizing using the supplementary view item at the section index
     */
-    @discardableResult func referenceSizeForHeader(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<BaseComposableSupplementaryViewModel>) -> ComposableCollectionDataSource
+    @discardableResult func referenceSizeForHeader(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<BaseCollectionSupplementaryViewModel>) -> ComposableCollectionDataSource
     
     /**
      Provides completion block for returning UICollectionReusableView footer sizes at specific indexPaths
@@ -246,7 +246,7 @@ public protocol ComposableDataSourceActionHandlerProtocol {
     - Usage:
     ```
     let dataSource = ...
-    dataSource.referenceSizeForFooter { (section: Int, supplementaryItem: BaseComposableSupplementaryViewModel) in
+    dataSource.referenceSizeForFooter { (section: Int, supplementaryItem: BaseCollectionSupplementaryViewModel) in
         // ... Handle footer supplementary view size
     }
     ```
@@ -254,7 +254,7 @@ public protocol ComposableDataSourceActionHandlerProtocol {
     - Parameters:
         - completion: Completion handler block in which you will provide custom supplementary view sizing using the supplementary view item at the section index
     */
-    @discardableResult func referenceSizeForFooter(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<BaseComposableSupplementaryViewModel>) -> ComposableCollectionDataSource
+    @discardableResult func referenceSizeForFooter(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<BaseCollectionSupplementaryViewModel>) -> ComposableCollectionDataSource
     
     /**
      Provides completion block for handling UICollectionView prefetching events.

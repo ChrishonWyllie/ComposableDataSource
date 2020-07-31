@@ -16,7 +16,7 @@ protocol SupplementaryItemModel {
     var title: String { get }
 }
 
-struct HeaderItemModel: BaseComposableSupplementaryViewModel, SupplementaryItemModel {
+struct HeaderItemModel: BaseCollectionSupplementaryViewModel, SupplementaryItemModel {
     var viewKind: String {
         return UICollectionView.elementKindSectionHeader
     }
