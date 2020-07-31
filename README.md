@@ -26,6 +26,7 @@ let dataSource = ComposableCollectionDataSource(....)
     * [Updating datasource](#updating-datasource)
     * [Deleting from datasource](#deleting-from-datasource)
     * [Empty backgroundView](#empty-backgroundview)
+    * [Full Documentation](#full-documentation)
 * [Example App](#example-app)
 <br />
 
@@ -78,7 +79,7 @@ Your View Model but conform to the `BaseCollectionCellModel` protocol. Doing so 
 struct ChatroomViewModel: BaseCollectionCellModel {
     
     func getCellClass() -> AnyComposableCellClass {
-        return VideoCell.self
+        return ChatroomCell.self
     }
 
     let chatroom: Chatroom
@@ -327,6 +328,12 @@ emptyView.textAlignment = .center
 dataSource.emptyDataSourceView = emptyView
 
 ```
+
+<a name="full-documentation"/>
+
+## Full Documentation
+
+Check out the full documentation [here](https://chrishonwyllie.com/docs/composabledatasource)
 
 <a name="example-app"/>
 
