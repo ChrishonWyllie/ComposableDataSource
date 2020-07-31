@@ -134,13 +134,35 @@ extension ViewController {
             Celestial.shared.pausePrefetchingForResources(at: models.map { $0.urlString}, cancelCompletely: false)
         }
         
-        let emptyView = UILabel()
-        emptyView.text = "Still loading data... :)"
-        emptyView.font = UIFont.boldSystemFont(ofSize: 25)
-        emptyView.numberOfLines = 0
-        emptyView.textAlignment = .center
+        let emptyContainerView = UIView()
         
-        dataSource.emptyDataSourceView = emptyView
+        let emptyViewLabel = UILabel()
+        emptyViewLabel.translatesAutoresizingMaskIntoConstraints = false
+        emptyViewLabel.text = "Still loading data... :)"
+        emptyViewLabel.font = UIFont.boldSystemFont(ofSize: 25)
+        emptyViewLabel.numberOfLines = 0
+        emptyViewLabel.textAlignment = .center
+        
+        let activityView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
+        activityView.translatesAutoresizingMaskIntoConstraints = false
+        activityView.hidesWhenStopped = true
+        
+        emptyContainerView.addSubview(emptyViewLabel)
+        emptyContainerView.addSubview(activityView)
+        
+        let paddingConstant: CGFloat = 12.0
+        emptyViewLabel.leadingAnchor.constraint(equalTo: emptyContainerView.leadingAnchor, constant: paddingConstant).isActive = true
+        emptyViewLabel.trailingAnchor.constraint(equalTo: emptyContainerView.trailingAnchor, constant: -paddingConstant).isActive = true
+        emptyViewLabel.centerYAnchor.constraint(equalTo: emptyContainerView.centerYAnchor).isActive = true
+        emptyViewLabel.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        
+        activityView.topAnchor.constraint(equalTo: emptyViewLabel.bottomAnchor, constant: paddingConstant).isActive = true
+        activityView.centerXAnchor.constraint(equalTo: emptyContainerView.centerXAnchor).isActive = true
+        
+        activityView.startAnimating()
+        
+        dataSource.emptyDataSourceView = emptyContainerView
         return dataSource
     }
 }

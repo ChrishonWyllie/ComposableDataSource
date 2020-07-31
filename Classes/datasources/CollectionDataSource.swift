@@ -69,18 +69,12 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T, View: ConfigurableRe
     // MARK: - UICollectionView datasource
     
     open func numberOfSections(in collectionView: UICollectionView) -> Int {
+        collectionView.backgroundView = provider.isEmpty ? emptyDataSourceView : nil
         return provider.numberOfSections()
     }
     
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let numItemsInSection = provider.numberOfItems(in: section)
-        if numItemsInSection > 0 {
-            collectionView.backgroundView = nil
-            return numItemsInSection
-        } else {
-            collectionView.backgroundView = emptyDataSourceView
-            return 0
-        }
+        return provider.numberOfItems(in: section)
     }
     
     open func collectionView(_ collectionView: UICollectionView,
