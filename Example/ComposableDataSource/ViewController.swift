@@ -124,7 +124,7 @@ extension ViewController {
             print("selected model: \(model) at indexPath: \(indexPath)")
         }.sizeForItem { [unowned self] (indexPath: IndexPath, model: BaseCollectionCellModel) -> CGSize in
             return CGSize.init(width: self.collectionView.frame.size.width, height: 400.0)
-        }.referenceSizeForHeader { [unowned self] (section: Int, model: BaseComposableSupplementaryViewModel) -> CGSize in
+        }.referenceSizeForHeader { [unowned self] (section: Int, model: BaseCollectionSupplementaryViewModel) -> CGSize in
             return CGSize.init(width: self.collectionView.frame.size.width, height: 60.0)
         }.prefetchItems { (indexPaths: [IndexPath], models: [BaseCollectionCellModel]) in
             let models = models as! [URLCellModel]
