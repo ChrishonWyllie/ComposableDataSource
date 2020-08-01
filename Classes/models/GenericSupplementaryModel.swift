@@ -35,7 +35,7 @@ public protocol GenericSupplementarySectionModelProtocol {
     var footer: GenericSupplementaryModel? { get }
 }
 
-public struct GenericSupplementarySectionModel: GenericSupplementarySectionModelProtocol {
+public struct BaseSupplementarySectionModel: GenericSupplementarySectionModelProtocol {
     public private(set) var header: GenericSupplementaryModel?
     public private(set) var footer: GenericSupplementaryModel?
     

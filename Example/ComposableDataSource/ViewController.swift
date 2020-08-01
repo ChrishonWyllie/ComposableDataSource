@@ -115,7 +115,7 @@ extension ViewController {
     private func setupDataSource() -> ComposableCollectionDataSource {
             
         let models: [[BaseCollectionCellModel]] = [[]]
-        let supplementaryModels: [GenericSupplementarySectionModel] = []
+        let supplementaryModels: [BaseSupplementarySectionModel] = []
         
         let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
                                                         cellItems: models,
@@ -173,7 +173,7 @@ extension ViewController {
     
     @objc private func addItems() {
         let headerModel = HeaderItemModel(title: "Videos")
-        let supplementarySectionItem = GenericSupplementarySectionModel(header: headerModel, footer: nil)
+        let supplementarySectionItem = BaseSupplementarySectionModel(header: headerModel, footer: nil)
         
         dataSource?.insertNewSection(withCellItems: videoCellModels, supplementarySectionItem: supplementarySectionItem, atSection: 0, completion: nil)
         
@@ -182,9 +182,9 @@ extension ViewController {
     @objc private func updateItems() {
         let randomNumber = Int.random(in: 0...1)
         let section: Int = 0
-        let headerTitle: String = randomNumber == 0 ? imagesURLString : "Videos"
+        let headerTitle: String = randomNumber == 0 ? "Images" : "Videos"
         let headerModel = HeaderItemModel(title: headerTitle)
-        let supplementarySectionItem = GenericSupplementarySectionModel(header: headerModel, footer: nil)
+        let supplementarySectionItem = BaseSupplementarySectionModel(header: headerModel, footer: nil)
         let models: [BaseCollectionCellModel] = randomNumber == 0 ? imageCellModels : videoCellModels
 
         dataSource?.updateSections(atItemSectionIndices: [section],
@@ -204,7 +204,7 @@ extension ViewController {
             return
         }
         
-        var supplementaryModels: [GenericSupplementarySectionModel] = []
+        var supplementaryModels: [BaseSupplementarySectionModel] = []
         
         let group = DispatchGroup()
         
@@ -212,8 +212,8 @@ extension ViewController {
         
         URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
             
-            let headerModel = HeaderItemModel(title: self?.imagesURLString ?? "Images")
-            let containerModel = GenericSupplementarySectionModel(header: headerModel, footer: nil)
+            let headerModel = HeaderItemModel(title: "Images")
+            let containerModel = BaseSupplementarySectionModel(header: headerModel, footer: nil)
             supplementaryModels.append(containerModel)
             
             guard let data = data else { return }
