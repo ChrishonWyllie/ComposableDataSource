@@ -23,7 +23,11 @@ class ExampleSupplementaryHeaderView: BaseComposableCollectionReusableView {
         lbl.numberOfLines = 0
         lbl.font = UIFont.boldSystemFont(ofSize: 28)
         lbl.textAlignment = .center
-        lbl.textColor = .red
+        if #available(iOS 13.0, *) {
+            lbl.textColor = .label
+        } else {
+            // Fallback on earlier versions
+        }
         return lbl
     }()
     

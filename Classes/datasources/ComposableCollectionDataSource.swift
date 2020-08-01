@@ -29,7 +29,7 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     
     public init(collectionView: UICollectionView,
                 cellItems: [[BaseCollectionCellModel]],
-                supplementarySectionItems: [GenericSupplementarySectionModel],
+                supplementarySectionItems: [BaseSupplementarySectionModel],
                 cellPadding: UIEdgeInsets = .zero,
                 cellCornerRadius: CGFloat = 0.0) {
         
@@ -40,7 +40,7 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     }
     
     public init(collectionView: UICollectionView,
-                dataProvider: DataSourceProvider<BaseCollectionCellModel, GenericSupplementarySectionModel, BaseCollectionSupplementaryViewModel>,
+                dataProvider: DataSourceProvider<BaseCollectionCellModel, BaseSupplementarySectionModel, BaseCollectionSupplementaryViewModel>,
                 cellPadding: UIEdgeInsets = .zero,
                 cellCornerRadius: CGFloat = 0.0) {
         

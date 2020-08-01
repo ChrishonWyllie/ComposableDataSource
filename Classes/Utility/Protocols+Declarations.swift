@@ -127,7 +127,7 @@ public typealias CollectionDataSourceInheritableProtocol<T, S, U, Cell, View> = 
 /// Typealias for conforming to SectionableDataSource superclass
 public typealias SectionableDataSourceInheriableProtocol = SectionableCollectionDataSource
 <BaseCollectionCellModel,
-GenericSupplementarySectionModel,
+BaseSupplementarySectionModel,
 BaseCollectionSupplementaryViewModel,
 BaseComposableCollectionViewCell,
 BaseComposableCollectionReusableView>
