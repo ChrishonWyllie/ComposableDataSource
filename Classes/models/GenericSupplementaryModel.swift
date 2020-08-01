@@ -35,7 +35,7 @@ public protocol GenericSupplementarySectionModelProtocol {
     var footer: GenericSupplementaryModel? { get }
 }
 
-public struct GenericSupplementarySectionModel: GenericSupplementarySectionModelProtocol {
+public struct BaseSupplementarySectionModel: GenericSupplementarySectionModelProtocol {
     public private(set) var header: GenericSupplementaryModel?
     public private(set) var footer: GenericSupplementaryModel?
     
@@ -66,11 +66,11 @@ public struct GenericSupplementarySectionModel: GenericSupplementarySectionModel
 
 public typealias AnyComposableCollectionReusableViewClass = BaseComposableCollectionReusableView.Type
 
-public protocol BaseComposableSupplementaryViewModel: GenericSupplementaryModel {
+public protocol BaseCollectionSupplementaryViewModel: GenericSupplementaryModel {
     func getReusableViewClass() -> AnyComposableCollectionReusableViewClass
 }
 
-extension BaseComposableSupplementaryViewModel {
+extension BaseCollectionSupplementaryViewModel {
     public var supplementaryViewClass: UICollectionReusableView.Type {
         return getReusableViewClass()
     }

@@ -29,7 +29,7 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     
     public init(collectionView: UICollectionView,
                 cellItems: [[BaseCollectionCellModel]],
-                supplementarySectionItems: [GenericSupplementarySectionModel],
+                supplementarySectionItems: [BaseSupplementarySectionModel],
                 cellPadding: UIEdgeInsets = .zero,
                 cellCornerRadius: CGFloat = 0.0) {
         
@@ -40,7 +40,7 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     }
     
     public init(collectionView: UICollectionView,
-                dataProvider: DataSourceProvider<BaseCollectionCellModel, GenericSupplementarySectionModel, BaseComposableSupplementaryViewModel>,
+                dataProvider: DataSourceProvider<BaseCollectionCellModel, BaseSupplementarySectionModel, BaseCollectionSupplementaryViewModel>,
                 cellPadding: UIEdgeInsets = .zero,
                 cellCornerRadius: CGFloat = 0.0) {
         
@@ -196,12 +196,12 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
         return self
     }
     
-    @discardableResult open func referenceSizeForHeader(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<BaseComposableSupplementaryViewModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func referenceSizeForHeader(_ completion: @escaping ComposableSupplementaryHeaderSizeHandler<BaseCollectionSupplementaryViewModel>) -> ComposableCollectionDataSource {
         super.composableHeaderItemSizeHandler = completion
         return self
     }
     
-    @discardableResult open func referenceSizeForFooter(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<BaseComposableSupplementaryViewModel>) -> ComposableCollectionDataSource {
+    @discardableResult open func referenceSizeForFooter(_ completion: @escaping ComposableSupplementaryFooterSizeHandler<BaseCollectionSupplementaryViewModel>) -> ComposableCollectionDataSource {
         super.composableFooterItemSizeHandler = completion
         return self
     }
@@ -284,7 +284,7 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
         default: fatalError()
         }
         
-        guard let item = supplementaryItem as? BaseComposableSupplementaryViewModel else {
+        guard let item = supplementaryItem as? BaseCollectionSupplementaryViewModel else {
             return UICollectionReusableView()
         }
         
@@ -304,14 +304,14 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     
     open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
-        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.header as? BaseComposableSupplementaryViewModel else {
+        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.header as? BaseCollectionSupplementaryViewModel else {
             return .zero
         }
         return composableHeaderItemSizeHandler?(section, supplementarySectionItem) ?? .zero
     }
     
     open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.footer as? BaseComposableSupplementaryViewModel else {
+        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.footer as? BaseCollectionSupplementaryViewModel else {
             return .zero
         }
         return composableFooterItemSizeHandler?(section, supplementarySectionItem) ?? .zero

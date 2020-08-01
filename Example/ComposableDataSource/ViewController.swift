@@ -115,7 +115,7 @@ extension ViewController {
     private func setupDataSource() -> ComposableCollectionDataSource {
             
         let models: [[BaseCollectionCellModel]] = [[]]
-        let supplementaryModels: [GenericSupplementarySectionModel] = []
+        let supplementaryModels: [BaseSupplementarySectionModel] = []
         
         let dataSource = ComposableCollectionDataSource(collectionView: collectionView,
                                                         cellItems: models,
@@ -124,7 +124,7 @@ extension ViewController {
             print("selected model: \(model) at indexPath: \(indexPath)")
         }.sizeForItem { [unowned self] (indexPath: IndexPath, model: BaseCollectionCellModel) -> CGSize in
             return CGSize.init(width: self.collectionView.frame.size.width, height: 400.0)
-        }.referenceSizeForHeader { [unowned self] (section: Int, model: BaseComposableSupplementaryViewModel) -> CGSize in
+        }.referenceSizeForHeader { [unowned self] (section: Int, model: BaseCollectionSupplementaryViewModel) -> CGSize in
             return CGSize.init(width: self.collectionView.frame.size.width, height: 60.0)
         }.prefetchItems { (indexPaths: [IndexPath], models: [BaseCollectionCellModel]) in
             let models = models as! [URLCellModel]
@@ -134,13 +134,35 @@ extension ViewController {
             Celestial.shared.pausePrefetchingForResources(at: models.map { $0.urlString}, cancelCompletely: false)
         }
         
-        let emptyView = UILabel()
-        emptyView.text = "Still loading data... :)"
-        emptyView.font = UIFont.boldSystemFont(ofSize: 25)
-        emptyView.numberOfLines = 0
-        emptyView.textAlignment = .center
+        let emptyContainerView = UIView()
         
-        dataSource.emptyDataSourceView = emptyView
+        let emptyViewLabel = UILabel()
+        emptyViewLabel.translatesAutoresizingMaskIntoConstraints = false
+        emptyViewLabel.text = "Still loading data... :)"
+        emptyViewLabel.font = UIFont.boldSystemFont(ofSize: 25)
+        emptyViewLabel.numberOfLines = 0
+        emptyViewLabel.textAlignment = .center
+        
+        let activityView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
+        activityView.translatesAutoresizingMaskIntoConstraints = false
+        activityView.hidesWhenStopped = true
+        
+        emptyContainerView.addSubview(emptyViewLabel)
+        emptyContainerView.addSubview(activityView)
+        
+        let paddingConstant: CGFloat = 12.0
+        emptyViewLabel.leadingAnchor.constraint(equalTo: emptyContainerView.leadingAnchor, constant: paddingConstant).isActive = true
+        emptyViewLabel.trailingAnchor.constraint(equalTo: emptyContainerView.trailingAnchor, constant: -paddingConstant).isActive = true
+        emptyViewLabel.centerYAnchor.constraint(equalTo: emptyContainerView.centerYAnchor).isActive = true
+        emptyViewLabel.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        
+        activityView.topAnchor.constraint(equalTo: emptyViewLabel.bottomAnchor, constant: paddingConstant).isActive = true
+        activityView.centerXAnchor.constraint(equalTo: emptyContainerView.centerXAnchor).isActive = true
+        
+        activityView.startAnimating()
+        
+        dataSource.emptyDataSourceView = emptyContainerView
         return dataSource
     }
 }
@@ -151,7 +173,7 @@ extension ViewController {
     
     @objc private func addItems() {
         let headerModel = HeaderItemModel(title: "Videos")
-        let supplementarySectionItem = GenericSupplementarySectionModel(header: headerModel, footer: nil)
+        let supplementarySectionItem = BaseSupplementarySectionModel(header: headerModel, footer: nil)
         
         dataSource?.insertNewSection(withCellItems: videoCellModels, supplementarySectionItem: supplementarySectionItem, atSection: 0, completion: nil)
         
@@ -160,9 +182,9 @@ extension ViewController {
     @objc private func updateItems() {
         let randomNumber = Int.random(in: 0...1)
         let section: Int = 0
-        let headerTitle: String = randomNumber == 0 ? imagesURLString : "Videos"
+        let headerTitle: String = randomNumber == 0 ? "Images" : "Videos"
         let headerModel = HeaderItemModel(title: headerTitle)
-        let supplementarySectionItem = GenericSupplementarySectionModel(header: headerModel, footer: nil)
+        let supplementarySectionItem = BaseSupplementarySectionModel(header: headerModel, footer: nil)
         let models: [BaseCollectionCellModel] = randomNumber == 0 ? imageCellModels : videoCellModels
 
         dataSource?.updateSections(atItemSectionIndices: [section],
@@ -182,7 +204,7 @@ extension ViewController {
             return
         }
         
-        var supplementaryModels: [GenericSupplementarySectionModel] = []
+        var supplementaryModels: [BaseSupplementarySectionModel] = []
         
         let group = DispatchGroup()
         
@@ -190,8 +212,8 @@ extension ViewController {
         
         URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
             
-            let headerModel = HeaderItemModel(title: self?.imagesURLString ?? "Images")
-            let containerModel = GenericSupplementarySectionModel(header: headerModel, footer: nil)
+            let headerModel = HeaderItemModel(title: "Images")
+            let containerModel = BaseSupplementarySectionModel(header: headerModel, footer: nil)
             supplementaryModels.append(containerModel)
             
             guard let data = data else { return }

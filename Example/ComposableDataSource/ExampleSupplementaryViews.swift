@@ -11,7 +11,7 @@ import ComposableDataSource
 
 class ExampleSupplementaryHeaderView: BaseComposableCollectionReusableView {
     
-    override func configure(with item: BaseComposableSupplementaryViewModel, at indexPath: IndexPath) {
+    override func configure(with item: BaseCollectionSupplementaryViewModel, at indexPath: IndexPath) {
         guard let item = item as? SupplementaryItemModel else { fatalError() }
         titleLabel.text = item.title
     }
@@ -23,7 +23,11 @@ class ExampleSupplementaryHeaderView: BaseComposableCollectionReusableView {
         lbl.numberOfLines = 0
         lbl.font = UIFont.boldSystemFont(ofSize: 28)
         lbl.textAlignment = .center
-        lbl.textColor = .red
+        if #available(iOS 13.0, *) {
+            lbl.textColor = .label
+        } else {
+            // Fallback on earlier versions
+        }
         return lbl
     }()
     

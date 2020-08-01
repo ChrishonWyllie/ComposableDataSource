@@ -16,8 +16,8 @@ protocol GenericCollectionReusableViewProtocol: ConfigurableReusableSupplementar
 }
 
 open class BaseComposableCollectionReusableView: UICollectionReusableView, GenericCollectionReusableViewProtocol {
-    public typealias T = BaseComposableSupplementaryViewModel
-    open func configure(with item: BaseComposableSupplementaryViewModel, at indexPath: IndexPath) {}
+    public typealias T = BaseCollectionSupplementaryViewModel
+    open func configure(with item: BaseCollectionSupplementaryViewModel, at indexPath: IndexPath) {}
     
     
     

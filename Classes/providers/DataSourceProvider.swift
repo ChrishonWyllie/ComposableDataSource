@@ -338,7 +338,7 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
                 cellItems[i].removeAll()
             }
             for index in 0..<supplementarySectionItems.count {
-                supplementarySectionItems[index] =  GenericSupplementarySectionModel(header: nil,
+                supplementarySectionItems[index] =  BaseSupplementarySectionModel(header: nil,
                                                                                      footer: nil) as! S
             }
         } else {

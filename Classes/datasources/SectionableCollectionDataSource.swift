@@ -57,7 +57,7 @@ open class SectionableCollectionDataSource
         
         if let unwrappedSupplementarySectionItems = supplementarySectionItems {
             unwrappedSupplementarySectionItems.forEach { (supplementarySectionItem) in
-                guard let supplementarySectionItem = supplementarySectionItem as? GenericSupplementarySectionModel else { fatalError() }
+                guard let supplementarySectionItem = supplementarySectionItem as? BaseSupplementarySectionModel else { fatalError() }
                 
                 if let header = supplementarySectionItem.header {
                     super.collectionView.register((header.supplementaryViewClass),
