@@ -1,3 +1,17 @@
+## [Version 0.7.0](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.0)
+
+### New
+* Links to more documentation
+
+### Improvements
+* Updated README
+* Added link in README to more documentation elsewhere
+* Renamed GenericSupplementarySectionModel to BaseSupplementarySectionModel
+* Renamed BaseComposableSupplementaryViewModel to BaseCollectionSupplementaryViewModel
+
+### Bug fixes
+* Fixed issue where empty data source view does not supply after first time
+
 ## [Version 0.6.21](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.6.21)
 
 ### New
