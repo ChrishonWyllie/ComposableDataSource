@@ -1,3 +1,14 @@
+## [Version 0.7.4](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.4)
+
+### New
+* N/A
+
+### Improvements
+* Replaced uses of `count == 0` or `counf > 0` with simply checking if an array `isEmpty`. According to sources, this is a more efficient approach
+
+### Bug fixes
+* Fixed issue where empty data source view does not supply after first time
+
 ## [Version 0.7.0](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.0)
 
 ### New
