@@ -133,7 +133,7 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
         self.collectionView.performBatchUpdates({
             let indicesOfNewSectionsToInsert = super.provider.insert(cellItems: cellItems, atIndexPaths: indexPaths)
             super.collectionView.insertItems(at: indexPaths)
-            if indicesOfNewSectionsToInsert.count > 0 {
+            if indicesOfNewSectionsToInsert.isEmpty == false {
                 let indexSet = IndexSet(integersIn: indicesOfNewSectionsToInsert.min()!...indicesOfNewSectionsToInsert.max()!)
                 super.collectionView.insertSections(indexSet)
             }
