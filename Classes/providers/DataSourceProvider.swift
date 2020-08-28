@@ -23,15 +23,15 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
     public var isEmpty: Bool {
         if cellItems.count > 1 {
             for section in cellItems {
-                if section.count > 0 {
+                if section.isEmpty == false {
                     return false
                 }
             }
             return true
         } else if cellItems.count == 1 {
-            return cellItems[0].count == 0
+            return cellItems[0].isEmpty
         } else {
-            return cellItems.count == 0
+            return cellItems.isEmpty
         }
     }
     
@@ -162,7 +162,7 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
         guard
             section >= 0 &&
             section < supplementarySectionItems.count,
-            supplementarySectionItems.count > 0 else {
+            supplementarySectionItems.isEmpty == false else {
                 return nil
         }
         
@@ -194,7 +194,7 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
     
     public func updateSections(_ sections: [Int], withNewCellItems newCellItems: [[T]]) {
         
-        guard sections.count > 0 else {
+        guard sections.isEmpty == false else {
             return
         }
         
@@ -214,7 +214,7 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
     
     public func updateSupplementarySectionItems(atSections sections: [Int], withNewSupplementarySectionItems supplementarySectionItems: [S]) {
         
-        guard sections.count > 0 else {
+        guard sections.isEmpty == false else {
             return
         }
         
@@ -299,7 +299,7 @@ public class DataSourceProvider<T, S, U>: CollectionDataProvider {
     
     public func deleteSections(atSections sections: [Int]) {
         guard
-            sections.count > 0,
+            sections.isEmpty == false,
             sections.max()! <= (cellItems.count - 1)
         else {
             return

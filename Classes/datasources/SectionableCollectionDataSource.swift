@@ -46,7 +46,7 @@ open class SectionableCollectionDataSource
     
     internal func register(cellItems: [T], supplementarySectionItems: [S]?) {
         
-        if cellItems.count > 0 {
+        if cellItems.isEmpty == false {
             cellItems.compactMap { (cellItem) -> GenericCellModel in
                 return (cellItem as! GenericCellModel)
             }.forEach { (cellItem) in
@@ -117,7 +117,7 @@ open class SectionableCollectionDataSource
             super.collectionView.performBatchUpdates({
                 let indicesOfNewSectionsToInsert = super.provider.insert(cellItems: cellItems, atIndexPaths: indexPaths)
                 super.collectionView.insertItems(at: indexPaths)
-                if indicesOfNewSectionsToInsert.count > 0 {
+                if indicesOfNewSectionsToInsert.isEmpty == false {
                     let indexSet = IndexSet(integersIn: indicesOfNewSectionsToInsert.min()!...indicesOfNewSectionsToInsert.max()!)
                     super.collectionView.insertSections(indexSet)
                 }
@@ -321,7 +321,7 @@ open class SectionableCollectionDataSource
             super.collectionView.performBatchUpdates({
                 let indexSectionsToDelete = super.provider.deleteCellItems(atIndexPaths: indexPaths)
                 super.collectionView.deleteItems(at: indexPaths)
-                if indexSectionsToDelete.count > 0 {
+                if indexSectionsToDelete.isEmpty == false {
                     super.provider.deleteSupplementarySectionItems(atSections: indexSectionsToDelete)
                     let sectionsToDeleteAt = IndexSet(indexSectionsToDelete)
                     super.collectionView.deleteSections(sectionsToDeleteAt)
