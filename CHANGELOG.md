@@ -1,3 +1,14 @@
+## [Version 0.7.9](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.9)
+
+### New
+* Exposed functions within the DataSourceProvider to the ComposableDataSource for getting the cell and supplementary view model items.
+
+### Improvements
+* N/A
+
+### Bug fixes
+* N/A
+
 ## [Version 0.7.4](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.4)
 
 ### New
