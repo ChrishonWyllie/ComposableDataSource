@@ -86,14 +86,6 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
         fatalError("This needs to be subclassed to provide the proper comparison")
     }
     
-    public func allCellItems() -> [[T]] {
-        return provider.allCellItems()
-    }
-    
-    public func allSupplementarySectionItems() -> [S] {
-        return provider.allSupplementarySectionItems()
-    }
-    
     public func manuallyTriggerSelection(atIndexPath indexPath: IndexPath) {
         super.collectionView.delegate?.collectionView?(super.collectionView, didSelectItemAt: indexPath)
     }

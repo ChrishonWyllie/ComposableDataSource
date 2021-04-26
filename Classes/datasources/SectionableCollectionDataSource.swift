@@ -104,6 +104,18 @@ open class SectionableCollectionDataSource
         return super.provider.numberOfItems(in: section)
     }
     
+    public func allCellItems() -> [[T]] {
+        return provider.allCellItems()
+    }
+    
+    public func cellModels(inSection section: Int) -> [T] {
+        return allCellItems()[section]
+    }
+    
+    public func allSupplementarySectionItems() -> [S] {
+        return provider.allSupplementarySectionItems()
+    }
+    
     // MARK: - Create
     
     public func insert(cellItems: [T],
