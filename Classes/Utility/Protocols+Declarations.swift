@@ -381,6 +381,15 @@ public protocol SectionableDataSourceProtocol {
     */
     func numberOfItems(in section: Int) -> Int
     
+    /// Returns a nested array of arrays containing all view models in the dataSource
+    func allCellItems() -> [[T]]
+    
+    /// Returns an array of view models in a particular section
+    func cellModels(inSection section: Int) -> [T]
+    
+    /// Returns all supplementary section view models
+    func allSupplementarySectionItems() -> [S]
+    
     /**
      Inserts cell items at specified indexPaths.
      
