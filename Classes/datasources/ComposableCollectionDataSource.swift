@@ -15,8 +15,8 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     
     public static var debugModeIsActive: Bool = false
     
-    private var cellPadding: UIEdgeInsets = .zero
-    private var cellCornerRadius: CGFloat = 0.0
+    public private(set) var cellPadding: UIEdgeInsets = .zero
+    public private(set) var cellCornerRadius: CGFloat = 0.0
     
     public var isEmpty: Bool {
         return super.provider.isEmpty
