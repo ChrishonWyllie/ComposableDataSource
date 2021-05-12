@@ -213,7 +213,35 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
         return self
     }
     
+    @discardableResult open func observeContentOffset(_ completion: @escaping ComposableContentOffsetHandler) -> ComposableCollectionDataSource {
+        super.composableContentOffsetHandler = completion
+        return self
+    }
     
+    @discardableResult open func observeScrollViewWillBeginDragging(_ completion: @escaping ComposableScrollViewWillBeginDraggingHandler) -> ComposableCollectionDataSource {
+        super.composableScrollViewWillBeginDraggingHandler = completion
+        return self
+    }
+    
+    @discardableResult open func observeScrollViewWillEndDragging(_ completion: @escaping ComposableScrollViewWillEndDraggingHandler) -> ComposableCollectionDataSource {
+        super.composableScrollViewWillEndDraggingHandler = completion
+        return self
+    }
+    
+    @discardableResult open func observeScrollViewDidEndDragging(_ completion: @escaping ComposableScrollViewDidEndDraggingHandler) -> ComposableCollectionDataSource {
+        super.composableScrollViewDidEndDraggingHandler = completion
+        return self
+    }
+    
+    @discardableResult open func observeScrollViewDidEndScrollAnimation(_ completion: @escaping ComposableScrollViewDidEndScrollAnimationHandler) -> ComposableCollectionDataSource {
+        super.composableScrollViewDidEndScrollAnimationHandler = completion
+        return self
+    }
+    
+    @discardableResult open func observeScrollViewDidEndDecelerating(_ completion: @escaping ComposableScrollViewDidEndDeceleratingHandler) -> ComposableCollectionDataSource {
+        super.composableScrollViewDidEndDeceleratingHandler = completion
+        return self
+    }
     
     
     
