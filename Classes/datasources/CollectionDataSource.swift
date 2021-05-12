@@ -21,7 +21,7 @@ where Cell: ConfigurableReusableCell, Provider.T == Cell.T, View: ConfigurableRe
     
     // MARK: - Variables
     
-    internal let provider: Provider
+    public let provider: Provider
     public private(set) var collectionView: UICollectionView
     public var emptyDataSourceView: UIView?
     
