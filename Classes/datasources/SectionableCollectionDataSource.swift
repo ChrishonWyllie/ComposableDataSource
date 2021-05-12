@@ -36,15 +36,15 @@ open class SectionableCollectionDataSource
     
     
     
-    internal func registerItems(in dataProvider: DataSourceProvider<T, S, U>) {
+    public func registerItems(in dataProvider: DataSourceProvider<T, S, U>) {
         register(cellItems: dataProvider.allCellItems(), supplementarySectionItems: dataProvider.allSupplementarySectionItems())
     }
     
-    internal func register(cellItems: [[T]], supplementarySectionItems: [S]?) {
+    public func register(cellItems: [[T]], supplementarySectionItems: [S]?) {
         register(cellItems: cellItems.flatten() as! [T], supplementarySectionItems: supplementarySectionItems)
     }
     
-    internal func register(cellItems: [T], supplementarySectionItems: [S]?) {
+    public func register(cellItems: [T], supplementarySectionItems: [S]?) {
         
         if cellItems.isEmpty == false {
             cellItems.compactMap { (cellItem) -> GenericCellModel in
