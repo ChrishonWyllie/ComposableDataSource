@@ -118,11 +118,11 @@ open class SectionableCollectionDataSource
     
     // MARK: - Create
     
-    public func insert(cellItems: [T],
-                       atIndexPaths indexPaths: [IndexPath],
-                       updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                       completion: OptionalCompletionHandler) {
-        
+    open func insert(cellItems: [T],
+                     atIndexPaths indexPaths: [IndexPath],
+                     updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                     completion: OptionalCompletionHandler) {
+    
         register(cellItems: cellItems, supplementarySectionItems: [])
         
         func insertWithBatchUpdates() {
@@ -150,10 +150,10 @@ open class SectionableCollectionDataSource
         }
     }
     
-    public func insert(supplementarySectionItems: [S],
-                       atSections sections: [Int],
-                       updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                       completion: OptionalCompletionHandler) {
+    open func insert(supplementarySectionItems: [S],
+                     atSections sections: [Int],
+                     updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                     completion: OptionalCompletionHandler) {
         
         register(cellItems: [[]], supplementarySectionItems: supplementarySectionItems)
         
@@ -177,11 +177,11 @@ open class SectionableCollectionDataSource
         }
     }
     
-    public func insertNewSection(withCellItems cellItems: [T],
-                                 supplementarySectionItem: S? = nil,
-                                 atSection section: Int,
-                                 updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                                 completion: OptionalCompletionHandler) {
+    open func insertNewSection(withCellItems cellItems: [T],
+                               supplementarySectionItem: S? = nil,
+                               atSection section: Int,
+                               updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                               completion: OptionalCompletionHandler) {
         
         var supplementarySectionItems: [S] = []
         if let unwrappedSupplementarySectionItem = supplementarySectionItem {
@@ -223,10 +223,10 @@ open class SectionableCollectionDataSource
     
     // MARK: - Update
     
-    public func updateCellItems(atIndexPaths indexPaths: [IndexPath],
-                                newCellItems: [T],
-                                updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                                completion: OptionalCompletionHandler) {
+    open func updateCellItems(atIndexPaths indexPaths: [IndexPath],
+                              newCellItems: [T],
+                              updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                              completion: OptionalCompletionHandler) {
         
         register(cellItems: newCellItems, supplementarySectionItems: [])
         
@@ -250,10 +250,10 @@ open class SectionableCollectionDataSource
         }
     }
     
-    public func updateSupplementarySectionsItems(atSections sections: [Int],
-                                                 withNewSupplementarySectionItems supplementarySectionItems: [S],
-                                                 updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                                                 completion: OptionalCompletionHandler) {
+    open func updateSupplementarySectionsItems(atSections sections: [Int],
+                                               withNewSupplementarySectionItems supplementarySectionItems: [S],
+                                               updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                                               completion: OptionalCompletionHandler) {
         
         register(cellItems: [[]], supplementarySectionItems: supplementarySectionItems)
         
@@ -278,12 +278,12 @@ open class SectionableCollectionDataSource
         }
     }
     
-    public func updateSections(atItemSectionIndices itemSectionIndices: [Int],
-                               newCellItems: [[T]],
-                               supplementarySectionIndices: [Int]? = nil,
-                               supplementarySectionItems: [S]? = nil,
-                               updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                               completion: OptionalCompletionHandler) {
+    open func updateSections(atItemSectionIndices itemSectionIndices: [Int],
+                             newCellItems: [[T]],
+                             supplementarySectionIndices: [Int]? = nil,
+                             supplementarySectionItems: [S]? = nil,
+                             updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                             completion: OptionalCompletionHandler) {
         
         register(cellItems: newCellItems, supplementarySectionItems: supplementarySectionItems)
         
@@ -322,9 +322,9 @@ open class SectionableCollectionDataSource
     
     // MARK: - Delete
     
-    public func deleteCellItems(atIndexPaths indexPaths: [IndexPath],
-                                updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                                completion: OptionalCompletionHandler) {
+    open func deleteCellItems(atIndexPaths indexPaths: [IndexPath],
+                              updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                              completion: OptionalCompletionHandler) {
         // TODO
         // Consider the case where deleting items in a section
         // will render that section empty.
@@ -354,9 +354,9 @@ open class SectionableCollectionDataSource
         }
     }
     
-    public func deleteSupplementarySectionItems(atSections sections: [Int],
-                                                updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                                                completion: OptionalCompletionHandler) {
+    open func deleteSupplementarySectionItems(atSections sections: [Int],
+                                              updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                                              completion: OptionalCompletionHandler) {
         
         func deleteWithBatchUpdates() {
              super.collectionView.performBatchUpdates({
@@ -378,9 +378,9 @@ open class SectionableCollectionDataSource
         }
     }
     
-    public func deleteSections(atSectionIndices sections: [Int],
-                               updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                               completion: OptionalCompletionHandler) {
+    open func deleteSections(atSectionIndices sections: [Int],
+                             updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                             completion: OptionalCompletionHandler) {
         
         func deleteWithBatchUpdates() {
             super.collectionView.performBatchUpdates({
@@ -402,10 +402,10 @@ open class SectionableCollectionDataSource
         }
     }
     
-    public func replaceDataSource(withCellItems cellItems: [[T]],
-                                  supplementarySectionItems: [S],
-                                  updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                                  completion: OptionalCompletionHandler) {
+    open func replaceDataSource(withCellItems cellItems: [[T]],
+                                supplementarySectionItems: [S],
+                                updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                                completion: OptionalCompletionHandler) {
         
         register(cellItems: cellItems, supplementarySectionItems: supplementarySectionItems)
         
