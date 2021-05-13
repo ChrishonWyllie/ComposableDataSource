@@ -382,6 +382,46 @@ public protocol SectionableDataSourceProtocol {
     func numberOfItems(in section: Int) -> Int
     
     /**
+     Returns double nested array of all items representing cells in each section
+     
+    - Usage:
+     ```
+     let provider = ....
+     let allItems = provider.allItems()
+     ```
+    */
+    func allCellItems() -> [[T]]
+    
+    
+    /**
+     Returns an array of view models in a particular section
+     
+    - Note:
+        This is a zero-based function
+     
+    - Parameters:
+        - secction: The index of the requested section
+ 
+    - Usage:
+     ```
+     let provider = ....
+     let itemsInSectionZero = provider.cellModels(inSection: 0)
+     ```
+    */
+    func cellModels(inSection section: Int) -> [T]
+    
+    /**
+     Returns all items representing section supplementary views
+     
+    - Usage:
+     ```
+     let provider = ....
+     let allSupplementaryItems = provider.allSupplementarySectionItems()
+     ```
+    */
+    func allSupplementarySectionItems() -> [S]
+    
+    /**
      Inserts cell items at specified indexPaths.
      
      

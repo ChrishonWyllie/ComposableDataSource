@@ -35,15 +35,24 @@ open class SectionableCollectionDataSource
     
     
     
-    
+
+    /**
+     Registers the cells and supplementaryViews included within the `DataSourceProvider` argument, to be dequeued later by the UICollectionView.cellForItem function
+     */
     public func registerItems(in dataProvider: DataSourceProvider<T, S, U>) {
         register(cellItems: dataProvider.allCellItems(), supplementarySectionItems: dataProvider.allSupplementarySectionItems())
     }
     
+    /**
+     Registers a nested array of cells and supplementaryViews to be dequeued later by the UICollectionView.cellForItem function
+     */
     public func register(cellItems: [[T]], supplementarySectionItems: [S]?) {
         register(cellItems: cellItems.flatten() as! [T], supplementarySectionItems: supplementarySectionItems)
     }
     
+    /**
+     Registers the cells and supplementaryViews to be dequeued later by the UICollectionView.cellForItem function
+     */
     public func register(cellItems: [T], supplementarySectionItems: [S]?) {
         
         if cellItems.isEmpty == false {
