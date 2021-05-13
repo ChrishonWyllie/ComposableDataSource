@@ -712,9 +712,9 @@ public protocol SectionableDataSourceProtocol {
      
     - Parameters:
         - keepingStructure: Determines if only the cell items and supplementary section items in each section will be removed, but the stucture of sections is maintained, i.e., empty sections will be left over. Otherwise, everything is purged, leaving a completely empty data source with 0 sections
-     
+        - shouldReloadCollectionView: Determines whether the underlying UICollectionView will be reloaded once the data is reset/cleared
     */
-    func reset(keepingStructure: Bool)
+    func reset(keepingStructure: Bool, shouldReloadCollectionView: Bool)
     
 }
 

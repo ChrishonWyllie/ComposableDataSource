@@ -15,8 +15,8 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     
     public static var debugModeIsActive: Bool = false
     
-    private var cellPadding: UIEdgeInsets = .zero
-    private var cellCornerRadius: CGFloat = 0.0
+    public private(set) var cellPadding: UIEdgeInsets = .zero
+    public private(set) var cellCornerRadius: CGFloat = 0.0
     
     public var isEmpty: Bool {
         return super.provider.isEmpty
@@ -213,7 +213,35 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
         return self
     }
     
+    @discardableResult open func observeContentOffset(_ completion: @escaping ComposableContentOffsetHandler) -> ComposableCollectionDataSource {
+        super.composableContentOffsetHandler = completion
+        return self
+    }
     
+    @discardableResult open func observeScrollViewWillBeginDragging(_ completion: @escaping ComposableScrollViewWillBeginDraggingHandler) -> ComposableCollectionDataSource {
+        super.composableScrollViewWillBeginDraggingHandler = completion
+        return self
+    }
+    
+    @discardableResult open func observeScrollViewWillEndDragging(_ completion: @escaping ComposableScrollViewWillEndDraggingHandler) -> ComposableCollectionDataSource {
+        super.composableScrollViewWillEndDraggingHandler = completion
+        return self
+    }
+    
+    @discardableResult open func observeScrollViewDidEndDragging(_ completion: @escaping ComposableScrollViewDidEndDraggingHandler) -> ComposableCollectionDataSource {
+        super.composableScrollViewDidEndDraggingHandler = completion
+        return self
+    }
+    
+    @discardableResult open func observeScrollViewDidEndScrollAnimation(_ completion: @escaping ComposableScrollViewDidEndScrollAnimationHandler) -> ComposableCollectionDataSource {
+        super.composableScrollViewDidEndScrollAnimationHandler = completion
+        return self
+    }
+    
+    @discardableResult open func observeScrollViewDidEndDecelerating(_ completion: @escaping ComposableScrollViewDidEndDeceleratingHandler) -> ComposableCollectionDataSource {
+        super.composableScrollViewDidEndDeceleratingHandler = completion
+        return self
+    }
     
     
     
