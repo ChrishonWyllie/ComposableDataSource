@@ -23,47 +23,6 @@ public protocol GenericSupplementaryModel {
 
 
 
-// This class contains a sort of tuple that contains
-// header and footer generic supplementary models.
-// Some dataSources only show headers, others only show footers,
-// and some show both.
-// The properties are optional
-
-
-public protocol GenericSupplementarySectionModelProtocol {
-    var header: GenericSupplementaryModel? { get }
-    var footer: GenericSupplementaryModel? { get }
-}
-
-public struct BaseSupplementarySectionModel: GenericSupplementarySectionModelProtocol {
-    public private(set) var header: GenericSupplementaryModel?
-    public private(set) var footer: GenericSupplementaryModel?
-    
-    public init(header: GenericSupplementaryModel?, footer: GenericSupplementaryModel?) {
-        if header != nil {
-            guard header?.viewKind == UICollectionView.elementKindSectionHeader else { fatalError("You placed the wrong supplementary model in this parameter") }
-        }
-        if footer != nil {
-            guard footer?.viewKind == UICollectionView.elementKindSectionFooter else { fatalError("You placed the wrong supplementary model in this parameter") }
-        }
-        self.header = header
-        self.footer = footer
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 public typealias AnyComposableCollectionReusableViewClass = BaseComposableCollectionReusableView.Type
 
 public protocol BaseCollectionSupplementaryViewModel: GenericSupplementaryModel {
@@ -73,5 +32,36 @@ public protocol BaseCollectionSupplementaryViewModel: GenericSupplementaryModel 
 extension BaseCollectionSupplementaryViewModel {
     public var supplementaryViewClass: UICollectionReusableView.Type {
         return getReusableViewClass()
+    }
+}
+
+
+
+
+// This class contains a sort of tuple that contains
+// header and footer generic supplementary models.
+// Some dataSources only show headers, others only show footers,
+// and some show both.
+// The properties are optional
+
+
+public protocol GenericSupplementarySectionModelProtocol {
+    var header: BaseCollectionSupplementaryViewModel? { get }
+    var footer: BaseCollectionSupplementaryViewModel? { get }
+}
+
+public struct BaseSupplementarySectionModel: GenericSupplementarySectionModelProtocol {
+    public private(set) var header: BaseCollectionSupplementaryViewModel?
+    public private(set) var footer: BaseCollectionSupplementaryViewModel?
+    
+    public init(header: BaseCollectionSupplementaryViewModel?, footer: BaseCollectionSupplementaryViewModel?) {
+        if header != nil {
+            guard header?.viewKind == UICollectionView.elementKindSectionHeader else { fatalError("You placed the wrong supplementary model in this parameter") }
+        }
+        if footer != nil {
+            guard footer?.viewKind == UICollectionView.elementKindSectionFooter else { fatalError("You placed the wrong supplementary model in this parameter") }
+        }
+        self.header = header
+        self.footer = footer
     }
 }

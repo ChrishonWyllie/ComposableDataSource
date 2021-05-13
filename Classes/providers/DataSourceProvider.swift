@@ -8,7 +8,7 @@
 import Foundation
 
 /// Maintains data source items to represent each cell and supplementary view in a UICollectionView
-public class DataSourceProvider<T, S, U>: CollectionDataProvider {
+open class DataSourceProvider<T, S, U>: CollectionDataProvider {
     
     // MARK: - Internal Properties
     private var cellItems: [[T]] = []
