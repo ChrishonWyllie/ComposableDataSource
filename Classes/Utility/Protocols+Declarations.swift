@@ -584,10 +584,10 @@ public protocol SectionableDataSourceProtocol {
         - updateStyle: Enum dictating how the updates will happen, either by calling `performBatchUpdates(...)` or with `reloadData()`
         - completion: Completion handler called at the end of function
     */
-    func updateSupplementarySectionsItems(atSections sections: [Int],
-                                          withNewSupplementarySectionItems supplementarySectionItems: [S],
-                                          updateStyle: DataSourceUpdateStyle,
-                                          completion: OptionalCompletionHandler)
+    func updateSupplementarySectionItems(atSections sections: [Int],
+                                         withNewSupplementarySectionItems supplementarySectionItems: [S],
+                                         updateStyle: DataSourceUpdateStyle,
+                                         completion: OptionalCompletionHandler)
     
     /**
      Replaces entire sections with new cell items and supplementary section items
