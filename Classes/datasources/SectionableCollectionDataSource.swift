@@ -430,8 +430,10 @@ open class SectionableCollectionDataSource
         }
     }
     
-    public func reset(keepingStructure: Bool = true) {
+    public func reset(keepingStructure: Bool = true, shouldReloadCollectionView: Bool = true) {
         super.provider.reset(keepingStructure: keepingStructure)
-        super.collectionView.reloadData()
+        if shouldReloadCollectionView {
+            super.collectionView.reloadData()
+        }
     }
 }
