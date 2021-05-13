@@ -109,7 +109,7 @@ open class SectionableCollectionDataSource
         return self.indexPathOfLastItem(in: lastSection)
     }
     
-    public func numberOfItems(in section: Int) -> Int {
+    open func numberOfItems(in section: Int) -> Int {
         return super.provider.numberOfItems(in: section)
     }
     
@@ -222,7 +222,7 @@ open class SectionableCollectionDataSource
     
     // MARK: - Read
     
-    public func item(atIndexPath indexPath: IndexPath) -> T? {
+    open func item(atIndexPath indexPath: IndexPath) -> T? {
         return super.provider.item(atIndexPath: indexPath)
     }
     
@@ -259,10 +259,10 @@ open class SectionableCollectionDataSource
         }
     }
     
-    open func updateSupplementarySectionsItems(atSections sections: [Int],
-                                               withNewSupplementarySectionItems supplementarySectionItems: [S],
-                                               updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
-                                               completion: OptionalCompletionHandler) {
+    open func updateSupplementarySectionItems(atSections sections: [Int],
+                                              withNewSupplementarySectionItems supplementarySectionItems: [S],
+                                              updateStyle: DataSourceUpdateStyle = .withBatchUpdates,
+                                              completion: OptionalCompletionHandler) {
         
         register(cellItems: [[]], supplementarySectionItems: supplementarySectionItems)
         
@@ -439,7 +439,7 @@ open class SectionableCollectionDataSource
         }
     }
     
-    public func reset(keepingStructure: Bool = true, shouldReloadCollectionView: Bool = true) {
+    open func reset(keepingStructure: Bool = true, shouldReloadCollectionView: Bool = true) {
         super.provider.reset(keepingStructure: keepingStructure)
         if shouldReloadCollectionView {
             super.collectionView.reloadData()
