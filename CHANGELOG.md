@@ -1,3 +1,17 @@
+## [Version 0.7.24](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.24)
+
+### New
+* N/A
+
+### Improvements
+* Added an optional boolean argument to the `reset(keepingStructure:)` function to optionally reload the underlying UICollectionView when the data is cleared.
+* Made the DataSourceProvider open, so it can be subclassed.
+* Exposed the `provider` variable within the dataSource, so its operations can be used in overriden CRUD functions without performing any batch updates or reloading.
+* Fixed an issue where the `BaseSupplementarySectionModel`'s header and footer properties had been using the generic protocol as its type rather than the `BaseCollectionSupplementaryViewModel`
+
+### Bug fixes
+* N/A
+
 ## [Version 0.7.9](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.9)
 
 ### New
