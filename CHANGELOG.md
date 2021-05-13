@@ -1,3 +1,15 @@
+## [Version 0.7.28](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.28)
+
+### New
+* N/A
+
+### Improvements
+* Made the `reset(keepingStructure:shouldReloadCollectionView:)` function open, so it can be overriden
+* Made the `numberOfItems(in:)` function open so that it can be overriden
+
+### Bug fixes
+* N/A
+
 ## [Version 0.7.24](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.24)
 
 ### New
