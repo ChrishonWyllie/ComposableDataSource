@@ -1,3 +1,14 @@
+## [Version 0.7.32](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.32)
+
+### New
+* N/A
+
+### Improvements
+* N/A
+
+### Bug fixes
+* Fixed issue where the `SectionableCollectionDataSource` was registering the Generic versions of the cell and supplementary view models. This resulted in crashes in subclasses about not registering cells before dequeueing them.
+
 ## [Version 0.7.28](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.28)
 
 ### New
