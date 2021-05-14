@@ -1,3 +1,15 @@
+## [Version 0.7.37](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.37)
+
+### New
+* N/A
+
+### Improvements
+* Made some functions more open, so they can be overrideable
+* Overrote the didSelect function to use the `item(at:)`, which is also overrideable itself
+
+### Bug fixes
+* N/A
+
 ## [Version 0.7.32](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.32)
 
 ### New
