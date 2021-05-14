@@ -329,14 +329,14 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     
     open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
-        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.header as? BaseCollectionSupplementaryViewModel else {
+        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.header else {
             return .zero
         }
         return composableHeaderItemSizeHandler?(section, supplementarySectionItem) ?? .zero
     }
     
     open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.footer as? BaseCollectionSupplementaryViewModel else {
+        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.footer else {
             return .zero
         }
         return composableFooterItemSizeHandler?(section, supplementarySectionItem) ?? .zero

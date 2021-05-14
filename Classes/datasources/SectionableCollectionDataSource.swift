@@ -56,11 +56,11 @@ open class SectionableCollectionDataSource
     public func register(cellItems: [T], supplementarySectionItems: [S]?) {
         
         if cellItems.isEmpty == false {
-            cellItems.compactMap { (cellItem) -> GenericCellModel in
-                return (cellItem as! GenericCellModel)
+            cellItems.compactMap { (cellItem) -> BaseCollectionCellModel in
+                return (cellItem as! BaseCollectionCellModel)
             }.forEach { (cellItem) in
-                super.collectionView.register((cellItem.cellClass),
-                                                forCellWithReuseIdentifier: String(describing: cellItem.cellClass))
+                super.collectionView.register((cellItem.getCellClass()),
+                                                forCellWithReuseIdentifier: String(describing: cellItem.getCellClass()))
             }
         }
         
@@ -69,14 +69,14 @@ open class SectionableCollectionDataSource
                 guard let supplementarySectionItem = supplementarySectionItem as? BaseSupplementarySectionModel else { fatalError() }
                 
                 if let header = supplementarySectionItem.header {
-                    super.collectionView.register((header.supplementaryViewClass),
+                    super.collectionView.register((header.getReusableViewClass()),
                                                   forSupplementaryViewOfKind: header.viewKind,
-                                                  withReuseIdentifier: String(describing: header.supplementaryViewClass))
+                                                  withReuseIdentifier: String(describing: header.getReusableViewClass()))
                 }
                 if let footer = supplementarySectionItem.footer {
-                    super.collectionView.register((footer.supplementaryViewClass),
+                    super.collectionView.register((footer.getReusableViewClass()),
                                                   forSupplementaryViewOfKind: footer.viewKind,
-                                                  withReuseIdentifier: String(describing: footer.supplementaryViewClass))
+                                                  withReuseIdentifier: String(describing: footer.getReusableViewClass()))
                 }
             }
         }
