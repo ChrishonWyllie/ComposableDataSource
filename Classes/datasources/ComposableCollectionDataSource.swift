@@ -265,7 +265,7 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     
     open override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        guard let item = super.provider.item(atIndexPath: indexPath) else {
+        guard let item = super.item(atIndexPath: indexPath) else {
             DebugLogger.shared.addDebugMessage("\(String(describing: type(of: self))) - Internal inconsistency. No cell model for indexPath: \(indexPath)")
             return UICollectionViewCell()
         }
@@ -329,14 +329,14 @@ open class ComposableCollectionDataSource: SectionableDataSourceInheriableProtoc
     
     open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
-        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.header else {
+        guard let supplementarySectionItem = supplementarySectionItem(atSection: section)?.header else {
             return .zero
         }
         return composableHeaderItemSizeHandler?(section, supplementarySectionItem) ?? .zero
     }
     
     open override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        guard let supplementarySectionItem = provider.supplementarySectionItem(atSection: section)?.footer else {
+        guard let supplementarySectionItem = supplementarySectionItem(atSection: section)?.footer else {
             return .zero
         }
         return composableFooterItemSizeHandler?(section, supplementarySectionItem) ?? .zero

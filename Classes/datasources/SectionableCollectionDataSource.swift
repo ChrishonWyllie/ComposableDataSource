@@ -88,7 +88,7 @@ open class SectionableCollectionDataSource
     
     // MARK: - Public Functions
     
-    public func numberOfSections() -> Int {
+    open func numberOfSections() -> Int {
         return super.provider.numberOfSections()
     }
     
@@ -226,8 +226,15 @@ open class SectionableCollectionDataSource
         return super.provider.item(atIndexPath: indexPath)
     }
     
-    public func supplementarySectionItem(atSection section: Int) -> S? {
+    open func supplementarySectionItem(atSection section: Int) -> S? {
         return super.provider.supplementarySectionItem(atSection: section)
+    }
+    
+    open override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let item = item(atIndexPath: indexPath) else {
+            return
+        }
+        super.composableItemSelectionHandler?(indexPath, item)
     }
     
     // MARK: - Update
