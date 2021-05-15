@@ -1,3 +1,14 @@
+## [Version 0.7.41](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.41)
+
+### New
+* N/A
+
+### Improvements
+* Overrote the `numberOfSections(in:)` and the `collectionView(_: numberOfItemsInSection:)` to use the separately overrideable functions. This allows for easier subclassing with varying dataProvider setups
+
+### Bug fixes
+* N/A
+
 ## [Version 0.7.37](https://github.com/ChrishonWyllie/ComposableDataSource/releases/tag/0.7.37)
 
 ### New
