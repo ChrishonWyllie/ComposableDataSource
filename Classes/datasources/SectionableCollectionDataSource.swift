@@ -125,6 +125,50 @@ open class SectionableCollectionDataSource
         return provider.allSupplementarySectionItems()
     }
     
+    
+    
+    
+    
+    
+    
+    
+    // MARK: - Overriden Functions
+    
+    open override func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return self.numberOfSections()
+    }
+    
+    open override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.numberOfItems(in: section)
+    }
+    
+    open override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let item = item(atIndexPath: indexPath) else {
+            return
+        }
+        super.composableItemSelectionHandler?(indexPath, item)
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     // MARK: - Create
     
     open func insert(cellItems: [T],
@@ -228,13 +272,6 @@ open class SectionableCollectionDataSource
     
     open func supplementarySectionItem(atSection section: Int) -> S? {
         return super.provider.supplementarySectionItem(atSection: section)
-    }
-    
-    open override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let item = item(atIndexPath: indexPath) else {
-            return
-        }
-        super.composableItemSelectionHandler?(indexPath, item)
     }
     
     // MARK: - Update
