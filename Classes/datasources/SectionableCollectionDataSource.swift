@@ -149,7 +149,12 @@ open class SectionableCollectionDataSource
         super.composableItemSelectionHandler?(indexPath, item)
     }
     
-    
+    open override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let item = item(atIndexPath: indexPath) else {
+            return
+        }
+        super.composableItemDeselectionHandler?(indexPath, item)
+    }
     
     
     
